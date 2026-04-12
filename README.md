@@ -19,9 +19,9 @@ EVERYDAY is a local Electron application designed for everyday use cases. Built 
 
 ## Features
 
--   **Target Allocation Maintenance**: Allows users to list all types of assets they possess, specify the desired percentage each asset should represent in their portfolio, input their budget, and then computes how much of each asset the user should buy next to achieve the desired distribution.
--   **Net Worth Assessment**: Track and visualize net worth evolution over time. Create audit entries with assets and liabilities, view a line chart of net worth history, and export charts as PNG.
--   **Other Features**: More features could be added in the future.
+-   **Target Allocation Maintenance**: List your assets, set target percentages for each, enter a budget, and get a breakdown of what to buy next to reach your desired allocation.
+-   **Net Worth Assessment**: Track net worth over time by creating dated entries with assets and liabilities. Visualize the evolution on a line chart and export it as PNG.
+-   **Recurring Purchases**: Log recurring expenses with custom frequencies (daily, weekly, monthly, yearly), organize them with tags and emojis, and see the annualized cost at a glance.
 
 ## Installation
 
@@ -41,21 +41,19 @@ For easy local setup, follow the bellow commands (tested on MacOS):
 
 ## Usage
 
-The EVERYDAY app features a user-friendly interface with various tools. Its first feature is the Target Allocation Maintenance tool. Here's how to use it:
+EVERYDAY is organized around three tools, each accessible from the sidebar.
 
-1. **Current Allocation**: Upon launching the app, you're greeted with the 'Current Allocation' section. This is where you'll add and review the assets in your portfolio. For each asset, you can input the amount you own and adjust the desired target percentage of your total portfolio that you wish for that asset to represent.
+### Target Allocation Maintenance
 
-    ![Current Allocation](documentation/images/current_allocation.png)
+Add the assets in your portfolio, set the target percentage for each, then enter a budget and currency. Hit **Compute** to get a chart showing how much of each asset to buy next in order to reach your target allocation.
 
-2. **Budget Input and Currency Selection**: Navigate to the 'Next Buy Estimation' section. Here, you'll find a budget input field where you can enter the amount of money you're planning to invest. You can also select the currency of your budget from the dropdown menu.
+### Net Worth Assessment
 
-    ![Budget Input](documentation/images/next_buy_estimation.png)
+Create timestamped entries listing your assets and liabilities with their estimated values. The app plots a line chart of your net worth over time that you can export as PNG.
 
-3. **Computation and Results**: After filling in your budget and currency, click the 'Compute' button. The app will then process your data and present you with a 'Next Buy Estimation' chart. This chart visualizes the amount of each asset you should buy next to align with your target allocation, based on your specified budget.
+### Recurring Purchases
 
-    ![Next Buy Estimation](documentation/images/compute_result.png)
-
-By following these steps, you can efficiently manage your asset portfolio to match your investment goals and preferences. This tool simplifies the decision-making process by providing clear visual aids and personalized data based on your strategy.
+Add recurring expenses with an emoji, a price, a quantity, and a frequency (e.g. every 2 weeks). Tag items to filter and group them. The app calculates the annualized cost of each item and supports 10 currencies.
 
 ## Testing
 

@@ -1,9 +1,26 @@
 import { useRef } from 'react'
-import { LineChart } from '../../LineChart'
-import { NetWorthEntry, CURRENCIES, COLORS, computeNetWorth } from '../../../utils'
+import { Line } from 'react-chartjs-2'
+import { Chart, registerables } from 'chart.js'
+import 'chartjs-adapter-date-fns'
+import { NetWorthEntry, CURRENCIES, COLORS } from '../../../utils'
 import { Button } from '../../Button'
 import { Download } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+Chart.register(...registerables)
+
+const AREA_PALETTE = [
+    '#d4b85b',
+    '#5b8fd4',
+    '#5bd49a',
+    '#d49a5b',
+    '#9a5bd4',
+    '#d45b5b',
+    '#5bd4d4',
+    '#d45bb8',
+    '#8fd45b',
+    '#5b5bd4',
+]
 
 interface NwLineChartProps {
     entries: NetWorthEntry[]
@@ -15,22 +32,37 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
     const currencySymbol = CURRENCIES.get(currency) || currency
 
     const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
-    const points = sorted.map((e) => ({ x: e.date, y: computeNetWorth(e) }))
 
-    const chartData = {
-        datasets: [
-            {
-                label: 'Net Worth',
-                data: points,
-                borderColor: COLORS.nobleGold,
-                backgroundColor: COLORS.nobleGold + '20',
-                fill: true,
-                tension: 0.3,
-                pointBackgroundColor: COLORS.nobleGold,
-                pointBorderColor: COLORS.nobleGold,
-            },
-        ],
+    // Collect unique item names in order of first appearance
+    const itemNames: string[] = []
+    for (const entry of sorted) {
+        for (const item of entry.items) {
+            if (!itemNames.includes(item.name)) {
+                itemNames.push(item.name)
+            }
+        }
     }
+
+    const datasets = itemNames.map((name, i) => {
+        const color = AREA_PALETTE[i % AREA_PALETTE.length]
+        return {
+            label: name,
+            data: sorted.map((entry) => {
+                const item = entry.items.find((it) => it.name === name)
+                return { x: entry.date, y: item ? item.estimatedValue : 0 }
+            }),
+            borderColor: color,
+            backgroundColor: color + '80',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: color,
+            pointBorderColor: color,
+        }
+    })
+
+    const chartData = { datasets }
 
     const exportChart = () => {
         if (!chartRef.current) return
@@ -63,11 +95,72 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
                 </Button>
             </div>
             <div className="h-64 w-full">
-                <LineChart
+                <Line
                     ref={chartRef}
-                    chartData={chartData}
-                    title="Net Worth Evolution"
-                    label={(context) => `Net Worth: ${context.raw.toLocaleString()} ${currencySymbol}`}
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => {
+                                        const val = (context.raw as { y: number }).y
+                                        return `  ${context.dataset.label}: ${val.toLocaleString()} ${currencySymbol}`
+                                    },
+                                    footer: (tooltipItems) => {
+                                        const total = tooltipItems.reduce(
+                                            (sum, item) => sum + ((item.raw as { y: number }).y || 0),
+                                            0,
+                                        )
+                                        return `Net Worth: ${total.toLocaleString()} ${currencySymbol}`
+                                    },
+                                },
+                            },
+                            legend: {
+                                labels: {
+                                    color: COLORS.softWhite,
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                stacked: true,
+                                time: {
+                                    tooltipFormat: 'dd MMM yyyy',
+                                    displayFormats: {
+                                        day: 'dd MMM',
+                                        week: 'dd MMM',
+                                        month: 'MMM yyyy',
+                                        quarter: 'MMM yyyy',
+                                        year: 'yyyy',
+                                    },
+                                },
+                                ticks: {
+                                    color: COLORS.softWhite,
+                                    autoSkip: true,
+                                    maxRotation: 45,
+                                },
+                                grid: {
+                                    color: COLORS.lightGray,
+                                },
+                            },
+                            y: {
+                                stacked: true,
+                                grid: {
+                                    color: COLORS.lightGray,
+                                },
+                                ticks: {
+                                    color: COLORS.softWhite,
+                                },
+                            },
+                        },
+                    }}
                 />
             </div>
         </div>
