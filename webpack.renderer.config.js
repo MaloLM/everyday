@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'production',
   target: 'web',
-  entry: './src/renderer/index.tsx',
+  entry: { renderer: './src/renderer/index.tsx' },
   module: {
     rules: [
       {
@@ -40,6 +40,7 @@ module.exports = {
     filename: '[name].bundle.js',
     chunkFilename: '[name].[contenthash:8].chunk.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: './',
   },
   optimization: {
     splitChunks: {
