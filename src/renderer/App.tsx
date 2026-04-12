@@ -4,6 +4,7 @@ import { NetWorthAssessment } from './pages/NetWorthAssessment'
 import { CustomToaster, Layout } from './components'
 import { RecurringPurchases } from './pages/RecurringPurchases'
 import { Recipes } from './pages/Recipes'
+import { Home } from './pages/Home'
 import { NotFoundComponent } from './pages/NotFound'
 import { AppProvider } from './context'
 
@@ -14,7 +15,7 @@ const App = () => {
                 <Router>
                     <Layout>
                         <Routes>
-                            <Route path="/" element={<TargetAllocationMaintenance />} />
+                            <Route path="/" element={<Home />} />
                             <Route path="/tam" element={<TargetAllocationMaintenance />} />
                             <Route path="/nw" element={<NetWorthAssessment />} />
                             <Route path="/rp" element={<RecurringPurchases />} />
