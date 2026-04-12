@@ -69,12 +69,12 @@ export const Home = () => {
 
     return (
         <div className="flex flex-col items-center px-4 py-10">
-            <div className="mb-2 flex w-full max-w-4xl items-start justify-between">
-                <div />
+            <div className="relative mb-2 flex w-full max-w-4xl flex-col items-center">
                 <h1 className="font-serif text-4xl font-medium tracking-widest text-nobleGold">
                     Everyday
                 </h1>
-                <div className="flex gap-2">
+                <p className="mt-2 text-softWhite/50">Your everyday personal toolkit</p>
+                <div className="absolute right-0 top-1 flex gap-2">
                     <div className="group relative flex justify-center">
                         <button
                             onClick={() => fileInputRef.current?.click()}
@@ -109,7 +109,7 @@ export const Home = () => {
                     />
                 </div>
             </div>
-            <p className="mb-12 text-softWhite/50">Your everyday personal toolkit</p>
+            <div className="mb-12" />
 
             <div className="grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">
                 {features.map((feature) => {
