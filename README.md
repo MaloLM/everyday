@@ -10,6 +10,7 @@ EVERYDAY is a local Electron application designed for everyday use cases. Built 
 -   [Features](#features)
 -   [Installation](#installation)
 -   [Usage](#usage)
+-   [Testing](#testing)
 -   [Dependencies](#dependencies)
 -   [Documentation](#documentation)
 -   [Contributors](#contributors)
@@ -19,6 +20,7 @@ EVERYDAY is a local Electron application designed for everyday use cases. Built 
 ## Features
 
 -   **Target Allocation Maintenance**: Allows users to list all types of assets they possess, specify the desired percentage each asset should represent in their portfolio, input their budget, and then computes how much of each asset the user should buy next to achieve the desired distribution.
+-   **Net Worth Assessment**: Track and visualize net worth evolution over time. Create audit entries with assets and liabilities, view a line chart of net worth history, and export charts as PNG.
 -   **Other Features**: More features could be added in the future.
 
 ## Installation
@@ -54,6 +56,30 @@ The EVERYDAY app features a user-friendly interface with various tools. Its firs
     ![Next Buy Estimation](documentation/images/compute_result.png)
 
 By following these steps, you can efficiently manage your asset portfolio to match your investment goals and preferences. This tool simplifies the decision-making process by providing clear visual aids and personalized data based on your strategy.
+
+## Testing
+
+EVERYDAY uses [Vitest](https://vitest.dev/) with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) for testing. Tests are co-located next to the source files they test (`.test.tsx` / `.test.js`).
+
+### Running tests
+
+| Command | Scope |
+|---|---|
+| `npm test` | All tests |
+| `npm run test:watch` | Watch mode (re-runs on file changes) |
+| `npm run test:main` | Main process tests only (TAM algorithm) |
+| `npm run test:renderer` | All renderer/UI tests |
+| `npm run test:tam` | TAM feature only |
+| `npm run test:nw` | Net Worth feature only |
+| `npm run test:shared` | Shared/wrapper components (Button, Card, Layout, Sidebar, form fields, Context) |
+
+### Adding tests for a new feature
+
+1. Create components in `src/renderer/components/form/<feature>-form/`
+2. Add `.test.tsx` files next to each component -- they are automatically picked up
+3. Add an npm script: `"test:<feature>": "vitest run --project renderer <feature>-form"`
+
+No Vitest config changes are needed.
 
 ## Dependencies
 
