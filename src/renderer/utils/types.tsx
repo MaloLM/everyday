@@ -37,3 +37,20 @@ export interface ChartData {
         order: number
     }[]
 }
+
+export interface NetWorthItem {
+    id: string
+    name: string
+    estimatedValue: number
+}
+
+export interface NetWorthEntry {
+    id: string
+    date: string
+    items: NetWorthItem[]
+}
+
+export interface NetWorthData {
+    entries: NetWorthEntry[]
+    currency: string
+}

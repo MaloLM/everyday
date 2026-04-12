@@ -1,4 +1,4 @@
-import { ChartData, TamFormData } from './types'
+import { ChartData, NetWorthData, TamFormData } from './types'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../tailwind.config'
 
@@ -48,6 +48,11 @@ export const CURRENCIES = new Map<string, string>([
     ['SEK', 'kr'], // Swedish Krona
     ['NZD', 'NZ$'], // New Zealand Dollar
 ])
+
+export const INIT_NW_DATA: NetWorthData = {
+    entries: [],
+    currency: 'EUR',
+}
 
 export const INIT_TAM_DATA: TamFormData = {
     assets: [

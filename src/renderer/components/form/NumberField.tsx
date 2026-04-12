@@ -7,6 +7,7 @@ interface NumberFieldProps {
     className?: string
     currency?: string
     displayError?: boolean
+    allowNegative?: boolean
     inputElement?: ComponentType<InputHTMLAttributes<HTMLInputElement>>
 }
 
@@ -25,8 +26,12 @@ export const NumberField = (props: NumberFieldProps) => {
                                     {...field}
                                     onChange={(e) => {
                                         let value = e.target.value
-                                        if (/^\d*\.?\d*$/.test(value) || value === '') {
-                                            if (value !== '0' && !value.startsWith('0.')) {
+                                        const pattern = props.allowNegative ? /^-?\d*\.?\d*$/ : /^\d*\.?\d*$/
+                                        if (pattern.test(value) || value === '') {
+                                            if (props.allowNegative) {
+                                                const stripped = value.startsWith('-') ? '-' + value.slice(1).replace(/^0+(?=\d)/, '') : value.replace(/^0+(?=\d)/, '')
+                                                e.target.value = stripped
+                                            } else if (value !== '0' && !value.startsWith('0.')) {
                                                 e.target.value = value.replace(/^0+/, '')
                                             }
                                             field.onChange(e)

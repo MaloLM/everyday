@@ -39,5 +39,16 @@ input[type="number"] {
 }
 
 .field {
-  @apply rounded-none border-0 border-b bg-transparent p-1 text-softWhite hover:border-nobleGold focus:outline-none focus:ring-0 hover:brightness-125; 
+  @apply rounded-none border-0 border-b bg-transparent p-1 text-softWhite hover:border-nobleGold focus:outline-none focus:ring-0 hover:brightness-125;
+}
+
+.sidebar-glass {
+  background: rgba(11, 11, 11, 0.65);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
 }

@@ -1,5 +1,6 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance'
+import { NetWorthAssessment } from './pages/NetWorthAssessment'
 import { CustomToaster, Layout } from './components'
 import { OtherFeature } from './pages/OtherFeature'
 import { NotFoundComponent } from './pages/NotFound'
@@ -14,6 +15,7 @@ const App = () => {
                         <Routes>
                             <Route path="/" element={<TargetAllocationMaintenance />} />
                             <Route path="/tam" element={<TargetAllocationMaintenance />} />
+                            <Route path="/nw" element={<NetWorthAssessment />} />
                             <Route path="/other-feature" element={<OtherFeature />} />
                             <Route path="*" element={<NotFoundComponent />} />
                         </Routes>

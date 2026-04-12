@@ -15,5 +15,17 @@ export function useIpcRenderer() {
         window.electron.saveTAMForm(data)
     }
 
-    return { sendRequestData, sendWriteData, onResponseData, saveFormData }
+    const loadNetWorthData = (): Promise<any> => {
+        return window.electron.loadNetWorthData()
+    }
+
+    const saveNetWorthEntry = (entry: any): Promise<any> => {
+        return window.electron.saveNetWorthEntry(entry)
+    }
+
+    const deleteNetWorthEntry = (entryId: string): Promise<any> => {
+        return window.electron.deleteNetWorthEntry(entryId)
+    }
+
+    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry }
 }

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, session } = require("electron");
 const { readJsonFile, writeJsonFile } = require("./services/dataFiles");
 const path = require("path");
 const {
@@ -20,8 +20,8 @@ const {
 // - change the api/electron.js in renderer : ok
 function createWindow() {
   const win = new BrowserWindow({
-    width: 850,
-    height: 720,
+    width: 1200,
+    height: 800,
     minWidth: 640,
     minHeight: 720,
     icon: path.join(__dirname, 'icons/logo.png'),
@@ -35,9 +35,23 @@ function createWindow() {
   // open DevTools automatically
   // win.webContents.openDevTools();
 
-  // Open main winder
-  win.loadFile( path.join(__dirname, "index.html"));
-  // win.loadURL('http://localhost:8080');
+  const isDev = !app.isPackaged;
+  if (isDev) {
+    // Relax CSP in dev to allow webpack-dev-server HMR (WebSocket + inline scripts)
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': [
+            "default-src 'self'; script-src 'self'; connect-src 'self' ws://localhost:8080; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'"
+          ],
+        },
+      });
+    });
+    win.loadURL('http://localhost:8080');
+  } else {
+    win.loadFile(path.join(__dirname, "index.html"));
+  }
 
 }
 
@@ -109,4 +123,36 @@ ipcMain.on("request-data-channel", async (event) => {
       error: "Failed to read JSON file",
     });
   }
+});
+
+// Net Worth Assessment IPC handlers
+
+const NW_FILE = "net_worth_data.json";
+
+ipcMain.handle("nw:load", async () => {
+  return await readJsonFile(NW_FILE);
+});
+
+ipcMain.handle("nw:save-entry", async (event, entry) => {
+  let data = await readJsonFile(NW_FILE);
+  if (!data.entries) data = { entries: [], currency: data.currency || "EUR" };
+
+  const idx = data.entries.findIndex((e) => e.id === entry.id);
+  if (idx >= 0) {
+    data.entries[idx] = entry;
+  } else {
+    data.entries.push(entry);
+  }
+
+  await writeJsonFile(NW_FILE, data);
+  return data;
+});
+
+ipcMain.handle("nw:delete-entry", async (event, entryId) => {
+  let data = await readJsonFile(NW_FILE);
+  if (!data.entries) data = { entries: [], currency: data.currency || "EUR" };
+
+  data.entries = data.entries.filter((e) => e.id !== entryId);
+  await writeJsonFile(NW_FILE, data);
+  return data;
 });

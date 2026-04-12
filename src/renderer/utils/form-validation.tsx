@@ -20,3 +20,15 @@ export const TamFormSchema = Yup.object().shape({
     budget: Yup.number().min(0, 'Budget must be positive').required('Budget is required'),
     currency: Yup.string().required('Currency is required'),
 })
+
+const NwItemSchema = Yup.object().shape({
+    name: Yup.string().required('Item name is required').max(50, 'Item name must be 50 characters or less'),
+    estimatedValue: Yup.number().required('Estimated value is required').typeError('Estimated value must be a number'),
+})
+
+export const NwEntrySchema = Yup.object().shape({
+    date: Yup.string()
+        .required('Date is required')
+        .matches(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+    items: Yup.array().of(NwItemSchema).min(1, 'At least one item is required'),
+})

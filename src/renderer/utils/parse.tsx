@@ -1,5 +1,5 @@
-import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData } from './types'
-import { COLORS, INIT_TAM_DATA } from './constants'
+import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -74,4 +74,32 @@ export function parseToChartData(tamResponse: TamFormResponse): ChartData {
     }
 
     return data
+}
+
+export function parseNetWorthData(input: string | object): NetWorthData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || !data.entries) {
+            return INIT_NW_DATA
+        }
+
+        data.entries = data.entries.map((entry: any) => ({
+            ...entry,
+            id: entry.id ?? crypto.randomUUID(),
+            items: (entry.items || []).map((item: any) => ({
+                ...item,
+                id: item.id ?? crypto.randomUUID(),
+            })),
+        }))
+
+        return data as NetWorthData
+    } catch {
+        return INIT_NW_DATA
+    }
+}
+
+export function computeNetWorth(entry: NetWorthEntry): number {
+    return entry.items.reduce((sum, item) => sum + item.estimatedValue, 0)
 }

@@ -3,8 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  target: 'electron-renderer',
-  entry: './src/renderer/index.tsx', 
+  target: 'web',
+  entry: './src/renderer/index.tsx',
   module: {
     rules: [
       {
@@ -29,10 +29,12 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
+  devtool: 'source-map',
   devServer: {
-    historyApiFallback: true, 
+    historyApiFallback: true,
     hot: true,
-    port: 8080, 
+    port: 8080,
+    allowedHosts: 'all',
   },
   output: {
     filename: 'renderer.bundle.js',

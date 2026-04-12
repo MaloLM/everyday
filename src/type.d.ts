@@ -6,6 +6,9 @@ declare global {
       sendData: (data: any) => Promise<any>;
       saveTAMForm: (data: any) => void;
       onResponseData: (callback: (event: any, data: any) => void) => () => void;
+      loadNetWorthData: () => Promise<any>;
+      saveNetWorthEntry: (entry: any) => Promise<any>;
+      deleteNetWorthEntry: (entryId: string) => Promise<any>;
     };
   }
 }
