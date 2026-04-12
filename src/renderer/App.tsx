@@ -1,12 +1,23 @@
+import { lazy, Suspense } from 'react'
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
-import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance'
-import { NetWorthAssessment } from './pages/NetWorthAssessment'
-import { CustomToaster, Layout } from './components'
-import { RecurringPurchases } from './pages/RecurringPurchases'
-import { Recipes } from './pages/Recipes'
+import { CustomToaster } from './components/utils/CustomToaster'
+import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
 import { NotFoundComponent } from './pages/NotFound'
 import { AppProvider } from './context'
+
+const TargetAllocationMaintenance = lazy(() =>
+    import('./pages/TargetAllocationMaintenance').then(m => ({ default: m.TargetAllocationMaintenance }))
+)
+const NetWorthAssessment = lazy(() =>
+    import('./pages/NetWorthAssessment').then(m => ({ default: m.NetWorthAssessment }))
+)
+const RecurringPurchases = lazy(() =>
+    import('./pages/RecurringPurchases').then(m => ({ default: m.RecurringPurchases }))
+)
+const Recipes = lazy(() =>
+    import('./pages/Recipes').then(m => ({ default: m.Recipes }))
+)
 
 const App = () => {
     return (
@@ -14,6 +25,7 @@ const App = () => {
             <div className="flex h-full min-h-screen w-full flex-col bg-nobleBlack font-sans font-light text-softWhite">
                 <Router>
                     <Layout>
+                        <Suspense fallback={null}>
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/tam" element={<TargetAllocationMaintenance />} />
@@ -22,6 +34,7 @@ const App = () => {
                             <Route path="/recipes" element={<Recipes />} />
                             <Route path="*" element={<NotFoundComponent />} />
                         </Routes>
+                        </Suspense>
                         <CustomToaster />
                     </Layout>
                 </Router>

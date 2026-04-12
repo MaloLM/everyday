@@ -37,8 +37,18 @@ module.exports = {
     allowedHosts: 'all',
   },
   output: {
-    filename: 'renderer.bundle.js',
+    filename: '[name].bundle.js',
+    chunkFilename: '[name].[contenthash:8].chunk.js',
     path: path.resolve(__dirname, 'dist'),
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+  performance: {
+    maxAssetSize: 300_000,
+    maxEntrypointSize: 350_000,
   },
   plugins: [
     new HtmlWebpackPlugin({

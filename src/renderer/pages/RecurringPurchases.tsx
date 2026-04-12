@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useIpcRenderer } from '../api/electron'
-import { Loading } from '../components'
+import { Loading } from '../components/utils/Loading'
 import { RpForm } from '../components/form/rp-form/RpForm'
 import { useAppContext } from '../context'
 

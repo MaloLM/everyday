@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { parseToTamResponse, TamFormData, TamFormResponse } from '../utils'
 import { useIpcRenderer } from '../api/electron'
-import { Loading, TamForm } from '../components'
+import { Loading } from '../components/utils/Loading'
+import { TamForm } from '../components/form/tam-form/TamForm'
 import toast from 'react-hot-toast'
 import { useAppContext } from '../context'
 
