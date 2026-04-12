@@ -71,7 +71,10 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                 <RpTagFilter tags={mergedTags} activeTag={activeTag} onTagClick={setActiveTag} />
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-medium text-nobleGold">
-                                        {totalAnnual.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                        {totalAnnual.toLocaleString(undefined, totalAnnual % 1 !== 0
+                                            ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+                                            : { maximumFractionDigits: 0 }
+                                        )}
                                     </span>
                                     <span className="text-lg text-softWhite/60">{currencySymbol} / year</span>
                                     {activeTag && (

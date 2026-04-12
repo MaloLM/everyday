@@ -49,6 +49,7 @@ const RpItemSchema = Yup.object().shape({
     quantity: Yup.number().min(1, 'Must be at least 1').required('Quantity is required'),
     recurrence: RecurrenceSchema,
     tag: Yup.string().max(30, 'Tag must be 30 characters or less'),
+    referenceUrl: Yup.string().url('Must be a valid URL'),
 })
 
 export const RpFormSchema = Yup.object().shape({

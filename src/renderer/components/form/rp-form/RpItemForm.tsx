@@ -1,5 +1,5 @@
 import { NumberField, TextField, SelectorField } from '..'
-import { X } from 'lucide-react'
+import { X, ExternalLink } from 'lucide-react'
 import { RECURRENCE_UNITS, CURRENCIES, computeAnnualCost, RecurringPurchaseItem } from '../../../utils'
 import { useFormikContext } from 'formik'
 
@@ -78,8 +78,29 @@ export const RpItemForm = (props: RpItemFormProps) => {
                 placeholder="Tag"
                 className="w-24"
             />
+            <div className="flex items-center gap-1">
+                <TextField
+                    name={`items[${props.itemIndex}].referenceUrl`}
+                    tooltip="Reference URL"
+                    placeholder="Ref. URL"
+                    className="w-28 text-xs"
+                />
+                {item?.referenceUrl && (
+                    <button
+                        type="button"
+                        className="border-0 p-0.5"
+                        title="Open reference URL"
+                        onClick={() => window.open(item.referenceUrl, '_blank')}
+                    >
+                        <ExternalLink className="text-nobleGold opacity-60 hover:opacity-100" size={16} />
+                    </button>
+                )}
+            </div>
             <div className="ml-auto flex items-center text-sm font-medium text-nobleGold whitespace-nowrap">
-                {annual.toLocaleString(undefined, { maximumFractionDigits: 0 })} {props.currency}/yr
+                {annual.toLocaleString(undefined, annual % 1 !== 0
+                    ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+                    : { maximumFractionDigits: 0 }
+                )} {props.currency}/yr
             </div>
             <button className="absolute right-0 top-0 m-1 border-0 p-0.5" type="button" onClick={props.onDelete}>
                 <X className="opacity-30 hover:text-error hover:opacity-100" size={'20'} />

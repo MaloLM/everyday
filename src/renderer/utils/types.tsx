@@ -68,6 +68,7 @@ export interface RecurringPurchaseItem {
     quantity: number
     recurrence: RecurrenceConfig
     tag: string
+    referenceUrl?: string
 }
 
 export interface RecurringPurchasesData {
