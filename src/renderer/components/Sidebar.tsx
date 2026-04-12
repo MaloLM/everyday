@@ -32,6 +32,7 @@ export const Sidebar = () => {
             )}
             <button
                 onClick={toggleSidebar}
+                onMouseEnter={() => { if (!isSidebarOpen) setSidebarOpen(true) }}
                 aria-controls="default-sidebar"
                 type="button"
                 className={`fixed top-2 z-50 mt-2 inline-flex items-center border p-2

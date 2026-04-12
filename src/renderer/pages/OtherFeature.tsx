@@ -3,7 +3,8 @@ import { Card } from '../components'
 export const OtherFeature = () => {
     return (
         <div className="">
-            <Card title="Other Feature"></Card>
+            <h1 className="mb-5 font-serif text-4xl font-medium tracking-wider">Other Feature</h1>
+            <Card></Card>
         </div>
     )
 }

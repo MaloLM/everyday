@@ -57,6 +57,7 @@ export const TargetAllocationMaintenance = () => {
 
     return (
         <div className="flex h-full flex-col">
+            <h1 className="mb-5 font-serif text-4xl font-medium tracking-wider">Target Allocation Maintenance</h1>
             {isLoading ? (
                 <Loading />
             ) : (
