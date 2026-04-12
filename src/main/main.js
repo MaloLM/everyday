@@ -26,7 +26,7 @@ function createWindow() {
     minHeight: 720,
     icon: path.join(__dirname, 'icons/logo.png'),
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.bundle.js')
     },
@@ -76,15 +76,9 @@ app.whenReady().then(createWindow);
  * @param {Event} event - The event object from Electron's ipcMain.
  * @param {Object} data - The data received from the renderer process.
  */
-ipcMain.on("write-data-channel", (event, data) => {
-  // writeJsonFile("tam_form_data.json", data);
-
+ipcMain.handle("write-data-channel", async (event, data) => {
   let res = run_tam_optimization(data);
-
-  event.sender.send("write-response-channel", {
-    status: "tam-result",
-    message: res,
-  });
+  return { status: "tam-result", message: res };
 });
 
 /**

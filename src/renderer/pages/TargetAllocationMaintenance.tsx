@@ -9,7 +9,7 @@ export const TargetAllocationMaintenance = () => {
     const { tamData } = useAppContext()
     const [isLoading, setIsloading] = useState<boolean>(true)
     const [computeResult, setComputeResult] = useState<TamFormResponse>({} as TamFormResponse)
-    const { sendWriteData, onWriteResponse, saveFormData } = useIpcRenderer()
+    const { sendWriteData, saveFormData } = useIpcRenderer()
 
     useEffect(() => {
         if (tamData && tamData.assets && tamData.budget && tamData.currency) {
@@ -28,23 +28,7 @@ export const TargetAllocationMaintenance = () => {
         toast.success('Configuration saved')
     }
 
-    const handleResponse = (event, responseData) => {
-        if (event.error) {
-            toast.error(event.error)
-        } else {
-            let result = parseToTamResponse(responseData.message)
-            // round the newProp value to 2 decimal places
-            result.assets = result.assets.map((asset) => {
-                return {
-                    ...asset,
-                    newProp: Number(asset.newProp.toFixed(2)),
-                }
-            })
-            setComputeResult(result)
-        }
-    }
-
-    const handleSubmit = (formData: TamFormData) => {
+    const handleSubmit = async (formData: TamFormData) => {
         // make sure that numeric values are number type
         formData.budget = Number(formData.budget)
         formData.assets = formData.assets.map((asset) => {
@@ -56,8 +40,19 @@ export const TargetAllocationMaintenance = () => {
             }
         })
 
-        sendWriteData(formData)
-        onWriteResponse(handleResponse)
+        try {
+            const responseData = await sendWriteData(formData)
+            let result = parseToTamResponse(responseData.message)
+            result.assets = result.assets.map((asset) => {
+                return {
+                    ...asset,
+                    newProp: Number(asset.newProp.toFixed(2)),
+                }
+            })
+            setComputeResult(result)
+        } catch (err) {
+            toast.error('Optimization failed')
+        }
     }
 
     return (

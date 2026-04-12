@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import React, { useMemo } from 'react'
 import { Asset } from '../../../utils/types'
 import { DonutChart } from '../../DonutChart'
 import { COLORS } from '../../../utils/constants'
-
-ChartJS.register(ArcElement, Tooltip, Legend)
 
 interface DonutChartProps {
     className?: string
@@ -12,27 +9,17 @@ interface DonutChartProps {
 }
 
 export const TamDonutChart = ({ assets, className }: DonutChartProps) => {
-    const [borderColor, setBorderColor] = React.useState<string>('#262626')
-    const [totalPurcentage, setTotalPurcentage] = React.useState<number>(0)
-
-    useEffect(() => {
-        let total: number = assets.reduce(
+    const { totalPurcentage, borderColor } = useMemo(() => {
+        const total = assets.reduce(
             (acc: number, asset) =>
                 acc + (typeof asset.targetPercent === 'string' ? parseInt(asset.targetPercent) : asset.targetPercent),
             0,
         )
-
-        setTotalPurcentage(total)
-        if (total > 100) {
-            setBorderColor(COLORS.error)
-        } else if (total === 100) {
-            setBorderColor(COLORS.nobleGold)
-        } else {
-            setBorderColor(COLORS.lightNobleBlack)
-        }
+        const color = total > 100 ? COLORS.error : total === 100 ? COLORS.nobleGold : COLORS.lightNobleBlack
+        return { totalPurcentage: total, borderColor: color }
     }, [assets])
 
-    const data = {
+    const data = useMemo(() => ({
         labels: assets.map((asset) => asset.assetName),
         datasets: [
             {
@@ -54,7 +41,7 @@ export const TamDonutChart = ({ assets, className }: DonutChartProps) => {
                 borderWidth: 2,
             },
         ],
-    }
+    }), [assets, borderColor])
 
     return (
         <div className={'relative flex items-center justify-center ' + className}>

@@ -23,10 +23,9 @@ export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => 
         <div className="flex w-full flex-col">
             <div className="flex max-h-110 w-full flex-col gap-1  overflow-y-scroll py-1 pr-4 md:min-h-24">
                 {values.assets.map((asset, index) => (
-                    <div ref={index === values.assets.length - 1 ? lastAssetRef : null} key={index}>
+                    <div ref={index === values.assets.length - 1 ? lastAssetRef : null} key={asset.id ?? index}>
                         <AssetForm
                             currency={CURRENCIES.get(values.currency)}
-                            key={index}
                             assetIndex={index}
                             error={
                                 (errors.assets && errors.assets[index]) !== undefined &&
@@ -66,15 +65,14 @@ const AddAsset = (setFieldValue, values, lastAssetRef) => {
     }
     setFieldValue('assets', [
         ...values.assets,
-        { assetName: 'Asset Name', unitPrice: 1, quantityOwned: 0, targetPercent: 0 },
+        { id: crypto.randomUUID(), assetName: 'Asset Name', unitPrice: 1, quantityOwned: 0, targetPercent: 0 },
     ])
 
-    // sleep for 100ms to wait for the new asset to be rendered
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         if (!lastAssetRef.current) return
         lastAssetRef.current.scrollIntoView({
             block: 'nearest',
             behavior: 'smooth',
         })
-    }, 100)
+    })
 }

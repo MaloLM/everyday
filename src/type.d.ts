@@ -2,11 +2,10 @@
 declare global {
   interface Window {
     electron: {
-      requestData: () => any;
-      sendData: (data: any) => void;
+      requestData: () => void;
+      sendData: (data: any) => Promise<any>;
       saveTAMForm: (data: any) => void;
-      onResponseData: (callback: (event: any, data: any) => void) => void;
-      onWriteResponse: (callback: (event: any, response: any) => void) => void;
+      onResponseData: (callback: (event: any, data: any) => void) => () => void;
     };
   }
 }

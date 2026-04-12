@@ -52,36 +52,42 @@ export const CURRENCIES = new Map<string, string>([
 export const INIT_TAM_DATA: TamFormData = {
     assets: [
         {
+            id: crypto.randomUUID(),
             assetName: 'BTC',
             unitPrice: 149.92,
             quantityOwned: 2,
             targetPercent: 2,
         },
         {
+            id: crypto.randomUUID(),
             assetName: 'ETH',
             unitPrice: 20.8,
             quantityOwned: 22,
             targetPercent: 33,
         },
         {
+            id: crypto.randomUUID(),
             assetName: 'ESDT',
             unitPrice: 333.33,
             quantityOwned: 1,
             targetPercent: 6,
         },
         {
+            id: crypto.randomUUID(),
             assetName: 'YAHOO',
             unitPrice: 271.93,
             quantityOwned: 1,
             targetPercent: 9,
         },
         {
+            id: crypto.randomUUID(),
             assetName: 'WV',
             unitPrice: 477,
             quantityOwned: 2,
             targetPercent: 45,
         },
         {
+            id: crypto.randomUUID(),
             assetName: 'BMW',
             unitPrice: 26.8,
             quantityOwned: 2,

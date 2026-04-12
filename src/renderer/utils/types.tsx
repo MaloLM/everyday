@@ -1,4 +1,5 @@
 export interface Asset {
+    id: string
     assetName: string
     unitPrice: number
     quantityOwned: number

@@ -27,8 +27,9 @@ export const AppProvider = ({ children }) => {
             }
         }
 
-        onResponseData(handleResponse)
+        const cleanup = onResponseData(handleResponse)
         sendRequestData()
+        return cleanup
     }, [])
 
     const contextValue = {

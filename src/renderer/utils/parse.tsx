@@ -10,6 +10,14 @@ export function parseTamFormData(input: string | object): TamFormData {
             return INIT_TAM_DATA
         }
 
+        // Ensure each asset has an id for stable React keys
+        if (data.assets) {
+            data.assets = data.assets.map((asset: any) => ({
+                ...asset,
+                id: asset.id ?? crypto.randomUUID(),
+            }))
+        }
+
         return data as TamFormData
     } catch (error) {
         throw new Error('Failed to parse JSON data')
