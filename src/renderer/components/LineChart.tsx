@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { Line } from 'react-chartjs-2'
 import { COLORS } from '../utils'
 import { Chart, registerables } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 
 Chart.register(...registerables)
 
@@ -39,11 +40,24 @@ export const LineChart = forwardRef<any, LineChartProps>(({ chartData, className
                 },
                 scales: {
                     x: {
-                        grid: {
-                            color: COLORS.lightGray,
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'dd MMM yyyy',
+                            displayFormats: {
+                                day: 'dd MMM',
+                                week: 'dd MMM',
+                                month: 'MMM yyyy',
+                                quarter: 'MMM yyyy',
+                                year: 'yyyy',
+                            },
                         },
                         ticks: {
                             color: COLORS.softWhite,
+                            autoSkip: true,
+                            maxRotation: 45,
+                        },
+                        grid: {
+                            color: COLORS.lightGray,
                         },
                     },
                     y: {

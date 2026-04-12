@@ -13,11 +13,11 @@ export const AssetForm = (props: AssetFormProps) => {
     return (
         <div
             className={`bg-secondaryLightNobleBlack relative flex items-center justify-between rounded-lg  border
-        py-2 pb-2 pl-2 pr-8  shadow-xl transition-all duration-500 ease-in-out
+        py-2 pb-2 pl-2 pr-8  shadow-xl
         ${
             props.error
                 ? 'border-error border-opacity-100'
-                : 'scale-95  border-nobleBlack border-opacity-100 hover:scale-100'
+                : 'border-nobleBlack border-opacity-100 hover:border-opacity-40'
         } 
         ${props.className}`}
         >

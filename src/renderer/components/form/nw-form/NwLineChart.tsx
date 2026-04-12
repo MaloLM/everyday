@@ -15,15 +15,13 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
     const currencySymbol = CURRENCIES.get(currency) || currency
 
     const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
-    const labels = sorted.map((e) => e.date)
-    const totals = sorted.map((e) => computeNetWorth(e))
+    const points = sorted.map((e) => ({ x: e.date, y: computeNetWorth(e) }))
 
     const chartData = {
-        labels,
         datasets: [
             {
                 label: 'Net Worth',
-                data: totals,
+                data: points,
                 borderColor: COLORS.nobleGold,
                 backgroundColor: COLORS.nobleGold + '20',
                 fill: true,

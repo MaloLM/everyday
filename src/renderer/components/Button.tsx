@@ -19,7 +19,7 @@ export const Button = (props: ButtonProps) => {
             className={` rounded-full border px-2
         ${
             props.filled
-                ? 'border-nobleGold bg-nobleGold text-lightNobleBlack transition-transform duration-700 hover:scale-105 hover:bg-nobleGold hover:brightness-110 '
+                ? 'border-nobleGold bg-nobleGold text-lightNobleBlack hover:brightness-110 '
                 : ` relative flex  
                     items-center justify-center overflow-hidden border-nobleGold text-nobleGold transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-nobleGold before:duration-300 before:ease-in 
                     hover:bg-lightNobleBlack hover:text-lightNobleBlack hover:before:h-32 hover:before:w-32`

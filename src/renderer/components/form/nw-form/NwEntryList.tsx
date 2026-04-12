@@ -41,11 +41,11 @@ export const NwEntryList = ({
                         <div
                             key={entry.id}
                             onClick={() => onSelectEntry(entry)}
-                            className={`flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2 transition-all duration-300
+                            className={`bg-secondaryLightNobleBlack flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2
                                 ${
                                     isSelected
                                         ? 'border-nobleGold bg-nobleBlack'
-                                        : 'border-nobleBlack hover:border-lightGray hover:bg-nobleBlack'
+                                        : 'border-nobleBlack border-opacity-100 hover:border-opacity-40'
                                 }`}
                         >
                             <div className="flex flex-col">
