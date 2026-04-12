@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { parseToTamResponse, TamFormData, TamFormResponse } from '../utils'
 import { useIpcRenderer } from '../api/electron'
 import { Loading, TamForm } from '../components'

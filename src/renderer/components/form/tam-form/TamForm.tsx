@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TamFormResponse, TamFormSchema, ChartData, TamFormData, parseToChartData } from '../../../utils'
 import { Button, Card } from '../..'
 import { Save } from 'lucide-react'
@@ -18,7 +18,7 @@ interface TamFormProps {
 }
 
 export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFormProps) => {
-    const formRef = React.useRef<HTMLDivElement>(null)
+    const formRef = useRef<HTMLDivElement>(null)
     const [chartData, setChartData] = useState<ChartData>({} as ChartData)
     useEffect(() => {
         if (computeResult && computeResult.assets && computeResult.assets.length > 0) {

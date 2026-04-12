@@ -1,8 +1,8 @@
 import { ErrorMessage, Field } from 'formik'
-import React from 'react'
+import { ReactNode } from 'react'
 
 interface TextFieldProps {
-    children?: React.ReactNode
+    children?: ReactNode
     name?: string
     tooltip?: string
     displayError?: boolean

@@ -1,10 +1,10 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
 interface CardProps {
     title?: string
-    children?: React.ReactNode
+    children?: ReactNode
     className?: string
-    titleButton?: React.ReactNode
+    titleButton?: ReactNode
 }
 
 export const Card = (props: CardProps) => {

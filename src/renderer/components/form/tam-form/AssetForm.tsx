@@ -1,4 +1,3 @@
-import React from 'react'
 import { NumberField, TextField, SliderField } from '..'
 import { X } from 'lucide-react'
 

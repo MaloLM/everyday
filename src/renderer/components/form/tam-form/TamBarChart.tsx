@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from '../../Button'
 import { MOCK_CHART_DATA } from '../../../utils'
 import { BarChart } from '../../BarChart'

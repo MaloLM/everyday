@@ -1,5 +1,4 @@
 import { Field } from 'formik'
-import React from 'react'
 
 interface SelectorFieldProps {
     name?: string

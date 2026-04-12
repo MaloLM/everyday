@@ -1,8 +1,8 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
 interface ButtonProps {
     onClick?: () => void
-    children?: React.ReactNode
+    children?: ReactNode
     className?: string
     filled?: boolean
     disabled?: boolean

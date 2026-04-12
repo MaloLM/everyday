@@ -1,5 +1,4 @@
 import { AlertCircle } from 'lucide-react'
-import React from 'react'
 
 export const ErrorMessages = ({ errorMessages }) => {
     return (

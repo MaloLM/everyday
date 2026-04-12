@@ -1,4 +1,3 @@
-import React from 'react'
 import { CURRENCIES, TamFormResponse } from '../../../utils'
 import { SelectorField } from '../SelectorField'
 import { NumberField } from '../NumberField'

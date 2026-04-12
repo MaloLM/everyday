@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Asset } from '../../../utils/types'
 import { DonutChart } from '../../DonutChart'
 import { COLORS } from '../../../utils/constants'

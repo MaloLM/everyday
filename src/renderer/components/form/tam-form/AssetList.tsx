@@ -1,4 +1,4 @@
-import React from 'react'
+import { useRef } from 'react'
 import { Button } from '../../Button'
 import { Plus } from 'lucide-react'
 import { AssetForm } from './AssetForm'
@@ -18,7 +18,7 @@ interface AssetListProps {
 const MAX_ASSETS = 30
 
 export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => {
-    const lastAssetRef = React.useRef<HTMLDivElement>(null)
+    const lastAssetRef = useRef<HTMLDivElement>(null)
     return (
         <div className="flex w-full flex-col">
             <div className="flex max-h-110 w-full flex-col gap-1  overflow-y-scroll py-1 pr-4 md:min-h-24">

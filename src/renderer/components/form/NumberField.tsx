@@ -1,5 +1,5 @@
 import { ErrorMessage, Field } from 'formik'
-import React, { useEffect } from 'react'
+import { ComponentType, InputHTMLAttributes } from 'react'
 
 interface NumberFieldProps {
     name?: string
@@ -7,7 +7,7 @@ interface NumberFieldProps {
     className?: string
     currency?: string
     displayError?: boolean
-    inputElement?: React.ComponentType<React.InputHTMLAttributes<HTMLInputElement>>
+    inputElement?: ComponentType<InputHTMLAttributes<HTMLInputElement>>
 }
 
 export const NumberField = (props: NumberFieldProps) => {

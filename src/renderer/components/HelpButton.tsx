@@ -1,5 +1,4 @@
 import { HelpCircle } from 'lucide-react'
-import React from 'react'
 
 interface LearnMoreProps {
     message: string
