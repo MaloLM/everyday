@@ -5,6 +5,7 @@ interface TextFieldProps {
     children?: ReactNode
     name?: string
     tooltip?: string
+    placeholder?: string
     displayError?: boolean
     className?: string
 }
@@ -15,11 +16,12 @@ export const TextField = (props: TextFieldProps) => {
             {({ field, meta }) => (
                 <div className="flex flex-col">
                     <input
-                        className={`field 
-                        ${meta.touched && meta.error ? ' border-error ' : ' border-transparent '} 
+                        className={`field
+                        ${meta.touched && meta.error ? ' border-error ' : ' border-transparent '}
                         ${props.className}`}
                         type="text"
                         title={props.tooltip}
+                        placeholder={props.placeholder}
                         {...field}
                     />
                     {props.displayError && meta.touched && meta.error && (

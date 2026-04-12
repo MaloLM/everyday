@@ -11,4 +11,7 @@ contextBridge.exposeInMainWorld('electron', {
   loadNetWorthData: () => ipcRenderer.invoke('nw:load'),
   saveNetWorthEntry: (entry) => ipcRenderer.invoke('nw:save-entry', entry),
   deleteNetWorthEntry: (entryId) => ipcRenderer.invoke('nw:delete-entry', entryId),
+  loadRpData: () => ipcRenderer.invoke('rp:load'),
+  saveRpItem: (item) => ipcRenderer.invoke('rp:save-item', item),
+  deleteRpItem: (itemId) => ipcRenderer.invoke('rp:delete-item', itemId),
 });

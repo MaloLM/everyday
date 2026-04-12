@@ -156,3 +156,35 @@ ipcMain.handle("nw:delete-entry", async (event, entryId) => {
   await writeJsonFile(NW_FILE, data);
   return data;
 });
+
+// Recurring Purchases IPC handlers
+
+const RP_FILE = "recurring_purchases_data.json";
+
+ipcMain.handle("rp:load", async () => {
+  return await readJsonFile(RP_FILE);
+});
+
+ipcMain.handle("rp:save-item", async (event, item) => {
+  let data = await readJsonFile(RP_FILE);
+  if (!data.items) data = { items: [], currency: data.currency || "EUR" };
+
+  const idx = data.items.findIndex((i) => i.id === item.id);
+  if (idx >= 0) {
+    data.items[idx] = item;
+  } else {
+    data.items.push(item);
+  }
+
+  await writeJsonFile(RP_FILE, data);
+  return data;
+});
+
+ipcMain.handle("rp:delete-item", async (event, itemId) => {
+  let data = await readJsonFile(RP_FILE);
+  if (!data.items) data = { items: [], currency: data.currency || "EUR" };
+
+  data.items = data.items.filter((i) => i.id !== itemId);
+  await writeJsonFile(RP_FILE, data);
+  return data;
+});

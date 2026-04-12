@@ -4,6 +4,7 @@ import { ComponentType, InputHTMLAttributes } from 'react'
 interface NumberFieldProps {
     name?: string
     tooltip?: string
+    placeholder?: string
     className?: string
     currency?: string
     displayError?: boolean
@@ -38,6 +39,7 @@ export const NumberField = (props: NumberFieldProps) => {
                                         }
                                     }}
                                     title={props.tooltip}
+                                    placeholder={props.placeholder}
                                     className={`field relative max-w-14 text-center 
                                 ${meta.touched && meta.error ? ' border-error ' : ' border-transparent '} ${props.className}`}
                                 ></input>

@@ -13,6 +13,9 @@ vi.mock('./context', () => ({
     nwData: { entries: [], currency: 'EUR' },
     setNwData: vi.fn(),
     refreshNwData: vi.fn(),
+    rpData: { items: [], currency: 'EUR' },
+    setRpData: vi.fn(),
+    refreshRpData: vi.fn().mockResolvedValue(undefined),
   }),
   AppProvider: ({ children }) => <>{children}</>,
 }))
@@ -26,12 +29,15 @@ vi.mock('./api/electron', () => ({
     loadNetWorthData: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
     saveNetWorthEntry: vi.fn(),
     deleteNetWorthEntry: vi.fn(),
+    loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
+    saveRpItem: vi.fn(),
+    deleteRpItem: vi.fn(),
   }),
 }))
 
 import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance'
 import { NetWorthAssessment } from './pages/NetWorthAssessment'
-import { OtherFeature } from './pages/OtherFeature'
+import { RecurringPurchases } from './pages/RecurringPurchases'
 import { NotFoundComponent } from './pages/NotFound'
 import { Layout } from './components'
 
@@ -43,7 +49,7 @@ function renderWithRoute(route: string) {
           <Route path="/" element={<TargetAllocationMaintenance />} />
           <Route path="/tam" element={<TargetAllocationMaintenance />} />
           <Route path="/nw" element={<NetWorthAssessment />} />
-          <Route path="/other-feature" element={<OtherFeature />} />
+          <Route path="/rp" element={<RecurringPurchases />} />
           <Route path="*" element={<NotFoundComponent />} />
         </Routes>
       </Layout>
@@ -73,10 +79,9 @@ describe('App routing', () => {
     })
   })
 
-  it('renders Other Feature page on /other-feature', async () => {
-    renderWithRoute('/other-feature')
-    // Both sidebar and page have "Other Feature" text, so use getAllByText
-    const elements = screen.getAllByText('Other Feature')
+  it('renders Recurring Purchases page on /rp', async () => {
+    renderWithRoute('/rp')
+    const elements = screen.getAllByText('Recurring Purchases')
     expect(elements.length).toBeGreaterThanOrEqual(2) // sidebar + page heading
   })
 

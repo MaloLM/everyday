@@ -54,3 +54,23 @@ export interface NetWorthData {
     entries: NetWorthEntry[]
     currency: string
 }
+
+export interface RecurrenceConfig {
+    every: number
+    unit: 'day' | 'week' | 'month' | 'year'
+}
+
+export interface RecurringPurchaseItem {
+    id: string
+    emoji: string
+    name: string
+    unitPrice: number
+    quantity: number
+    recurrence: RecurrenceConfig
+    tag: string
+}
+
+export interface RecurringPurchasesData {
+    items: RecurringPurchaseItem[]
+    currency: string
+}

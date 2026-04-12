@@ -4,25 +4,21 @@ import { MemoryRouter } from 'react-router-dom'
 
 vi.mock('../context', () => ({
   useAppContext: vi.fn().mockReturnValue({
-    tamData: {
-      assets: [{ id: '1', assetName: 'BTC', unitPrice: 100, quantityOwned: 2, targetPercent: 100 }],
-      budget: 10000,
-      currency: 'EUR',
-    },
+    tamData: {},
     setTamData: vi.fn(),
     nwData: { entries: [], currency: 'EUR' },
     setNwData: vi.fn(),
     refreshNwData: vi.fn(),
     rpData: { items: [], currency: 'EUR' },
     setRpData: vi.fn(),
-    refreshRpData: vi.fn(),
+    refreshRpData: vi.fn().mockResolvedValue(undefined),
   }),
 }))
 
 vi.mock('../api/electron', () => ({
   useIpcRenderer: () => ({
     sendRequestData: vi.fn(),
-    sendWriteData: vi.fn().mockResolvedValue({ status: 'ok', message: [] }),
+    sendWriteData: vi.fn(),
     onResponseData: vi.fn().mockReturnValue(vi.fn()),
     saveFormData: vi.fn(),
     loadNetWorthData: vi.fn(),
@@ -34,40 +30,47 @@ vi.mock('../api/electron', () => ({
   }),
 }))
 
-import { TargetAllocationMaintenance } from './TargetAllocationMaintenance'
+import { RecurringPurchases } from './RecurringPurchases'
 
 function renderPage() {
   return render(
     <MemoryRouter>
-      <TargetAllocationMaintenance />
+      <RecurringPurchases />
     </MemoryRouter>
   )
 }
 
-describe('TargetAllocationMaintenance', () => {
+describe('RecurringPurchases', () => {
   it('renders the page title', () => {
     renderPage()
-    expect(screen.getByText('Target Allocation Maintenance')).toBeInTheDocument()
+    expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
   })
 
-  it('renders TamForm when data is loaded', async () => {
+  it('renders the Annual Summary card', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Current Allocation')).toBeInTheDocument()
+      expect(screen.getByText('Annual Summary')).toBeInTheDocument()
     })
   })
 
-  it('renders the Next Buy Estimation card', async () => {
+  it('renders the Purchases card', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Next Buy Estimation')).toBeInTheDocument()
+      expect(screen.getByText('Purchases')).toBeInTheDocument()
     })
   })
 
-  it('shows budget field', async () => {
+  it('shows Add Purchase button', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Budget')).toBeInTheDocument()
+      expect(screen.getByText('Purchase')).toBeInTheDocument()
+    })
+  })
+
+  it('shows Save button', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Save')).toBeInTheDocument()
     })
   })
 })

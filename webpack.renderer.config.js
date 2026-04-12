@@ -18,7 +18,7 @@ module.exports = {
           configFile: 'tsconfig.renderer.json'
         },        
         include: [path.resolve(__dirname, 'src/renderer'), path.resolve(__dirname, 'src/shared')],
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /\.test\.tsx?$/],
       },
       {
         test: /\.css$/,

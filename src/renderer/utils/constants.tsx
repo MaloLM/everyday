@@ -1,4 +1,4 @@
-import { ChartData, NetWorthData, TamFormData } from './types'
+import { ChartData, NetWorthData, RecurringPurchasesData, TamFormData } from './types'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../tailwind.config'
 
@@ -51,6 +51,13 @@ export const CURRENCIES = new Map<string, string>([
 
 export const INIT_NW_DATA: NetWorthData = {
     entries: [],
+    currency: 'EUR',
+}
+
+export const RECURRENCE_UNITS = ['day', 'week', 'month', 'year'] as const
+
+export const INIT_RP_DATA: RecurringPurchasesData = {
+    items: [],
     currency: 'EUR',
 }
 

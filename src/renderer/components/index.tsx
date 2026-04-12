@@ -1,5 +1,6 @@
 export * from './form/tam-form/TamForm'
 export * from './form/nw-form/NwForm'
+export * from './form/rp-form/RpForm'
 export * from './form'
 export * from './Sidebar'
 export * from './Layout'

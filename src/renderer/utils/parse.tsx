@@ -1,5 +1,5 @@
-import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA } from './constants'
+import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -102,4 +102,42 @@ export function parseNetWorthData(input: string | object): NetWorthData {
 
 export function computeNetWorth(entry: NetWorthEntry): number {
     return entry.items.reduce((sum, item) => sum + item.estimatedValue, 0)
+}
+
+export function parseRpData(input: string | object): RecurringPurchasesData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || !data.items) {
+            return INIT_RP_DATA
+        }
+
+        data.items = data.items.map((item: any) => ({
+            ...item,
+            id: item.id ?? crypto.randomUUID(),
+        }))
+
+        return data as RecurringPurchasesData
+    } catch {
+        return INIT_RP_DATA
+    }
+}
+
+export function computeAnnualCost(item: RecurringPurchaseItem): number {
+    const { every, unit } = item.recurrence
+    if (every <= 0) return 0
+    let occurrencesPerYear: number
+    switch (unit) {
+        case 'day':   occurrencesPerYear = 365 / every; break
+        case 'week':  occurrencesPerYear = 52 / every; break
+        case 'month': occurrencesPerYear = 12 / every; break
+        case 'year':  occurrencesPerYear = 1 / every; break
+        default:      occurrencesPerYear = 0
+    }
+    return item.unitPrice * item.quantity * occurrencesPerYear
+}
+
+export function computeTotalAnnualCost(items: RecurringPurchaseItem[]): number {
+    return items.reduce((sum, item) => sum + computeAnnualCost(item), 0)
 }

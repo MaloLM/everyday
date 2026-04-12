@@ -96,7 +96,7 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                                 toast.success(selectedEntryId ? 'Entry updated' : 'Entry created')
                             }}
                         >
-                            {({ values, errors, handleSubmit, setFieldValue }) => {
+                            {({ values, errors, dirty, handleSubmit, setFieldValue }) => {
                                 const total = computeNetWorth({ id: '', date: '', items: values.items.map((i) => ({ ...i, estimatedValue: Number(i.estimatedValue) || 0 })) })
                                 const currencySymbol = CURRENCIES.get(nwData.currency) || nwData.currency
                                 return (
@@ -130,7 +130,7 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                                         )}
 
                                         <div className="flex gap-2">
-                                            <Button type="submit" filled className="flex items-center gap-1 px-4">
+                                            <Button type="submit" filled={!dirty} className="flex items-center gap-2 px-4">
                                                 <Save size={16} />
                                                 {selectedEntryId ? 'Update' : 'Save'}
                                             </Button>

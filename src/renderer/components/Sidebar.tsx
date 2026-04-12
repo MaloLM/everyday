@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, BarChartBig, PackagePlus, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, BarChartBig, ShoppingCart, Wallet } from 'lucide-react'
 
 const navItems = [
     { path: '/tam', altPaths: ['/'], label: 'Target Allocation Maintenance', icon: BarChartBig },
     { path: '/nw', altPaths: [], label: 'Net Worth Assessment', icon: Wallet },
-    { path: '/other-feature', altPaths: [], label: 'Other Feature', icon: PackagePlus },
+    { path: '/rp', altPaths: [], label: 'Recurring Purchases', icon: ShoppingCart },
 ]
 
 export const Sidebar = () => {
@@ -51,6 +51,7 @@ export const Sidebar = () => {
                 aria-label="Sidebar"
             >
                 <div className="sidebar-glass flex h-full flex-col overflow-y-auto border-r border-white/10 px-3 py-4">
+                    <div className="mb-4 px-2.5 font-serif text-xl font-medium tracking-widest text-nobleGold">Everyday</div>
                     <ul className="space-y-1 font-medium">
                         {navItems.map((item) => {
                             const active = isActive(item)

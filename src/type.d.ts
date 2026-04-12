@@ -9,6 +9,9 @@ declare global {
       loadNetWorthData: () => Promise<any>;
       saveNetWorthEntry: (entry: any) => Promise<any>;
       deleteNetWorthEntry: (entryId: string) => Promise<any>;
+      loadRpData: () => Promise<any>;
+      saveRpItem: (item: any) => Promise<any>;
+      deleteRpItem: (itemId: string) => Promise<any>;
     };
   }
 }

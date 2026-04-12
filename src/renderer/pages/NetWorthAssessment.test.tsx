@@ -9,6 +9,9 @@ vi.mock('../context', () => ({
     nwData: { entries: [], currency: 'EUR' },
     setNwData: vi.fn(),
     refreshNwData: vi.fn(),
+    rpData: { items: [], currency: 'EUR' },
+    setRpData: vi.fn(),
+    refreshRpData: vi.fn(),
   }),
 }))
 
@@ -21,6 +24,9 @@ vi.mock('../api/electron', () => ({
     loadNetWorthData: vi.fn(),
     saveNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
     deleteNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
+    loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
+    saveRpItem: vi.fn(),
+    deleteRpItem: vi.fn(),
   }),
 }))
 

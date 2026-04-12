@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import { useIpcRenderer } from '../api/electron'
 import toast from 'react-hot-toast'
-import { TamFormData, NetWorthData, parseTamFormData, parseNetWorthData, INIT_NW_DATA } from '../utils'
+import { TamFormData, NetWorthData, RecurringPurchasesData, parseTamFormData, parseNetWorthData, parseRpData, INIT_NW_DATA, INIT_RP_DATA } from '../utils'
 
 interface AppContextState {
     tamData: TamFormData
@@ -9,6 +9,9 @@ interface AppContextState {
     nwData: NetWorthData
     setNwData: (data: NetWorthData) => void
     refreshNwData: () => Promise<void>
+    rpData: RecurringPurchasesData
+    setRpData: (data: RecurringPurchasesData) => void
+    refreshRpData: () => Promise<void>
 }
 
 const AppContext = createContext<AppContextState>({
@@ -17,12 +20,16 @@ const AppContext = createContext<AppContextState>({
     nwData: INIT_NW_DATA,
     setNwData: () => {},
     refreshNwData: async () => {},
+    rpData: INIT_RP_DATA,
+    setRpData: () => {},
+    refreshRpData: async () => {},
 })
 
 export const AppProvider = ({ children }) => {
     const [tamData, setTamData] = useState<TamFormData>({} as TamFormData)
     const [nwData, setNwData] = useState<NetWorthData>(INIT_NW_DATA)
-    const { sendRequestData, onResponseData, loadNetWorthData } = useIpcRenderer()
+    const [rpData, setRpData] = useState<RecurringPurchasesData>(INIT_RP_DATA)
+    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData } = useIpcRenderer()
 
     const refreshNwData = useCallback(async () => {
         try {
@@ -31,6 +38,16 @@ export const AppProvider = ({ children }) => {
         } catch (err) {
             console.error('Failed to load net worth data:', err)
             toast.error('Failed to load net worth data')
+        }
+    }, [])
+
+    const refreshRpData = useCallback(async () => {
+        try {
+            const data = await loadRpData()
+            setRpData(parseRpData(data))
+        } catch (err) {
+            console.error('Failed to load recurring purchases data:', err)
+            toast.error('Failed to load recurring purchases data')
         }
     }, [])
 
@@ -47,6 +64,7 @@ export const AppProvider = ({ children }) => {
         const cleanup = onResponseData(handleResponse)
         sendRequestData()
         refreshNwData()
+        refreshRpData()
         return cleanup
     }, [])
 
@@ -56,6 +74,9 @@ export const AppProvider = ({ children }) => {
         nwData,
         setNwData,
         refreshNwData,
+        rpData,
+        setRpData,
+        refreshRpData,
     }
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
