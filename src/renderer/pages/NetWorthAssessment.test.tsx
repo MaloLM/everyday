@@ -1,0 +1,70 @@
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+
+vi.mock('../context', () => ({
+  useAppContext: vi.fn().mockReturnValue({
+    tamData: {},
+    setTamData: vi.fn(),
+    nwData: { entries: [], currency: 'EUR' },
+    setNwData: vi.fn(),
+    refreshNwData: vi.fn(),
+  }),
+}))
+
+vi.mock('../api/electron', () => ({
+  useIpcRenderer: () => ({
+    sendRequestData: vi.fn(),
+    sendWriteData: vi.fn(),
+    onResponseData: vi.fn().mockReturnValue(vi.fn()),
+    saveFormData: vi.fn(),
+    loadNetWorthData: vi.fn(),
+    saveNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
+    deleteNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
+  }),
+}))
+
+import { NetWorthAssessment } from './NetWorthAssessment'
+
+function renderPage() {
+  return render(
+    <MemoryRouter>
+      <NetWorthAssessment />
+    </MemoryRouter>
+  )
+}
+
+describe('NetWorthAssessment', () => {
+  it('renders the page title', () => {
+    renderPage()
+    expect(screen.getByText('Net Worth Assessment')).toBeInTheDocument()
+  })
+
+  it('renders NwForm when data is loaded', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Net Worth Evolution')).toBeInTheDocument()
+    })
+  })
+
+  it('renders the Audit Entry card', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Audit Entry')).toBeInTheDocument()
+    })
+  })
+
+  it('shows New Audit button', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('New Audit')).toBeInTheDocument()
+    })
+  })
+
+  it('shows Save button for entry form', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('Save')).toBeInTheDocument()
+    })
+  })
+})
