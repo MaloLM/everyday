@@ -1,10 +1,9 @@
-# FINANCES
+# EVERYDAY
 
-![banner](documentation/images/banner.png)
 
 ## Introduction
 
-FINANCES is a local Electron application designed for simple financial use cases. Built with Electron, React, TailwindCSS, Webpack, and TypeScript, this offline app offers multiple financial tools to assist with investing and potentially other financial aspects in the future. The app's primary feature is the Target Allocation Maintenance, which allows users to manage their asset allocation efficiently.
+EVERYDAY is a local Electron application designed for everyday use cases. Built with Electron, React, TailwindCSS, Webpack, and TypeScript, this offline app offers multiple tools to assist with various tasks. The app's first feature is the Target Allocation Maintenance, which allows users to manage their asset allocation efficiently.
 
 ## Table of Contents
 
@@ -20,11 +19,11 @@ FINANCES is a local Electron application designed for simple financial use cases
 ## Features
 
 -   **Target Allocation Maintenance**: Allows users to list all types of assets they possess, specify the desired percentage each asset should represent in their portfolio, input their budget, and then computes how much of each asset the user should buy next to achieve the desired distribution.
--   **Other Features**: More financial features could be added in the future.
+-   **Other Features**: More features could be added in the future.
 
 ## Installation
 
-To install FINANCES, you'll need to have Node.js installed on your system. Follow these steps:
+To install EVERYDAY, you'll need to have Node.js installed on your system. Follow these steps:
 
 1. Clone the repository to your local machine.
 2. Navigate to the project directory and run `npm install` to install all the necessary dependencies.
@@ -40,7 +39,7 @@ For easy local setup, follow the bellow commands (tested on MacOS):
 
 ## Usage
 
-The FINANCES app features a user-friendly interface for managing and analyzing your financial portfolio through the Target Allocation Maintenance tool. Here's how to use it:
+The EVERYDAY app features a user-friendly interface with various tools. Its first feature is the Target Allocation Maintenance tool. Here's how to use it:
 
 1. **Current Allocation**: Upon launching the app, you're greeted with the 'Current Allocation' section. This is where you'll add and review the assets in your portfolio. For each asset, you can input the amount you own and adjust the desired target percentage of your total portfolio that you wish for that asset to represent.
 
@@ -54,11 +53,11 @@ The FINANCES app features a user-friendly interface for managing and analyzing y
 
     ![Next Buy Estimation](documentation/images/compute_result.png)
 
-By following these steps, you can efficiently manage your financial portfolio to match your investment goals and preferences. This tool simplifies the decision-making process by providing clear visual aids and personalized data based on your financial strategy.
+By following these steps, you can efficiently manage your asset portfolio to match your investment goals and preferences. This tool simplifies the decision-making process by providing clear visual aids and personalized data based on your strategy.
 
 ## Dependencies
 
-FINANCES is built using several key technologies and libraries, including:
+EVERYDAY is built using several key technologies and libraries, including:
 
 -   Electron (v28.1)
 -   React (v18.2.0)
@@ -70,7 +69,7 @@ For a full list of dependencies, refer to the `package.json` file's `devDependen
 
 ## Documentation
 
-Further documentation detailing the technical aspects and architecture of FINANCES will be available [here](documentation/TECHNICAL-README.md).
+Further documentation detailing the technical aspects and architecture of EVERYDAY will be available [here](documentation/TECHNICAL-README.md).
 
 ## Contributors
 

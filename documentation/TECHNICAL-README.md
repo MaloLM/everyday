@@ -1,4 +1,4 @@
-# FINANCES Technical Documentation
+# EVERYDAY Technical Documentation
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@
 
 ## Overview of the Application Architecture & Configuration
 
-The FINANCES app leverages the Electron framework, which allows for a separation of concerns between the backend logic ('main' process) and the rendering logic ('renderer' process).
+The EVERYDAY app leverages the Electron framework, which allows for a separation of concerns between the backend logic ('main' process) and the rendering logic ('renderer' process).
 
 ### Codebase Structure
 
@@ -162,10 +162,10 @@ Make sure to revert these changes when preparing the application for production 
 
 ## Packaging & Deployment
 
-When you're ready to build the FINANCES app for production, certain parameters in the `package.json` file under the `build` property determine how the application is packaged for different operating systems:
+When you're ready to build the EVERYDAY app for production, certain parameters in the `package.json` file under the `build` property determine how the application is packaged for different operating systems:
 
--   `appId`: The unique identifier for your app, usually in reverse domain notation. For this app, it is set as `"io.dopee.finances"`.
--   `productName`: The name of the product as it should appear in the installer and on the computer. For this app, it is `"Finances"`.
+-   `appId`: The unique identifier for your app, usually in reverse domain notation. For this app, it is set as `"io.dopee.everyday"`.
+-   `productName`: The name of the product as it should appear in the installer and on the computer. For this app, it is `"Everyday"`.
 -   `directories`: Defines where the output of the build process should be placed. Here, it is set to the `"dist_packaged"` directory.
 -   `files`: Specifies which files and directories are included in the build. This typically includes the `dist` folder, `node_modules`, and `package.json`.
 -   `win`: Configuration specific to Windows builds.
@@ -234,7 +234,7 @@ By defining a strict CSP, the application mitigates the risk of content injectio
 
 ## New Feature Workflow
 
-To add a new feature to the FINANCES app, follow these steps which cover changes across both the main and renderer processes:
+To add a new feature to the EVERYDAY app, follow these steps which cover changes across both the main and renderer processes:
 
 ### Main Process
 
