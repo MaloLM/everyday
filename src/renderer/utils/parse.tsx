@@ -1,5 +1,5 @@
-import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA } from './constants'
+import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -121,6 +121,34 @@ export function parseRpData(input: string | object): RecurringPurchasesData {
         return data as RecurringPurchasesData
     } catch {
         return INIT_RP_DATA
+    }
+}
+
+export function parseRecipesData(input: string | object): RecipesData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || !data.recipes) {
+            return INIT_RECIPES_DATA
+        }
+
+        data.recipes = data.recipes.map((recipe: any) => ({
+            ...recipe,
+            id: recipe.id ?? crypto.randomUUID(),
+            ingredients: (recipe.ingredients || []).map((ing: any) => ({
+                ...ing,
+                id: ing.id ?? crypto.randomUUID(),
+            })),
+            tools: (recipe.tools || []).map((tool: any) => ({
+                ...tool,
+                id: tool.id ?? crypto.randomUUID(),
+            })),
+        }))
+
+        return data as RecipesData
+    } catch {
+        return INIT_RECIPES_DATA
     }
 }
 

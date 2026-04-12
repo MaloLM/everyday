@@ -54,3 +54,23 @@ const RpItemSchema = Yup.object().shape({
 export const RpFormSchema = Yup.object().shape({
     items: Yup.array().of(RpItemSchema),
 })
+
+const RecipeIngredientSchema = Yup.object().shape({
+    name: Yup.string().required('Ingredient name is required').max(100, 'Name too long'),
+    quantity: Yup.string().max(20, 'Quantity too long'),
+    unit: Yup.string().max(20, 'Unit too long'),
+})
+
+const RecipeToolSchema = Yup.object().shape({
+    name: Yup.string().required('Tool name is required').max(100, 'Name too long'),
+})
+
+export const RecipeFormSchema = Yup.object().shape({
+    title: Yup.string().required('Recipe title is required').max(200, 'Title too long'),
+    instructions: Yup.string(),
+    ingredients: Yup.array().of(RecipeIngredientSchema),
+    tools: Yup.array().of(RecipeToolSchema),
+    prepTime: Yup.number().nullable().min(0, 'Prep time must be positive'),
+    cost: Yup.number().nullable().min(1).max(5),
+    dishesCost: Yup.number().nullable().min(1).max(5),
+})

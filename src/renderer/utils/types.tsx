@@ -74,3 +74,32 @@ export interface RecurringPurchasesData {
     items: RecurringPurchaseItem[]
     currency: string
 }
+
+export interface RecipeIngredient {
+    id: string
+    name: string
+    quantity: string
+    unit: string
+}
+
+export interface RecipeTool {
+    id: string
+    name: string
+}
+
+export interface Recipe {
+    id: string
+    title: string
+    instructions: string
+    ingredients: RecipeIngredient[]
+    tools: RecipeTool[]
+    prepTime: number | null
+    cost: number | null
+    dishesCost: number | null
+    createdAt: string
+    updatedAt: string
+}
+
+export interface RecipesData {
+    recipes: Recipe[]
+}

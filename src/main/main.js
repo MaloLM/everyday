@@ -188,3 +188,35 @@ ipcMain.handle("rp:delete-item", async (event, itemId) => {
   await writeJsonFile(RP_FILE, data);
   return data;
 });
+
+// Recipes IPC handlers
+
+const RECIPES_FILE = "recipes_data.json";
+
+ipcMain.handle("recipes:load", async () => {
+  return await readJsonFile(RECIPES_FILE);
+});
+
+ipcMain.handle("recipes:save", async (event, recipe) => {
+  let data = await readJsonFile(RECIPES_FILE);
+  if (!data.recipes) data = { recipes: [] };
+
+  const idx = data.recipes.findIndex((r) => r.id === recipe.id);
+  if (idx >= 0) {
+    data.recipes[idx] = recipe;
+  } else {
+    data.recipes.push(recipe);
+  }
+
+  await writeJsonFile(RECIPES_FILE, data);
+  return data;
+});
+
+ipcMain.handle("recipes:delete", async (event, recipeId) => {
+  let data = await readJsonFile(RECIPES_FILE);
+  if (!data.recipes) data = { recipes: [] };
+
+  data.recipes = data.recipes.filter((r) => r.id !== recipeId);
+  await writeJsonFile(RECIPES_FILE, data);
+  return data;
+});

@@ -39,5 +39,17 @@ export function useIpcRenderer() {
         return window.electron.deleteRpItem(itemId)
     }
 
-    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem }
+    const loadRecipesData = (): Promise<any> => {
+        return window.electron.loadRecipesData()
+    }
+
+    const saveRecipe = (recipe: any): Promise<any> => {
+        return window.electron.saveRecipe(recipe)
+    }
+
+    const deleteRecipe = (recipeId: string): Promise<any> => {
+        return window.electron.deleteRecipe(recipeId)
+    }
+
+    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadRecipesData, saveRecipe, deleteRecipe }
 }

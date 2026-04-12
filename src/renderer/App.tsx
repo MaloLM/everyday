@@ -3,6 +3,7 @@ import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance
 import { NetWorthAssessment } from './pages/NetWorthAssessment'
 import { CustomToaster, Layout } from './components'
 import { RecurringPurchases } from './pages/RecurringPurchases'
+import { Recipes } from './pages/Recipes'
 import { NotFoundComponent } from './pages/NotFound'
 import { AppProvider } from './context'
 
@@ -17,6 +18,7 @@ const App = () => {
                             <Route path="/tam" element={<TargetAllocationMaintenance />} />
                             <Route path="/nw" element={<NetWorthAssessment />} />
                             <Route path="/rp" element={<RecurringPurchases />} />
+                            <Route path="/recipes" element={<Recipes />} />
                             <Route path="*" element={<NotFoundComponent />} />
                         </Routes>
                         <CustomToaster />

@@ -52,3 +52,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8);
   cursor: pointer;
 }
+
+/* Markdown rendering styles for recipes */
+.prose-recipe h1 { @apply text-2xl font-serif font-medium text-nobleGold mt-6 mb-3; }
+.prose-recipe h2 { @apply text-xl font-serif font-medium text-nobleGold mt-5 mb-2; }
+.prose-recipe h3 { @apply text-lg font-medium text-nobleGold mt-4 mb-2; }
+.prose-recipe p { @apply mb-3 leading-relaxed; }
+.prose-recipe ul { @apply list-disc pl-6 mb-3; }
+.prose-recipe ol { @apply list-decimal pl-6 mb-3; }
+.prose-recipe li { @apply mb-1; }
+.prose-recipe strong { @apply font-medium text-softWhite; }
+.prose-recipe em { @apply italic; }
+.prose-recipe blockquote { @apply border-l-2 border-nobleGold/40 pl-4 italic text-softWhite/70 my-3; }
+.prose-recipe code { @apply bg-lightNobleBlack px-1.5 py-0.5 rounded text-sm; }
+.prose-recipe pre { @apply bg-lightNobleBlack p-4 rounded-lg overflow-x-auto my-3; }
+.prose-recipe a { @apply text-nobleGold underline underline-offset-2; }
+.prose-recipe hr { @apply border-lightGray my-6; }
+.prose-recipe table { @apply w-full border-collapse my-3; }
+.prose-recipe th { @apply border border-lightGray p-2 text-left text-nobleGold; }
+.prose-recipe td { @apply border border-lightGray p-2; }

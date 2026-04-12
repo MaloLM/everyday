@@ -12,6 +12,9 @@ declare global {
       loadRpData: () => Promise<any>;
       saveRpItem: (item: any) => Promise<any>;
       deleteRpItem: (itemId: string) => Promise<any>;
+      loadRecipesData: () => Promise<any>;
+      saveRecipe: (recipe: any) => Promise<any>;
+      deleteRecipe: (recipeId: string) => Promise<any>;
     };
   }
 }

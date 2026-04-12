@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, BarChartBig, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, BarChartBig, ChefHat, ShoppingCart, Wallet } from 'lucide-react'
 
 const navItems = [
     { path: '/tam', altPaths: ['/'], label: 'Target Allocation Maintenance', icon: BarChartBig },
     { path: '/nw', altPaths: [], label: 'Net Worth Assessment', icon: Wallet },
     { path: '/rp', altPaths: [], label: 'Recurring Purchases', icon: ShoppingCart },
+    { path: '/recipes', altPaths: [], label: 'Recipes', icon: ChefHat },
 ]
 
 export const Sidebar = () => {

@@ -1,4 +1,4 @@
-import { ChartData, NetWorthData, RecurringPurchasesData, TamFormData } from './types'
+import { ChartData, NetWorthData, RecurringPurchasesData, RecipesData, TamFormData } from './types'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../tailwind.config'
 
@@ -59,6 +59,15 @@ export const RECURRENCE_UNITS = ['day', 'week', 'month', 'year'] as const
 export const INIT_RP_DATA: RecurringPurchasesData = {
     items: [],
     currency: 'EUR',
+}
+
+export const COMMON_UNITS = [
+    '', 'g', 'kg', 'ml', 'cl', 'L', 'tsp', 'tbsp', 'cup',
+    'oz', 'lb', 'pinch', 'slice', 'piece', 'bunch', 'clove',
+] as const
+
+export const INIT_RECIPES_DATA: RecipesData = {
+    recipes: [],
 }
 
 export const INIT_TAM_DATA: TamFormData = {
