@@ -14,6 +14,9 @@ vi.mock('../api/electron', () => ({
     loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
     saveRpItem: vi.fn(),
     deleteRpItem: vi.fn(),
+    loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
+    saveRecipe: vi.fn(),
+    deleteRecipe: vi.fn(),
   }),
 }))
 

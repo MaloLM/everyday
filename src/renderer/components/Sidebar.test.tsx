@@ -17,6 +17,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Target Allocation Maintenance')).toBeInTheDocument()
     expect(screen.getByText('Net Worth Assessment')).toBeInTheDocument()
     expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
+    expect(screen.getByText('Recipes')).toBeInTheDocument()
   })
 
   it('renders a toggle button', () => {

@@ -16,6 +16,9 @@ vi.mock('./context', () => ({
     rpData: { items: [], currency: 'EUR' },
     setRpData: vi.fn(),
     refreshRpData: vi.fn().mockResolvedValue(undefined),
+    recipesData: { recipes: [] },
+    setRecipesData: vi.fn(),
+    refreshRecipesData: vi.fn().mockResolvedValue(undefined),
   }),
   AppProvider: ({ children }) => <>{children}</>,
 }))
@@ -32,12 +35,16 @@ vi.mock('./api/electron', () => ({
     loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
     saveRpItem: vi.fn(),
     deleteRpItem: vi.fn(),
+    loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
+    saveRecipe: vi.fn(),
+    deleteRecipe: vi.fn(),
   }),
 }))
 
 import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance'
 import { NetWorthAssessment } from './pages/NetWorthAssessment'
 import { RecurringPurchases } from './pages/RecurringPurchases'
+import { Recipes } from './pages/Recipes'
 import { NotFoundComponent } from './pages/NotFound'
 import { Layout } from './components'
 
@@ -50,6 +57,7 @@ function renderWithRoute(route: string) {
           <Route path="/tam" element={<TargetAllocationMaintenance />} />
           <Route path="/nw" element={<NetWorthAssessment />} />
           <Route path="/rp" element={<RecurringPurchases />} />
+          <Route path="/recipes" element={<Recipes />} />
           <Route path="*" element={<NotFoundComponent />} />
         </Routes>
       </Layout>
@@ -83,6 +91,14 @@ describe('App routing', () => {
     renderWithRoute('/rp')
     const elements = screen.getAllByText('Recurring Purchases')
     expect(elements.length).toBeGreaterThanOrEqual(2) // sidebar + page heading
+  })
+
+  it('renders Recipes page on /recipes', async () => {
+    renderWithRoute('/recipes')
+    await waitFor(() => {
+      const elements = screen.getAllByText('Recipes')
+      expect(elements.length).toBeGreaterThanOrEqual(1)
+    })
   })
 
   it('renders NotFound on unknown routes', async () => {

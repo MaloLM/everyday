@@ -27,56 +27,51 @@ vi.mock('../api/electron', () => ({
     loadNetWorthData: vi.fn(),
     saveNetWorthEntry: vi.fn(),
     deleteNetWorthEntry: vi.fn(),
-    loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
+    loadRpData: vi.fn(),
     saveRpItem: vi.fn(),
     deleteRpItem: vi.fn(),
     loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
-    saveRecipe: vi.fn(),
-    deleteRecipe: vi.fn(),
+    saveRecipe: vi.fn().mockResolvedValue({ recipes: [] }),
+    deleteRecipe: vi.fn().mockResolvedValue({ recipes: [] }),
   }),
 }))
 
-import { RecurringPurchases } from './RecurringPurchases'
+import { Recipes } from './Recipes'
 
 function renderPage() {
   return render(
     <MemoryRouter>
-      <RecurringPurchases />
+      <Recipes />
     </MemoryRouter>
   )
 }
 
-describe('RecurringPurchases', () => {
-  it('renders the page title', () => {
-    renderPage()
-    expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
-  })
-
-  it('renders the Annual Summary card', async () => {
+describe('Recipes', () => {
+  it('renders the page title', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Annual Summary')).toBeInTheDocument()
+      expect(screen.getByText('Recipes')).toBeInTheDocument()
     })
   })
 
-  it('renders the Purchases card', async () => {
+  it('renders the New Recipe button', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Purchases')).toBeInTheDocument()
+      expect(screen.getByText('New Recipe')).toBeInTheDocument()
     })
   })
 
-  it('shows Add Purchase button', async () => {
+  it('shows empty state message when no recipes exist', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Purchase')).toBeInTheDocument()
+      expect(screen.getByText('No recipes yet. Create your first one!')).toBeInTheDocument()
     })
   })
 
-  it('shows Save button', async () => {
+  it('renders the search input', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Save')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Search recipes...')).toBeInTheDocument()
     })
   })
 })

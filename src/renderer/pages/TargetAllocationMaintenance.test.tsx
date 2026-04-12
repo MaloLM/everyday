@@ -16,6 +16,9 @@ vi.mock('../context', () => ({
     rpData: { items: [], currency: 'EUR' },
     setRpData: vi.fn(),
     refreshRpData: vi.fn(),
+    recipesData: { recipes: [] },
+    setRecipesData: vi.fn(),
+    refreshRecipesData: vi.fn().mockResolvedValue(undefined),
   }),
 }))
 
@@ -31,6 +34,9 @@ vi.mock('../api/electron', () => ({
     loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
     saveRpItem: vi.fn(),
     deleteRpItem: vi.fn(),
+    loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
+    saveRecipe: vi.fn(),
+    deleteRecipe: vi.fn(),
   }),
 }))
 
