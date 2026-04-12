@@ -6,6 +6,7 @@ interface NwItemFormProps {
     onDelete: () => void
     error?: boolean
     currency?: string
+    percentage?: number | null
 }
 
 export const NwItemForm = (props: NwItemFormProps) => {
@@ -28,6 +29,11 @@ export const NwItemForm = (props: NwItemFormProps) => {
                     allowNegative
                     className="mx-2 font-bold"
                 />
+                {props.percentage !== null && props.percentage !== undefined && (
+                    <span className="whitespace-nowrap text-xs text-softWhite opacity-80">
+                        ({props.percentage.toFixed(1)}%)
+                    </span>
+                )}
             </div>
             <button className="absolute right-0 top-0 m-1 border-0 p-0.5" type="button" onClick={props.onDelete}>
                 <X className="opacity-30 hover:text-error hover:opacity-100" size={'20'} />

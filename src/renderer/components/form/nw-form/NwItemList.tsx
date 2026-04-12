@@ -18,6 +18,8 @@ const MAX_ITEMS = 50
 
 export const NwItemList = ({ values, errors, setFieldValue }: NwItemListProps) => {
     const lastItemRef = useRef<HTMLDivElement>(null)
+    const total = values.items.reduce((sum, item) => sum + Number(item.estimatedValue), 0)
+
     return (
         <div className="flex w-full flex-col">
             <div className="flex max-h-80 w-full flex-col gap-1 overflow-y-auto py-1 pr-4 md:min-h-24">
@@ -26,6 +28,7 @@ export const NwItemList = ({ values, errors, setFieldValue }: NwItemListProps) =
                         <NwItemForm
                             currency={CURRENCIES.get(values.currency)}
                             itemIndex={index}
+                            percentage={total !== 0 ? (Number(item.estimatedValue) / total) * 100 : null}
                             error={
                                 (errors.items && errors.items[index]) !== undefined &&
                                 typeof (errors.items && errors.items[index]) !== 'string'

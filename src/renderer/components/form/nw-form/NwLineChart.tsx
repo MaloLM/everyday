@@ -49,8 +49,9 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
             label: name,
             data: sorted.map((entry) => {
                 const item = entry.items.find((it) => it.name === name)
-                return { x: entry.date, y: item ? item.estimatedValue : 0 }
+                return { x: entry.date, y: item ? item.estimatedValue : null }
             }),
+            spanGaps: false,
             borderColor: color,
             backgroundColor: color + '80',
             fill: true,
