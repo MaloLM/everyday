@@ -38,6 +38,8 @@ vi.mock('./api/electron', () => ({
     loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
     saveRecipe: vi.fn(),
     deleteRecipe: vi.fn(),
+    exportAllData: vi.fn().mockResolvedValue({}),
+    importAllData: vi.fn().mockResolvedValue(undefined),
   }),
 }))
 

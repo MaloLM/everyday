@@ -1,5 +1,9 @@
+import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BarChartBig, ChefHat, ShoppingCart, Wallet } from 'lucide-react'
+import { BarChartBig, ChefHat, Download, ShoppingCart, Upload, Wallet } from 'lucide-react'
+import { useIpcRenderer } from '../api/electron'
+import { useAppContext } from '../context'
+import toast from 'react-hot-toast'
 
 const features = [
     {
@@ -30,12 +34,81 @@ const features = [
 
 export const Home = () => {
     const navigate = useNavigate()
+    const { exportAllData, importAllData, sendRequestData } = useIpcRenderer()
+    const { refreshNwData, refreshRpData, refreshRecipesData } = useAppContext()
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleExport = async () => {
+        const data = await exportAllData()
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `everyday-export-${new Date().toISOString().slice(0, 10)}.json`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+    }
+
+    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        try {
+            const text = await file.text()
+            const data = JSON.parse(text)
+            await importAllData(data)
+            sendRequestData()
+            await Promise.all([refreshNwData(), refreshRpData(), refreshRecipesData()])
+            toast.success('Data imported successfully')
+        } catch {
+            toast.error('Failed to import data')
+        }
+        if (fileInputRef.current) fileInputRef.current.value = ''
+    }
 
     return (
         <div className="flex flex-col items-center px-4 py-10">
-            <h1 className="mb-2 font-serif text-4xl font-medium tracking-widest text-nobleGold">
-                Everyday
-            </h1>
+            <div className="mb-2 flex w-full max-w-4xl items-start justify-between">
+                <div />
+                <h1 className="font-serif text-4xl font-medium tracking-widest text-nobleGold">
+                    Everyday
+                </h1>
+                <div className="flex gap-2">
+                    <div className="group relative flex justify-center">
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            title="Import data"
+                            className="rounded-full border border-nobleGold p-2 text-nobleGold transition-colors hover:bg-nobleGold hover:text-lightNobleBlack"
+                        >
+                            <Upload size={20} />
+                        </button>
+                        <span className="absolute top-11 z-50 scale-0 whitespace-nowrap rounded bg-nobleBlack p-2 text-xs text-softWhite group-hover:scale-100">
+                            Import data
+                        </span>
+                    </div>
+                    <div className="group relative flex justify-center">
+                        <button
+                            onClick={handleExport}
+                            title="Export all data"
+                            className="rounded-full border border-nobleGold p-2 text-nobleGold transition-colors hover:bg-nobleGold hover:text-lightNobleBlack"
+                        >
+                            <Download size={20} />
+                        </button>
+                        <span className="absolute top-11 z-50 scale-0 whitespace-nowrap rounded bg-nobleBlack p-2 text-xs text-softWhite group-hover:scale-100">
+                            Export all data
+                        </span>
+                    </div>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        className="hidden"
+                        onChange={handleImport}
+                        data-testid="import-file-input"
+                    />
+                </div>
+            </div>
             <p className="mb-12 text-softWhite/50">Your everyday personal toolkit</p>
 
             <div className="grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">

@@ -220,3 +220,30 @@ ipcMain.handle("recipes:delete", async (event, recipeId) => {
   await writeJsonFile(RECIPES_FILE, data);
   return data;
 });
+
+// Export all data
+
+ipcMain.handle("app:export-all", async () => {
+  const [tam, netWorth, recurringPurchases, recipes] = await Promise.all([
+    readJsonFile("tam_form_data.json"),
+    readJsonFile(NW_FILE),
+    readJsonFile(RP_FILE),
+    readJsonFile(RECIPES_FILE),
+  ]);
+  return {
+    exportedAt: new Date().toISOString(),
+    tam,
+    netWorth,
+    recurringPurchases,
+    recipes,
+  };
+});
+
+ipcMain.handle("app:import-all", async (event, data) => {
+  await Promise.all([
+    writeJsonFile("tam_form_data.json", data.tam ?? {}),
+    writeJsonFile(NW_FILE, data.netWorth ?? {}),
+    writeJsonFile(RP_FILE, data.recurringPurchases ?? {}),
+    writeJsonFile(RECIPES_FILE, data.recipes ?? {}),
+  ]);
+});

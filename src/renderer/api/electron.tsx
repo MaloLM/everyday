@@ -51,5 +51,13 @@ export function useIpcRenderer() {
         return window.electron.deleteRecipe(recipeId)
     }
 
-    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadRecipesData, saveRecipe, deleteRecipe }
+    const exportAllData = (): Promise<any> => {
+        return window.electron.exportAllData()
+    }
+
+    const importAllData = (data: any): Promise<void> => {
+        return window.electron.importAllData(data)
+    }
+
+    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadRecipesData, saveRecipe, deleteRecipe, exportAllData, importAllData }
 }

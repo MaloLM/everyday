@@ -37,9 +37,9 @@ describe('Sidebar', () => {
     expect(nwLink).not.toHaveClass('bg-nobleGold/15')
   })
 
-  it('highlights TAM when on root path /', () => {
+  it('highlights Home when on root path /', () => {
     renderSidebar('/')
-    const tamLink = screen.getByText('Target Allocation Maintenance').closest('a')
-    expect(tamLink).toHaveClass('bg-nobleGold/15')
+    const homeLink = screen.getByText('Home').closest('a')
+    expect(homeLink).toHaveClass('bg-nobleGold/15')
   })
 })

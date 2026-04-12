@@ -19,6 +19,8 @@ const electronMock = {
   loadNetWorthData: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
   saveNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
   deleteNetWorthEntry: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
+  exportAllData: vi.fn().mockResolvedValue({}),
+  importAllData: vi.fn().mockResolvedValue(undefined),
 }
 
 Object.defineProperty(window, 'electron', {
