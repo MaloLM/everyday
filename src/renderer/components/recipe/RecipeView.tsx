@@ -1,8 +1,10 @@
-import { ArrowLeft, Pencil, Copy, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowLeft, Pencil, Copy, Trash2, ClipboardCopy, Check } from 'lucide-react'
 import { Recipe } from '../../utils/types'
 import { Card } from '../Card'
 import { RecipeIndicators } from './RecipeIndicators'
 import { RecipeMarkdownRenderer } from './RecipeMarkdownRenderer'
+import { buildRecipeMarkdown } from './recipeMarkdown'
 
 interface RecipeViewProps {
     recipe: Recipe
@@ -13,6 +15,18 @@ interface RecipeViewProps {
 }
 
 export const RecipeView = ({ recipe, onEdit, onDuplicate, onDelete, onBack }: RecipeViewProps) => {
+    const [copied, setCopied] = useState(false)
+
+    const handleCopyMarkdown = async () => {
+        try {
+            await navigator.clipboard.writeText(buildRecipeMarkdown(recipe))
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1500)
+        } catch {
+            // Ignore clipboard failures silently
+        }
+    }
+
     return (
         <div className="flex flex-col gap-5">
             {/* Top bar */}
@@ -29,6 +43,13 @@ export const RecipeView = ({ recipe, onEdit, onDuplicate, onDelete, onBack }: Re
                         className="flex items-center gap-1 rounded-lg border border-nobleGold/30 px-3 py-1.5 text-sm text-nobleGold transition-colors hover:bg-nobleGold/10"
                     >
                         <Pencil size={14} /> Edit
+                    </button>
+                    <button
+                        onClick={handleCopyMarkdown}
+                        className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                    >
+                        {copied ? <Check size={14} /> : <ClipboardCopy size={14} />}
+                        {copied ? 'Copied' : 'Copy'}
                     </button>
                     <button
                         onClick={onDuplicate}

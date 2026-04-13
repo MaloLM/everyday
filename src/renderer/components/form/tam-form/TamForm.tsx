@@ -2,9 +2,11 @@ import { Form, Formik } from 'formik'
 import { useEffect, useRef, useState } from 'react'
 import { TamFormResponse, TamFormSchema, ChartData, TamFormData, parseToChartData } from '../../../utils'
 import { Button, Card } from '../..'
-import { Save } from 'lucide-react'
+import { ClipboardCopy, Save } from 'lucide-react'
 import { TamDonutChart } from './TamDonutChart'
 import { TamBarChart } from './TamBarChart'
+import { buildTargetAllocationMarkdown } from './tamMarkdown'
+import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import toast from 'react-hot-toast'
 import { ErrorMessages } from '../../utils/ErrorMessage'
 import { AssetList } from './AssetList'
@@ -78,10 +80,29 @@ export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFor
                             className=" relative "
                             title="Current Allocation"
                             titleButton={
-                                <Button onClick={() => saveConfig(values)}>
-                                    {' '}
-                                    <Save size={20} />
-                                </Button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        title="Copy as markdown"
+                                        onClick={() =>
+                                            copyMarkdownToClipboard(
+                                                buildTargetAllocationMarkdown({
+                                                    assets: values.assets,
+                                                    currency: values.currency,
+                                                    budget: Number(values.budget) || 0,
+                                                }),
+                                                'Current allocation copied to clipboard'
+                                            )
+                                        }
+                                        className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                                    >
+                                        <ClipboardCopy size={14} /> Copy
+                                    </button>
+                                    <Button onClick={() => saveConfig(values)}>
+                                        {' '}
+                                        <Save size={20} />
+                                    </Button>
+                                </div>
                             }
                         >
                             <div

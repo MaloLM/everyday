@@ -5,9 +5,11 @@ import {
     RpFormSchema, CURRENCIES, computeAnnualCost, computeTotalAnnualCost,
 } from '../../../utils'
 import { Button, Card } from '../..'
-import { Save } from 'lucide-react'
+import { ClipboardCopy, Save } from 'lucide-react'
 import { RpItemList } from './RpItemList'
 import { RpTagFilter } from './RpTagFilter'
+import { buildRecurringPurchasesMarkdown } from './rpMarkdown'
+import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import toast from 'react-hot-toast'
 
 interface RpFormProps {
@@ -66,7 +68,35 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
 
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                        <Card title="Annual Summary">
+                        <Card
+                            title="Annual Summary"
+                            titleButton={
+                                <button
+                                    type="button"
+                                    title="Copy as markdown"
+                                    onClick={() =>
+                                        copyMarkdownToClipboard(
+                                            buildRecurringPurchasesMarkdown({
+                                                items: values.items.map((i) => ({
+                                                    ...i,
+                                                    unitPrice: Number(i.unitPrice) || 0,
+                                                    quantity: Number(i.quantity) || 0,
+                                                    recurrence: {
+                                                        every: Number(i.recurrence?.every) || 1,
+                                                        unit: i.recurrence?.unit || 'month',
+                                                    },
+                                                })),
+                                                currency: rpData.currency,
+                                            }),
+                                            'Recurring purchases copied to clipboard'
+                                        )
+                                    }
+                                    className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                                >
+                                    <ClipboardCopy size={14} /> Copy
+                                </button>
+                            }
+                        >
                             <div className="flex flex-col gap-4">
                                 <RpTagFilter tags={mergedTags} activeTag={activeTag} onTagClick={setActiveTag} />
                                 <div className="flex items-baseline gap-2">

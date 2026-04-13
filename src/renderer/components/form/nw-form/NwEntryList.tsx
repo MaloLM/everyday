@@ -1,6 +1,8 @@
 import { NetWorthEntry, CURRENCIES, computeNetWorth } from '../../../utils'
+import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import { Button } from '../../Button'
-import { Plus, Trash2 } from 'lucide-react'
+import { ClipboardCopy, Plus, Trash2 } from 'lucide-react'
+import { buildNetWorthEntryMarkdown } from './nwMarkdown'
 
 interface NwEntryListProps {
     entries: NetWorthEntry[]
@@ -57,16 +59,32 @@ export const NwEntryList = ({
                                     {entry.items.length} item{entry.items.length !== 1 ? 's' : ''}
                                 </span>
                             </div>
-                            <button
-                                type="button"
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    onDeleteEntry(entry.id)
-                                }}
-                                className="p-1 opacity-30 transition-opacity hover:text-error hover:opacity-100"
-                            >
-                                <Trash2 size={16} />
-                            </button>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    title="Copy as markdown"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        copyMarkdownToClipboard(
+                                            buildNetWorthEntryMarkdown(entry, currency),
+                                            'Audit copied to clipboard'
+                                        )
+                                    }}
+                                    className="p-1 opacity-30 transition-opacity hover:text-nobleGold hover:opacity-100"
+                                >
+                                    <ClipboardCopy size={16} />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        onDeleteEntry(entry.id)
+                                    }}
+                                    className="p-1 opacity-30 transition-opacity hover:text-error hover:opacity-100"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
                         </div>
                     )
                 })}

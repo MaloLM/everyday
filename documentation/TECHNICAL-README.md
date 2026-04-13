@@ -181,7 +181,10 @@ When you're ready to build the EVERYDAY app for production, certain parameters i
 The `package.json` also defines scripts to package the application:
 
 -   `"pack": "electron-builder --dir --mac"`: This command packages the app for macOS without creating an installer. The application is packaged in a directory (useful for testing the packaged app without installing it).
--   `"dist": "electron-builder --win --mac --linux"`: This command is used to package and create installers for all target operating systems (Windows, macOS, and Linux).
+-   `"dist": "electron-builder --win --mac --linux"`: Creates installers for all target operating systems (Windows, macOS, and Linux).
+-   `"dist:mac"`: Creates an installer for macOS only (`.dmg`).
+-   `"dist:win"`: Creates an installer for Windows only (`nsis`).
+-   `"dist:linux"`: Creates an installer for Linux only (`AppImage`).
 
 To package the app, you must follow these steps:
 
@@ -189,7 +192,10 @@ To package the app, you must follow these steps:
 2. Execute `npm run build` to create the `dist` folder with all the files bundled for production.
 3. Choose one of the following:
     - Run `npm run pack` if you need to package the app for macOS in a directory format for testing purposes.
-    - Run `npm run dist` if you want to create installers for one or all of the specified operating systems.
+    - Run `npm run dist` to create installers for all target operating systems.
+    - Run `npm run dist:mac`, `npm run dist:win`, or `npm run dist:linux` to create an installer for a single platform.
+
+> Tip: you can also pass platform flags directly to the default script, e.g. `npm run dist -- --mac` — but the dedicated scripts above are preferred as they don't inherit the `--win --mac --linux` flags from the `dist` script.
 
 The `pack` script is typically used for generating a testable build without generating an installer, while `dist` is used for creating the final distribution installers that end-users would download and install.
 
