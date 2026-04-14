@@ -4,7 +4,10 @@ import {
     CURRENCIES,
     computeAnnualCost,
     computeTotalAnnualCost,
+    convertAnnualToUnit,
+    DISPLAY_UNIT_LABELS,
 } from '../../../utils'
+import type { DisplayUnit } from '../../../utils/constants'
 
 function formatAmount(value: number): string {
     const rounded = Math.round(value * 100) / 100
@@ -21,15 +24,16 @@ function formatRecurrence(item: RecurringPurchaseItem): string {
     return `every ${every} ${unit}s`
 }
 
-export function buildRecurringPurchasesMarkdown(data: RecurringPurchasesData): string {
+export function buildRecurringPurchasesMarkdown(data: RecurringPurchasesData, displayUnit: DisplayUnit = 'year'): string {
     const symbol = CURRENCIES.get(data.currency) || data.currency
+    const unitLabel = DISPLAY_UNIT_LABELS[displayUnit]
     const lines: string[] = []
 
     lines.push('# Recurring Purchases')
     lines.push('')
 
-    const total = computeTotalAnnualCost(data.items)
-    lines.push(`**Total:** ${formatAmount(total)} ${symbol} / year`)
+    const total = convertAnnualToUnit(computeTotalAnnualCost(data.items), displayUnit)
+    lines.push(`**Total:** ${formatAmount(total)} ${symbol} ${unitLabel}`)
     lines.push('')
 
     if (data.items.length === 0) {
@@ -52,19 +56,19 @@ export function buildRecurringPurchasesMarkdown(data: RecurringPurchasesData): s
 
     for (const tag of sortedTags) {
         const items = groups.get(tag)!
-        const groupTotal = computeTotalAnnualCost(items)
-        lines.push(`## ${tag} — ${formatAmount(groupTotal)} ${symbol} / year`)
+        const groupTotal = convertAnnualToUnit(computeTotalAnnualCost(items), displayUnit)
+        lines.push(`## ${tag} — ${formatAmount(groupTotal)} ${symbol} ${unitLabel}`)
         lines.push('')
-        lines.push('| Item | Unit Price | Quantity | Recurrence | Annual Cost |')
+        lines.push(`| Item | Unit Price | Quantity | Recurrence | Cost ${unitLabel} |`)
         lines.push('| --- | ---: | ---: | --- | ---: |')
         for (const item of items) {
             const name = `${item.emoji ? `${item.emoji} ` : ''}${item.name || 'Unnamed'}`.trim()
             const displayName = item.referenceUrl
                 ? `[${name}](${item.referenceUrl})`
                 : name
-            const annual = computeAnnualCost(item)
+            const cost = convertAnnualToUnit(computeAnnualCost(item), displayUnit)
             lines.push(
-                `| ${displayName} | ${formatAmount(item.unitPrice)} ${symbol} | ${item.quantity} | ${formatRecurrence(item)} | ${formatAmount(annual)} ${symbol} |`
+                `| ${displayName} | ${formatAmount(item.unitPrice)} ${symbol} | ${item.quantity} | ${formatRecurrence(item)} | ${formatAmount(cost)} ${symbol} |`
             )
         }
         lines.push('')

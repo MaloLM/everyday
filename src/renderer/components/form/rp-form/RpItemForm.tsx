@@ -1,6 +1,7 @@
 import { NumberField, TextField, SelectorField } from '..'
 import { X, ExternalLink } from 'lucide-react'
-import { RECURRENCE_UNITS, CURRENCIES, computeAnnualCost, RecurringPurchaseItem } from '../../../utils'
+import { RECURRENCE_UNITS, CURRENCIES, computeAnnualCost, convertAnnualToUnit, DISPLAY_UNIT_LABELS, RecurringPurchaseItem } from '../../../utils'
+import type { DisplayUnit } from '../../../utils/constants'
 import { useFormikContext } from 'formik'
 
 interface RpItemFormProps {
@@ -8,6 +9,7 @@ interface RpItemFormProps {
     onDelete: () => void
     error?: boolean
     currency?: string
+    displayUnit: DisplayUnit
 }
 
 export const RpItemForm = (props: RpItemFormProps) => {
@@ -19,6 +21,7 @@ export const RpItemForm = (props: RpItemFormProps) => {
         quantity: Number(item.quantity) || 0,
         recurrence: { every: Number(item.recurrence?.every) || 1, unit: item.recurrence?.unit || 'month' },
     }) : 0
+    const displayCost = convertAnnualToUnit(annual, props.displayUnit)
 
     return (
         <div
@@ -97,10 +100,10 @@ export const RpItemForm = (props: RpItemFormProps) => {
                 )}
             </div>
             <div className="ml-auto flex items-center text-sm font-medium text-nobleGold whitespace-nowrap">
-                {annual.toLocaleString(undefined, annual % 1 !== 0
+                {displayCost.toLocaleString(undefined, displayCost % 1 !== 0
                     ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     : { maximumFractionDigits: 0 }
-                )} {props.currency}/yr
+                )} {props.currency}{DISPLAY_UNIT_LABELS[props.displayUnit]}
             </div>
             <button className="absolute right-0 top-0 m-1 border-0 p-0.5" type="button" onClick={props.onDelete}>
                 <X className="opacity-30 hover:text-error hover:opacity-100" size={'20'} />

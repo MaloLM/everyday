@@ -56,6 +56,15 @@ export const INIT_NW_DATA: NetWorthData = {
 
 export const RECURRENCE_UNITS = ['day', 'week', 'month', 'year'] as const
 
+export type DisplayUnit = typeof RECURRENCE_UNITS[number]
+
+export const DISPLAY_UNIT_LABELS: Record<DisplayUnit, string> = {
+    day: '/day',
+    week: '/wk',
+    month: '/mo',
+    year: '/yr',
+}
+
 export const INIT_RP_DATA: RecurringPurchasesData = {
     items: [],
     currency: 'EUR',

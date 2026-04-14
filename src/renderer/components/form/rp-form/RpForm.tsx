@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import {
     RecurringPurchasesData, RecurringPurchaseItem,
-    RpFormSchema, CURRENCIES, computeAnnualCost, computeTotalAnnualCost,
+    RpFormSchema, CURRENCIES, computeTotalAnnualCost,
+    convertAnnualToUnit, RECURRENCE_UNITS, DISPLAY_UNIT_LABELS,
 } from '../../../utils'
+import type { DisplayUnit } from '../../../utils/constants'
 import { Button, Card } from '../..'
 import { ClipboardCopy, Save } from 'lucide-react'
 import { RpItemList } from './RpItemList'
@@ -20,6 +22,12 @@ interface RpFormProps {
 export const RpForm = ({ rpData, onSave }: RpFormProps) => {
     const [activeTag, setActiveTag] = useState<string | null>(null)
     const [formKey, setFormKey] = useState(0)
+    const [displayUnit, setDisplayUnit] = useState<DisplayUnit>('year')
+
+    const cycleDisplayUnit = () => {
+        const idx = RECURRENCE_UNITS.indexOf(displayUnit)
+        setDisplayUnit(RECURRENCE_UNITS[(idx + 1) % RECURRENCE_UNITS.length])
+    }
 
     const allTags = [...new Set(rpData.items.map((i) => i.tag).filter(Boolean))]
     const currencySymbol = CURRENCIES.get(rpData.currency) || rpData.currency
@@ -69,7 +77,7 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <Card
-                            title="Annual Summary"
+                            title={displayUnit === 'year' ? 'Annual Summary' : `Summary ${DISPLAY_UNIT_LABELS[displayUnit]}`}
                             titleButton={
                                 <button
                                     type="button"
@@ -87,7 +95,7 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                                     },
                                                 })),
                                                 currency: rpData.currency,
-                                            }),
+                                            }, displayUnit),
                                             'Recurring purchases copied to clipboard'
                                         )
                                     }
@@ -101,12 +109,22 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                 <RpTagFilter tags={mergedTags} activeTag={activeTag} onTagClick={setActiveTag} />
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-medium text-nobleGold">
-                                        {totalAnnual.toLocaleString(undefined, totalAnnual % 1 !== 0
-                                            ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                                            : { maximumFractionDigits: 0 }
-                                        )}
+                                        {(() => {
+                                            const val = convertAnnualToUnit(totalAnnual, displayUnit)
+                                            return val.toLocaleString(undefined, val % 1 !== 0
+                                                ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+                                                : { maximumFractionDigits: 0 }
+                                            )
+                                        })()}
                                     </span>
-                                    <span className="text-lg text-softWhite/60">{currencySymbol} / year</span>
+                                    <button
+                                        type="button"
+                                        onClick={cycleDisplayUnit}
+                                        title="Cycle display unit"
+                                        className="text-lg text-softWhite/60 transition-colors hover:text-nobleGold cursor-pointer"
+                                    >
+                                        {currencySymbol} {DISPLAY_UNIT_LABELS[displayUnit]}
+                                    </button>
                                     {activeTag && (
                                         <span className="ml-2 rounded-full bg-nobleGold/15 px-2 py-0.5 text-xs text-nobleGold">
                                             filtered: {activeTag}
@@ -121,6 +139,7 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                 values={{ items: values.items, currency: rpData.currency }}
                                 errors={errors}
                                 setFieldValue={setFieldValue}
+                                displayUnit={displayUnit}
                             />
 
                             <div className="flex gap-2 pt-2">

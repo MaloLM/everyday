@@ -152,6 +152,16 @@ export function parseRecipesData(input: string | object): RecipesData {
     }
 }
 
+export function convertAnnualToUnit(annualCost: number, unit: 'day' | 'week' | 'month' | 'year'): number {
+    switch (unit) {
+        case 'day':   return annualCost / 365
+        case 'week':  return annualCost / 52
+        case 'month': return annualCost / 12
+        case 'year':  return annualCost
+        default:      return annualCost
+    }
+}
+
 export function computeAnnualCost(item: RecurringPurchaseItem): number {
     const { every, unit } = item.recurrence
     if (every <= 0) return 0

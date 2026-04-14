@@ -3,6 +3,7 @@ import { Button } from '../../Button'
 import { Plus, GripVertical } from 'lucide-react'
 import { RpItemForm } from './RpItemForm'
 import { RecurringPurchaseItem, CURRENCIES } from '../../../utils'
+import type { DisplayUnit } from '../../../utils/constants'
 import toast from 'react-hot-toast'
 
 interface RpItemListProps {
@@ -12,11 +13,12 @@ interface RpItemListProps {
     }
     errors: any
     setFieldValue: (field: string, value: any) => void
+    displayUnit: DisplayUnit
 }
 
 const MAX_ITEMS = 100
 
-export const RpItemList = ({ values, errors, setFieldValue }: RpItemListProps) => {
+export const RpItemList = ({ values, errors, setFieldValue, displayUnit }: RpItemListProps) => {
     const lastItemRef = useRef<HTMLDivElement>(null)
     const [dragIndex, setDragIndex] = useState<number | null>(null)
     const [overIndex, setOverIndex] = useState<number | null>(null)
@@ -75,6 +77,7 @@ export const RpItemList = ({ values, errors, setFieldValue }: RpItemListProps) =
                             <RpItemForm
                                 currency={CURRENCIES.get(values.currency)}
                                 itemIndex={index}
+                                displayUnit={displayUnit}
                                 error={
                                     (errors.items && errors.items[index]) !== undefined &&
                                     typeof (errors.items && errors.items[index]) !== 'string'

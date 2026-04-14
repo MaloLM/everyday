@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseTamFormData, parseToTamResponse, parseToChartData, parseNetWorthData, computeNetWorth } from './parse'
+import { parseTamFormData, parseToTamResponse, parseToChartData, parseNetWorthData, computeNetWorth, computeAnnualCost, convertAnnualToUnit } from './parse'
 import { INIT_TAM_DATA, INIT_NW_DATA } from './constants'
 import { NetWorthEntry, TamFormResponse } from './types'
 
@@ -186,5 +186,57 @@ describe('computeNetWorth', () => {
       ],
     }
     expect(computeNetWorth(entry)).toBe(50000)
+  })
+})
+
+describe('computeAnnualCost', () => {
+  const makeItem = (unitPrice: number, quantity: number, every: number, unit: 'day' | 'week' | 'month' | 'year') => ({
+    id: '1', emoji: '', name: 'Test', unitPrice, quantity, recurrence: { every, unit }, tag: '',
+  })
+
+  it('computes monthly recurrence', () => {
+    expect(computeAnnualCost(makeItem(10, 1, 1, 'month'))).toBe(120)
+  })
+
+  it('computes daily recurrence', () => {
+    expect(computeAnnualCost(makeItem(1, 1, 1, 'day'))).toBe(365)
+  })
+
+  it('computes weekly recurrence', () => {
+    expect(computeAnnualCost(makeItem(10, 1, 1, 'week'))).toBe(520)
+  })
+
+  it('computes yearly recurrence', () => {
+    expect(computeAnnualCost(makeItem(100, 1, 1, 'year'))).toBe(100)
+  })
+
+  it('handles every N units', () => {
+    expect(computeAnnualCost(makeItem(10, 1, 3, 'month'))).toBe(40)
+  })
+
+  it('multiplies by quantity', () => {
+    expect(computeAnnualCost(makeItem(10, 3, 1, 'month'))).toBe(360)
+  })
+
+  it('returns 0 when every is 0', () => {
+    expect(computeAnnualCost(makeItem(10, 1, 0, 'month'))).toBe(0)
+  })
+})
+
+describe('convertAnnualToUnit', () => {
+  it('returns same value for year', () => {
+    expect(convertAnnualToUnit(365, 'year')).toBe(365)
+  })
+
+  it('divides by 12 for month', () => {
+    expect(convertAnnualToUnit(120, 'month')).toBe(10)
+  })
+
+  it('divides by 52 for week', () => {
+    expect(convertAnnualToUnit(520, 'week')).toBe(10)
+  })
+
+  it('divides by 365 for day', () => {
+    expect(convertAnnualToUnit(365, 'day')).toBe(1)
   })
 })
