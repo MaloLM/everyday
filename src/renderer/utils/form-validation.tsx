@@ -24,6 +24,7 @@ export const TamFormSchema = Yup.object().shape({
 const NwItemSchema = Yup.object().shape({
     name: Yup.string().required('Item name is required').max(50, 'Item name must be 50 characters or less'),
     estimatedValue: Yup.number().required('Estimated value is required').typeError('Estimated value must be a number'),
+    estimatedYield: Yup.number().nullable().typeError('Yield must be a number'),
 })
 
 export const NwEntrySchema = Yup.object().shape({

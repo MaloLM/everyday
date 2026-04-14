@@ -30,15 +30,16 @@ export function buildNetWorthEntryMarkdown(entry: NetWorthEntry, currency: strin
 
     lines.push('## Items')
     lines.push('')
-    lines.push('| Item | Value | Share |')
-    lines.push('| --- | ---: | ---: |')
+    lines.push('| Item | Value | Share | Yield |')
+    lines.push('| --- | ---: | ---: | ---: |')
 
     const absTotal = entry.items.reduce((sum, i) => sum + Math.abs(Number(i.estimatedValue) || 0), 0)
 
     for (const item of entry.items) {
         const value = Number(item.estimatedValue) || 0
         const share = absTotal > 0 ? (Math.abs(value) / absTotal) * 100 : 0
-        lines.push(`| ${item.name || 'Unnamed'} | ${formatAmount(value)} ${symbol} | ${formatPercent(share)} |`)
+        const yieldStr = item.estimatedYield ? `${item.estimatedYield}%` : '—'
+        lines.push(`| ${item.name || 'Unnamed'} | ${formatAmount(value)} ${symbol} | ${formatPercent(share)} | ${yieldStr} |`)
     }
 
     return lines.join('\n').trimEnd() + '\n'

@@ -42,6 +42,7 @@ export interface NetWorthItem {
     id: string
     name: string
     estimatedValue: number
+    estimatedYield?: number
 }
 
 export interface NetWorthEntry {

@@ -29,6 +29,14 @@ export const NwItemForm = (props: NwItemFormProps) => {
                     allowNegative
                     className="mx-2 font-bold"
                 />
+                <NumberField
+                    name={`items[${props.itemIndex}].estimatedYield`}
+                    tooltip="Estimated Annual Yield"
+                    placeholder="renta"
+                    currency="%"
+                    allowNegative
+                    className="mx-1 max-w-10 text-xs opacity-70"
+                />
                 {props.percentage !== null && props.percentage !== undefined && (
                     <span className="whitespace-nowrap text-xs text-softWhite opacity-80">
                         ({props.percentage.toFixed(1)}%)

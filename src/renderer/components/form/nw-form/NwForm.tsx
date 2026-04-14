@@ -6,6 +6,7 @@ import { Eye, EyeOff, Save } from 'lucide-react'
 import { NwItemList } from './NwItemList'
 import { NwEntryList } from './NwEntryList'
 import { NwLineChart } from './NwLineChart'
+import { NwTreemap } from './NwTreemap'
 import toast from 'react-hot-toast'
 import { useAppContext } from '../../../context'
 import { ErrorMessages } from '../../utils/ErrorMessage'
@@ -71,6 +72,7 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                     items: values.items.map((item) => ({
                         ...item,
                         estimatedValue: Number(item.estimatedValue),
+                        estimatedYield: Number(item.estimatedYield) || 0,
                     })),
                 }
                 await onSaveEntry(entry)
@@ -103,6 +105,21 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                         </div>
                         <Card title="Net Worth Evolution">
                             <NwLineChart entries={nwData.entries} currency={nwData.currency} />
+                        </Card>
+
+                        <Card title="Asset Allocation">
+                            <NwTreemap
+                                entry={{
+                                    id: '',
+                                    date: '',
+                                    items: values.items.map((i) => ({
+                                        ...i,
+                                        estimatedValue: Number(i.estimatedValue) || 0,
+                                        estimatedYield: Number(i.estimatedYield) || 0,
+                                    })),
+                                }}
+                                currency={nwData.currency}
+                            />
                         </Card>
 
                         <Card title="Audit Entry">
