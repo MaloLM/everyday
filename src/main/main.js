@@ -235,15 +235,29 @@ ipcMain.handle("budget:save", async (event, data) => {
   return data;
 });
 
+// Savings Projects IPC handlers
+
+const SP_FILE = "savings_projects_data.json";
+
+ipcMain.handle("sp:load", async () => {
+  return await readJsonFile(SP_FILE);
+});
+
+ipcMain.handle("sp:save", async (event, data) => {
+  await writeJsonFile(SP_FILE, data);
+  return data;
+});
+
 // Export all data
 
 ipcMain.handle("app:export-all", async () => {
-  const [tam, netWorth, recurringPurchases, recipes, budget] = await Promise.all([
+  const [tam, netWorth, recurringPurchases, recipes, budget, savingsProjects] = await Promise.all([
     readJsonFile("tam_form_data.json"),
     readJsonFile(NW_FILE),
     readJsonFile(RP_FILE),
     readJsonFile(RECIPES_FILE),
     readJsonFile(BUDGET_FILE),
+    readJsonFile(SP_FILE),
   ]);
   return {
     exportedAt: new Date().toISOString(),
@@ -252,6 +266,7 @@ ipcMain.handle("app:export-all", async () => {
     recurringPurchases,
     recipes,
     budget,
+    savingsProjects,
   };
 });
 
@@ -262,5 +277,6 @@ ipcMain.handle("app:import-all", async (event, data) => {
     writeJsonFile(RP_FILE, data.recurringPurchases ?? {}),
     writeJsonFile(RECIPES_FILE, data.recipes ?? {}),
     writeJsonFile(BUDGET_FILE, data.budget ?? {}),
+    writeJsonFile(SP_FILE, data.savingsProjects ?? {}),
   ]);
 });

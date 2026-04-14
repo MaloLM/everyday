@@ -17,6 +17,8 @@ declare global {
       deleteRecipe: (recipeId: string) => Promise<any>;
       loadBudgetData: () => Promise<any>;
       saveBudgetData: (data: any) => Promise<any>;
+      loadSavingsProjectsData: () => Promise<any>;
+      saveSavingsProjectsData: (data: any) => Promise<any>;
       exportAllData: () => Promise<any>;
       importAllData: (data: any) => Promise<void>;
     };

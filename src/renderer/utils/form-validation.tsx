@@ -95,3 +95,14 @@ export const BudgetFormSchema = Yup.object().shape({
     expenses: Yup.array().of(BudgetExpenseSchema),
     incomes: Yup.array().of(BudgetIncomeSchema),
 })
+
+const SavingsProjectSchema = Yup.object().shape({
+    title: Yup.string().required('Title is required').max(100, 'Title must be 100 characters or less'),
+    objective: Yup.number().min(0, 'Must be non-negative').required('Objective is required'),
+    startingValue: Yup.number().required('Starting value is required'),
+    monthlyContributions: Yup.lazy(() => Yup.object()),
+})
+
+export const SavingsProjectsFormSchema = Yup.object().shape({
+    projects: Yup.array().of(SavingsProjectSchema),
+})

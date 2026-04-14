@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, GripVertical, Home, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
 
 const navItems: { path: string; altPaths: string[]; label: string; icon: typeof Home }[] = [
@@ -10,6 +10,7 @@ const navItems: { path: string; altPaths: string[]; label: string; icon: typeof 
     { path: '/rp', altPaths: [], label: 'Recurring Purchases', icon: ShoppingCart },
     { path: '/recipes', altPaths: [], label: 'Recipes', icon: ChefHat },
     { path: '/budget', altPaths: [], label: 'Budgeting', icon: PiggyBank },
+    { path: '/sp', altPaths: [], label: 'Savings Projects', icon: Landmark },
 ]
 
 const navItemsByPath = new Map(navItems.map((item) => [item.path, item]))

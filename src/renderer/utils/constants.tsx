@@ -1,4 +1,4 @@
-import { BudgetData, ChartData, NetWorthData, RecurringPurchasesData, RecipesData, TamFormData } from './types'
+import { BudgetData, ChartData, NetWorthData, RecurringPurchasesData, RecipesData, SavingsProjectsData, TamFormData } from './types'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../tailwind.config'
 
@@ -82,6 +82,11 @@ export const INIT_RECIPES_DATA: RecipesData = {
 export const INIT_BUDGET_DATA: BudgetData = {
     expenses: [],
     incomes: [],
+    currency: 'EUR',
+}
+
+export const INIT_SP_DATA: SavingsProjectsData = {
+    projects: [],
     currency: 'EUR',
 }
 

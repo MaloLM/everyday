@@ -41,6 +41,7 @@ module.exports = {
         lightGray: '#333333',
         softWhite: '#d6d6d6',
         error: '#d10000',
+        succesGreen: '#34d399',
       },
     },
   },

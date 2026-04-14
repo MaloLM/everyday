@@ -1,5 +1,5 @@
-import { BudgetData, BudgetExpense, BudgetIncome, ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA } from './constants'
+import { BudgetData, BudgetExpense, BudgetIncome, ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData, SavingsProject, SavingsProjectsData } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -213,4 +213,66 @@ export function computeNetIncome(incomes: BudgetIncome[]): number {
 
 export function computeTotalExpenses(expenses: BudgetExpense[]): number {
     return expenses.reduce((sum, expense) => sum + expense.value, 0)
+}
+
+export function parseSavingsProjectsData(input: string | object): SavingsProjectsData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || !data.projects) {
+            return INIT_SP_DATA
+        }
+
+        data.projects = data.projects.map((project: any) => ({
+            ...project,
+            id: project.id ?? crypto.randomUUID(),
+            monthlyContributions: project.monthlyContributions ?? {},
+        }))
+
+        return data as SavingsProjectsData
+    } catch {
+        return INIT_SP_DATA
+    }
+}
+
+export function computeProjectTotal(project: SavingsProject): number {
+    return (Number(project.startingValue) || 0) +
+        Object.values(project.monthlyContributions).reduce((sum, v) => sum + (Number(v) || 0), 0)
+}
+
+export function getMonthColumns(projects: SavingsProject[], extraMonths = 11): string[] {
+    const allKeys: string[] = []
+    for (const p of projects) {
+        allKeys.push(...Object.keys(p.monthlyContributions))
+    }
+
+    const now = new Date()
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
+    const sorted = allKeys.filter((k) => /^\d{4}-\d{2}$/.test(k)).sort((a, b) => a.localeCompare(b))
+    const startMonth = sorted.length > 0 && sorted[0] < currentMonth ? sorted[0] : currentMonth
+    const latestKey = sorted.length > 0 ? sorted[sorted.length - 1] : currentMonth
+
+    // End = whichever is further: now + extra OR latest contribution + extra
+    const endFromNow = new Date(now.getFullYear(), now.getMonth() + extraMonths, 1)
+    const [latestY, latestM] = latestKey.split('-').map(Number)
+    const endFromLatest = new Date(latestY, latestM - 1 + extraMonths, 1)
+    const endDate = endFromNow > endFromLatest ? endFromNow : endFromLatest
+
+    const result: string[] = []
+    const [startY, startM] = startMonth.split('-').map(Number)
+
+    let y = startY
+    let m = startM
+    while (true) {
+        const key = `${y}-${String(m).padStart(2, '0')}`
+        result.push(key)
+        const d = new Date(y, m, 1)
+        if (d > endDate) break
+        m++
+        if (m > 12) { m = 1; y++ }
+    }
+
+    return result
 }

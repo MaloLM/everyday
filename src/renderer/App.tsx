@@ -21,6 +21,9 @@ const Recipes = lazy(() =>
 const Budgeting = lazy(() =>
     import('./pages/Budgeting').then(m => ({ default: m.Budgeting }))
 )
+const SavingsProjects = lazy(() =>
+    import('./pages/SavingsProjects').then(m => ({ default: m.SavingsProjects }))
+)
 
 const AppShell = () => {
     const { blurFinances } = useAppContext()
@@ -36,6 +39,7 @@ const AppShell = () => {
                         <Route path="/rp" element={<RecurringPurchases />} />
                         <Route path="/recipes" element={<Recipes />} />
                         <Route path="/budget" element={<Budgeting />} />
+                        <Route path="/sp" element={<SavingsProjects />} />
                         <Route path="*" element={<NotFoundComponent />} />
                     </Routes>
                     </Suspense>

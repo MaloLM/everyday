@@ -27,6 +27,8 @@ const electronMock = {
   deleteRecipe: vi.fn().mockResolvedValue({ recipes: [] }),
   loadBudgetData: vi.fn().mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' }),
   saveBudgetData: vi.fn().mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' }),
+  loadSavingsProjectsData: vi.fn().mockResolvedValue({ projects: [], currency: 'EUR' }),
+  saveSavingsProjectsData: vi.fn().mockResolvedValue({ projects: [], currency: 'EUR' }),
   exportAllData: vi.fn().mockResolvedValue({}),
   importAllData: vi.fn().mockResolvedValue(undefined),
 }
@@ -112,4 +114,6 @@ beforeEach(() => {
   electronMock.deleteNetWorthEntry.mockResolvedValue({ entries: [], currency: 'EUR' })
   electronMock.loadBudgetData.mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' })
   electronMock.saveBudgetData.mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' })
+  electronMock.loadSavingsProjectsData.mockResolvedValue({ projects: [], currency: 'EUR' })
+  electronMock.saveSavingsProjectsData.mockResolvedValue({ projects: [], currency: 'EUR' })
 })

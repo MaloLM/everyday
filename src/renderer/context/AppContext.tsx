@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import { useIpcRenderer } from '../api/electron'
 import toast from 'react-hot-toast'
-import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA } from '../utils'
+import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA } from '../utils'
 
 interface AppContextState {
     tamData: TamFormData
@@ -18,6 +18,9 @@ interface AppContextState {
     budgetData: BudgetData
     setBudgetData: (data: BudgetData) => void
     refreshBudgetData: () => Promise<void>
+    spData: SavingsProjectsData
+    setSpData: (data: SavingsProjectsData) => void
+    refreshSpData: () => Promise<void>
     blurFinances: boolean
     toggleBlurFinances: () => void
     sidebarOrder: string[]
@@ -39,9 +42,12 @@ const AppContext = createContext<AppContextState>({
     budgetData: INIT_BUDGET_DATA,
     setBudgetData: () => {},
     refreshBudgetData: async () => {},
+    spData: INIT_SP_DATA,
+    setSpData: () => {},
+    refreshSpData: async () => {},
     blurFinances: false,
     toggleBlurFinances: () => {},
-    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp'],
     setSidebarOrder: () => {},
 })
 
@@ -51,8 +57,9 @@ export const AppProvider = ({ children }) => {
     const [rpData, setRpData] = useState<RecurringPurchasesData>(INIT_RP_DATA)
     const [recipesData, setRecipesData] = useState<RecipesData>(INIT_RECIPES_DATA)
     const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
+    const [spData, setSpData] = useState<SavingsProjectsData>(INIT_SP_DATA)
     const [blurFinances, setBlurFinances] = useState<boolean>(() => localStorage.getItem('blurFinances') === 'true')
-    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget']
+    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp']
     const [sidebarOrder, setSidebarOrderState] = useState<string[]>(() => {
         const stored = localStorage.getItem('sidebarOrder')
         if (stored) {
@@ -67,7 +74,7 @@ export const AppProvider = ({ children }) => {
         }
         return defaultOrder
     })
-    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData } = useIpcRenderer()
+    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData, loadSavingsProjectsData } = useIpcRenderer()
 
     const setSidebarOrder = useCallback((order: string[]) => {
         setSidebarOrderState(order)
@@ -122,6 +129,16 @@ export const AppProvider = ({ children }) => {
         }
     }, [])
 
+    const refreshSpData = useCallback(async () => {
+        try {
+            const data = await loadSavingsProjectsData()
+            setSpData(parseSavingsProjectsData(data))
+        } catch (err) {
+            console.error('Failed to load savings projects data:', err)
+            toast.error('Failed to load savings projects data')
+        }
+    }, [])
+
     useEffect(() => {
         const handleResponse = (event, responseData) => {
             if (event.error) {
@@ -138,6 +155,7 @@ export const AppProvider = ({ children }) => {
         refreshRpData()
         refreshRecipesData()
         refreshBudgetData()
+        refreshSpData()
         return cleanup
     }, [])
 
@@ -156,6 +174,9 @@ export const AppProvider = ({ children }) => {
         budgetData,
         setBudgetData,
         refreshBudgetData,
+        spData,
+        setSpData,
+        refreshSpData,
         blurFinances,
         toggleBlurFinances,
         sidebarOrder,

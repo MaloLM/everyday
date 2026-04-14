@@ -127,3 +127,16 @@ export interface BudgetData {
     incomes: BudgetIncome[]
     currency: string
 }
+
+export interface SavingsProject {
+    id: string
+    title: string
+    objective: number
+    startingValue: number
+    monthlyContributions: Record<string, number>
+}
+
+export interface SavingsProjectsData {
+    projects: SavingsProject[]
+    currency: string
+}

@@ -47,6 +47,14 @@ export function useIpcRenderer() {
         return window.electron.saveBudgetData(data)
     }
 
+    const loadSavingsProjectsData = (): Promise<any> => {
+        return window.electron.loadSavingsProjectsData()
+    }
+
+    const saveSavingsProjectsData = (data: any): Promise<any> => {
+        return window.electron.saveSavingsProjectsData(data)
+    }
+
     const loadRecipesData = (): Promise<any> => {
         return window.electron.loadRecipesData()
     }
@@ -67,5 +75,5 @@ export function useIpcRenderer() {
         return window.electron.importAllData(data)
     }
 
-    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadBudgetData, saveBudgetData, loadRecipesData, saveRecipe, deleteRecipe, exportAllData, importAllData }
+    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadBudgetData, saveBudgetData, loadSavingsProjectsData, saveSavingsProjectsData, loadRecipesData, saveRecipe, deleteRecipe, exportAllData, importAllData }
 }
