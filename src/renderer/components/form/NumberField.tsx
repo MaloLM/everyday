@@ -40,7 +40,7 @@ export const NumberField = (props: NumberFieldProps) => {
                                     }}
                                     title={props.tooltip}
                                     placeholder={props.placeholder}
-                                    className={`field relative max-w-14 text-center 
+                                    className={`field relative max-w-14 text-center ${props.currency && props.currency !== '%' ? 'fin-value' : ''}
                                 ${meta.touched && meta.error ? ' border-error ' : ' border-transparent '} ${props.className}`}
                                 ></input>
                                 {props.currency && (

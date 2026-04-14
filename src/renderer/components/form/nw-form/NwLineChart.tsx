@@ -95,7 +95,7 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
                     Export
                 </Button>
             </div>
-            <div className="h-64 w-full">
+            <div className="fin-chart h-64 w-full">
                 <Line
                     ref={chartRef}
                     data={chartData}

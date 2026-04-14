@@ -108,7 +108,7 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                             <div className="flex flex-col gap-4">
                                 <RpTagFilter tags={mergedTags} activeTag={activeTag} onTagClick={setActiveTag} />
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl font-medium text-nobleGold">
+                                    <span className="fin-value text-3xl font-medium text-nobleGold">
                                         {(() => {
                                             const val = convertAnnualToUnit(totalAnnual, displayUnit)
                                             return val.toLocaleString(undefined, val % 1 !== 0

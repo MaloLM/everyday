@@ -113,7 +113,7 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                                             </div>
                                             <div className="flex flex-col">
                                                 <label className="text-xs text-softWhite opacity-50">Net Worth</label>
-                                                <span className={`text-xl font-medium ${total >= 0 ? 'text-nobleGold' : 'text-error'}`}>
+                                                <span className={`fin-value text-xl font-medium ${total >= 0 ? 'text-nobleGold' : 'text-error'}`}>
                                                     {total.toLocaleString()} {currencySymbol}
                                                 </span>
                                             </div>

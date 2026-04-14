@@ -52,7 +52,7 @@ export const NwEntryList = ({
                         >
                             <div className="flex flex-col">
                                 <span className="text-sm text-softWhite">{entry.date}</span>
-                                <span className={`text-lg font-medium ${total >= 0 ? 'text-nobleGold' : 'text-error'}`}>
+                                <span className={`fin-value text-lg font-medium ${total >= 0 ? 'text-nobleGold' : 'text-error'}`}>
                                     {total.toLocaleString()} {currencySymbol}
                                 </span>
                                 <span className="text-xs text-softWhite opacity-50">

@@ -14,7 +14,7 @@ export const BudgetCurrencyForm = ({ computeResult, handleUpdate }: BudgetCurren
         <div className="flex items-center">
             <p className="text-softWhite">Budget</p>
             <NumberField
-                className=" max-w-24  text-center text-xl "
+                className=" max-w-24  text-center text-xl fin-value"
                 name="budget"
                 tooltip="Enter budget"
                 displayError

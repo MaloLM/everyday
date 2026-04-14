@@ -13,7 +13,7 @@ export const TamBarChart = ({ chartData, computeResult, onCompute, errors }: Tam
     return (
         <div>
             {computeResult.assets && chartData.datasets ? (
-                <div className="mt-12 w-full">
+                <div className="fin-chart mt-12 w-full">
                     <BarChart
                         className="h-full w-full"
                         title="New Target Allocation"

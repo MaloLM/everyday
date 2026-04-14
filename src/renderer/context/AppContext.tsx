@@ -18,6 +18,8 @@ interface AppContextState {
     budgetData: BudgetData
     setBudgetData: (data: BudgetData) => void
     refreshBudgetData: () => Promise<void>
+    blurFinances: boolean
+    toggleBlurFinances: () => void
 }
 
 const AppContext = createContext<AppContextState>({
@@ -35,6 +37,8 @@ const AppContext = createContext<AppContextState>({
     budgetData: INIT_BUDGET_DATA,
     setBudgetData: () => {},
     refreshBudgetData: async () => {},
+    blurFinances: false,
+    toggleBlurFinances: () => {},
 })
 
 export const AppProvider = ({ children }) => {
@@ -43,7 +47,16 @@ export const AppProvider = ({ children }) => {
     const [rpData, setRpData] = useState<RecurringPurchasesData>(INIT_RP_DATA)
     const [recipesData, setRecipesData] = useState<RecipesData>(INIT_RECIPES_DATA)
     const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
+    const [blurFinances, setBlurFinances] = useState<boolean>(() => localStorage.getItem('blurFinances') === 'true')
     const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData } = useIpcRenderer()
+
+    const toggleBlurFinances = useCallback(() => {
+        setBlurFinances((prev) => {
+            const next = !prev
+            localStorage.setItem('blurFinances', String(next))
+            return next
+        })
+    }, [])
 
     const refreshNwData = useCallback(async () => {
         try {
@@ -119,6 +132,8 @@ export const AppProvider = ({ children }) => {
         budgetData,
         setBudgetData,
         refreshBudgetData,
+        blurFinances,
+        toggleBlurFinances,
     }
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

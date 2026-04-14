@@ -54,6 +54,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* Markdown rendering styles for recipes */
+/* Privacy blur for financial values */
+.blur-finances .fin-value {
+  filter: blur(8px);
+  user-select: none;
+}
+.blur-finances .fin-chart {
+  filter: blur(12px);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Markdown rendering styles for recipes */
 .prose-recipe h1 { @apply text-2xl font-serif font-medium text-nobleGold mt-6 mb-3; }
 .prose-recipe h2 { @apply text-xl font-serif font-medium text-nobleGold mt-5 mb-2; }
 .prose-recipe h3 { @apply text-lg font-medium text-nobleGold mt-4 mb-2; }

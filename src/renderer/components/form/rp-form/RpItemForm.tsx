@@ -99,7 +99,7 @@ export const RpItemForm = (props: RpItemFormProps) => {
                     </button>
                 )}
             </div>
-            <div className="ml-auto flex items-center text-sm font-medium text-nobleGold whitespace-nowrap">
+            <div className="fin-value ml-auto flex items-center text-sm font-medium text-nobleGold whitespace-nowrap">
                 {displayCost.toLocaleString(undefined, displayCost % 1 !== 0
                     ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     : { maximumFractionDigits: 0 }

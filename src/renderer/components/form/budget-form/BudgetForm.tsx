@@ -110,7 +110,7 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
                                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-8">
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-sm text-softWhite/60">Income (net)</span>
-                                        <span className="text-2xl font-medium text-nobleGold">
+                                        <span className="fin-value text-2xl font-medium text-nobleGold">
                                             {filteredNetIncome.toLocaleString(undefined, filteredNetIncome % 1 !== 0
                                                 ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                                                 : { maximumFractionDigits: 0 })}
@@ -119,7 +119,7 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
                                     </div>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-sm text-softWhite/60">Expenses</span>
-                                        <span className="text-2xl font-medium text-nobleGold">
+                                        <span className="fin-value text-2xl font-medium text-nobleGold">
                                             {filteredTotalExpenses.toLocaleString(undefined, filteredTotalExpenses % 1 !== 0
                                                 ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                                                 : { maximumFractionDigits: 0 })}
@@ -128,7 +128,7 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
                                     </div>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-sm text-softWhite/60">Balance</span>
-                                        <span className={`text-2xl font-medium ${filteredNetIncome - filteredTotalExpenses >= 0 ? 'text-nobleGold' : 'text-error'}`}>
+                                        <span className={`fin-value text-2xl font-medium ${filteredNetIncome - filteredTotalExpenses >= 0 ? 'text-nobleGold' : 'text-error'}`}>
                                             {(filteredNetIncome - filteredTotalExpenses).toLocaleString(undefined,
                                                 Math.abs(filteredNetIncome - filteredTotalExpenses) % 1 !== 0
                                                     ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }

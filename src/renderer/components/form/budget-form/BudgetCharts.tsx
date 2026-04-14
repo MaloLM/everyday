@@ -125,8 +125,8 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             <div className="flex flex-col items-center gap-2">
                 <h3 className="text-sm font-medium text-softWhite/70">Income vs Expenses</h3>
                 <div className="relative flex items-center justify-center w-48 h-48">
-                    <DonutChart data={balanceData} />
-                    <span className={`absolute text-lg font-bold ${totalExpenses > netIncome ? 'text-error' : 'text-nobleGold'}`}>
+                    <div className="fin-chart h-full w-full"><DonutChart data={balanceData} /></div>
+                    <span className={`fin-value absolute text-lg font-bold ${totalExpenses > netIncome ? 'text-error' : 'text-nobleGold'}`}>
                         {netIncome === 0 && totalExpenses === 0
                             ? '—'
                             : `${totalExpenses > netIncome ? '-' : '+'}${formatAmount(Math.abs(netIncome - totalExpenses))} ${currencySymbol}`}
@@ -137,7 +137,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             {normalizedIncomes.length > 0 && (
                 <div className="flex flex-col items-center gap-2">
                     <h3 className="text-sm font-medium text-softWhite/70">Income by Tag</h3>
-                    <div className="w-44 h-44">
+                    <div className="fin-chart w-44 h-44">
                         <DonutChart data={incomeByTagData} />
                     </div>
                     <div className="flex flex-wrap justify-center gap-2">
@@ -157,7 +157,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             {normalizedExpenses.length > 0 && (
                 <div className="flex flex-col items-center gap-2">
                     <h3 className="text-sm font-medium text-softWhite/70">Expenses by Tag</h3>
-                    <div className="w-44 h-44">
+                    <div className="fin-chart w-44 h-44">
                         <DonutChart data={expenseByTagData} />
                     </div>
                     <div className="flex flex-wrap justify-center gap-2">
