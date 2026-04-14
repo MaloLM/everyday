@@ -15,7 +15,6 @@ export const Budgeting = () => {
 
     return (
         <div className="flex h-full flex-col">
-            <h1 className="mb-5 font-serif text-4xl font-medium tracking-wider">Budgeting</h1>
             {!isLoaded ? (
                 <Loading />
             ) : (

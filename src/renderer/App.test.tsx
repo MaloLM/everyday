@@ -19,6 +19,8 @@ vi.mock('./context', () => ({
     recipesData: { recipes: [] },
     setRecipesData: vi.fn(),
     refreshRecipesData: vi.fn().mockResolvedValue(undefined),
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: vi.fn(),
   }),
   AppProvider: ({ children }) => <>{children}</>,
 }))
@@ -91,8 +93,10 @@ describe('App routing', () => {
 
   it('renders Recurring Purchases page on /rp', async () => {
     renderWithRoute('/rp')
-    const elements = screen.getAllByText('Recurring Purchases')
-    expect(elements.length).toBeGreaterThanOrEqual(2) // sidebar + page heading
+    await waitFor(() => {
+      const elements = screen.getAllByText('Recurring Purchases')
+      expect(elements.length).toBeGreaterThanOrEqual(1)
+    })
   })
 
   it('renders Recipes page on /recipes', async () => {

@@ -20,6 +20,8 @@ interface AppContextState {
     refreshBudgetData: () => Promise<void>
     blurFinances: boolean
     toggleBlurFinances: () => void
+    sidebarOrder: string[]
+    setSidebarOrder: (order: string[]) => void
 }
 
 const AppContext = createContext<AppContextState>({
@@ -39,6 +41,8 @@ const AppContext = createContext<AppContextState>({
     refreshBudgetData: async () => {},
     blurFinances: false,
     toggleBlurFinances: () => {},
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: () => {},
 })
 
 export const AppProvider = ({ children }) => {
@@ -48,7 +52,27 @@ export const AppProvider = ({ children }) => {
     const [recipesData, setRecipesData] = useState<RecipesData>(INIT_RECIPES_DATA)
     const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
     const [blurFinances, setBlurFinances] = useState<boolean>(() => localStorage.getItem('blurFinances') === 'true')
+    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget']
+    const [sidebarOrder, setSidebarOrderState] = useState<string[]>(() => {
+        const stored = localStorage.getItem('sidebarOrder')
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored)
+                const defaultSet = new Set(defaultOrder)
+                const storedSet = new Set(parsed)
+                if (parsed.length === defaultOrder.length && defaultOrder.every((p) => storedSet.has(p)) && parsed.every((p: string) => defaultSet.has(p))) {
+                    return parsed
+                }
+            } catch { /* fall through */ }
+        }
+        return defaultOrder
+    })
     const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData } = useIpcRenderer()
+
+    const setSidebarOrder = useCallback((order: string[]) => {
+        setSidebarOrderState(order)
+        localStorage.setItem('sidebarOrder', JSON.stringify(order))
+    }, [])
 
     const toggleBlurFinances = useCallback(() => {
         setBlurFinances((prev) => {
@@ -134,6 +158,8 @@ export const AppProvider = ({ children }) => {
         refreshBudgetData,
         blurFinances,
         toggleBlurFinances,
+        sidebarOrder,
+        setSidebarOrder,
     }
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

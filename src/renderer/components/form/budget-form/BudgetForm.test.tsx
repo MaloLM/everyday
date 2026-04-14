@@ -3,6 +3,13 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BudgetData } from '../../../utils'
 
+vi.mock('../../../context', () => ({
+    useAppContext: vi.fn().mockReturnValue({
+        blurFinances: false,
+        toggleBlurFinances: vi.fn(),
+    }),
+}))
+
 vi.mock('../../DonutChart', () => ({
     DonutChart: () => <div data-testid="donut-chart" />,
 }))
@@ -41,7 +48,7 @@ describe('BudgetForm', () => {
 
     it('shows Save button', () => {
         render(<BudgetForm budgetData={emptyData} onSave={vi.fn()} />)
-        expect(screen.getByText('Save')).toBeInTheDocument()
+        expect(screen.getByTitle('Save budget')).toBeInTheDocument()
     })
 
     it('shows empty messages when no data', () => {
@@ -66,7 +73,7 @@ describe('BudgetForm', () => {
     it('calls onSave when form is submitted', async () => {
         const onSave = vi.fn().mockResolvedValue(undefined)
         render(<BudgetForm budgetData={emptyData} onSave={onSave} />)
-        const saveButton = screen.getByText('Save')
+        const saveButton = screen.getByTitle('Save budget')
         await userEvent.click(saveButton)
         await waitFor(() => {
             expect(onSave).toHaveBeenCalled()

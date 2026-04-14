@@ -15,6 +15,10 @@ vi.mock('../context', () => ({
     recipesData: { recipes: [] },
     setRecipesData: vi.fn(),
     refreshRecipesData: vi.fn().mockResolvedValue(undefined),
+    blurFinances: false,
+    toggleBlurFinances: vi.fn(),
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: vi.fn(),
   }),
 }))
 
@@ -47,9 +51,11 @@ function renderPage() {
 }
 
 describe('NetWorthAssessment', () => {
-  it('renders the page title', () => {
+  it('renders the page title', async () => {
     renderPage()
-    expect(screen.getByText('Net Worth Assessment')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Net Worth Assessment')).toBeInTheDocument()
+    })
   })
 
   it('renders NwForm when data is loaded', async () => {

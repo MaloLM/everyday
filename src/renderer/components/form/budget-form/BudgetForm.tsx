@@ -6,7 +6,7 @@ import {
     computeNetIncome, computeTotalExpenses,
 } from '../../../utils'
 import { Button, Card } from '../..'
-import { ClipboardCopy, Save } from 'lucide-react'
+import { ClipboardCopy, Eye, EyeOff, Save } from 'lucide-react'
 import { SelectorField } from '../SelectorField'
 import { BudgetExpenseList } from './BudgetExpenseList'
 import { BudgetIncomeList } from './BudgetIncomeList'
@@ -15,6 +15,7 @@ import { BudgetTagFilter } from './BudgetTagFilter'
 import { buildBudgetIncomesMarkdown, buildBudgetExpensesMarkdown } from './budgetMarkdown'
 import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import toast from 'react-hot-toast'
+import { useAppContext } from '../../../context'
 
 interface BudgetFormProps {
     budgetData: BudgetData
@@ -22,6 +23,7 @@ interface BudgetFormProps {
 }
 
 export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
+    const { blurFinances, toggleBlurFinances } = useAppContext()
     const [activeTag, setActiveTag] = useState<string | null>(null)
     const [formKey, setFormKey] = useState(0)
 
@@ -92,6 +94,24 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
 
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <h1 className="font-serif text-4xl font-medium tracking-wider">Budgeting</h1>
+                            <Button type="submit" filled={!dirty} title="Save budget" className="flex items-center gap-2 px-4">
+                                <Save size={16} />
+                                Save
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={toggleBlurFinances}
+                                title={blurFinances ? 'Show amounts' : 'Hide amounts'}
+                                className={`rounded-lg border p-2 transition-colors ${blurFinances
+                                    ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
+                                    : 'border-softWhite/20 text-softWhite/50 hover:text-softWhite'
+                                }`}
+                            >
+                                {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         <Card
                             title="Monthly Summary"
                             titleButton={
@@ -207,13 +227,6 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
                                     />
                                 </Card>
                             </div>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Button type="submit" filled={!dirty} className="flex items-center gap-2 px-4">
-                                <Save size={16} />
-                                Save
-                            </Button>
                         </div>
                     </Form>
                 )

@@ -2,12 +2,13 @@ import { Form, Formik } from 'formik'
 import { useEffect, useRef, useState } from 'react'
 import { TamFormResponse, TamFormSchema, ChartData, TamFormData, parseToChartData } from '../../../utils'
 import { Button, Card } from '../..'
-import { ClipboardCopy, Save } from 'lucide-react'
+import { ClipboardCopy, Eye, EyeOff, Save } from 'lucide-react'
 import { TamDonutChart } from './TamDonutChart'
 import { TamBarChart } from './TamBarChart'
 import { buildTargetAllocationMarkdown } from './tamMarkdown'
 import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import toast from 'react-hot-toast'
+import { useAppContext } from '../../../context'
 import { ErrorMessages } from '../../utils/ErrorMessage'
 import { AssetList } from './AssetList'
 import { BudgetCurrencyForm } from './BudgetCurrencyForm'
@@ -20,6 +21,7 @@ interface TamFormProps {
 }
 
 export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFormProps) => {
+    const { blurFinances, toggleBlurFinances } = useAppContext()
     const formRef = useRef<HTMLDivElement>(null)
     const [chartData, setChartData] = useState<ChartData>({} as ChartData)
     useEffect(() => {
@@ -73,36 +75,48 @@ export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFor
                 })
             }}
         >
-            {({ values, errors, handleSubmit, setFieldValue, isValid }) => {
+            {({ values, errors, dirty, handleSubmit, setFieldValue, isValid, resetForm }) => {
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <h1 className="font-serif text-4xl font-medium tracking-wider">Target Allocation Maintenance</h1>
+                            <Button onClick={() => { saveConfig(values); resetForm({ values }) }} filled={!dirty} title="Save configuration" className="flex items-center gap-2 px-4">
+                                <Save size={16} />
+                                Save
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={toggleBlurFinances}
+                                title={blurFinances ? 'Show amounts' : 'Hide amounts'}
+                                className={`rounded-lg border p-2 transition-colors ${blurFinances
+                                    ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
+                                    : 'border-softWhite/20 text-softWhite/50 hover:text-softWhite'
+                                }`}
+                            >
+                                {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         <Card
                             className=" relative "
                             title="Current Allocation"
                             titleButton={
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        title="Copy as markdown"
-                                        onClick={() =>
-                                            copyMarkdownToClipboard(
-                                                buildTargetAllocationMarkdown({
-                                                    assets: values.assets,
-                                                    currency: values.currency,
-                                                    budget: Number(values.budget) || 0,
-                                                }),
-                                                'Current allocation copied to clipboard'
-                                            )
-                                        }
-                                        className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
-                                    >
-                                        <ClipboardCopy size={14} /> Copy
-                                    </button>
-                                    <Button onClick={() => saveConfig(values)}>
-                                        {' '}
-                                        <Save size={20} />
-                                    </Button>
-                                </div>
+                                <button
+                                    type="button"
+                                    title="Copy as markdown"
+                                    onClick={() =>
+                                        copyMarkdownToClipboard(
+                                            buildTargetAllocationMarkdown({
+                                                assets: values.assets,
+                                                currency: values.currency,
+                                                budget: Number(values.budget) || 0,
+                                            }),
+                                            'Current allocation copied to clipboard'
+                                        )
+                                    }
+                                    className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                                >
+                                    <ClipboardCopy size={14} /> Copy
+                                </button>
                             }
                         >
                             <div

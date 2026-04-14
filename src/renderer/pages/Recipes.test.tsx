@@ -15,6 +15,10 @@ vi.mock('../context', () => ({
     recipesData: { recipes: [] },
     setRecipesData: vi.fn(),
     refreshRecipesData: vi.fn().mockResolvedValue(undefined),
+    blurFinances: false,
+    toggleBlurFinances: vi.fn(),
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: vi.fn(),
   }),
 }))
 

@@ -15,6 +15,10 @@ vi.mock('../context', () => ({
     recipesData: { recipes: [] },
     setRecipesData: vi.fn(),
     refreshRecipesData: vi.fn().mockResolvedValue(undefined),
+    blurFinances: false,
+    toggleBlurFinances: vi.fn(),
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: vi.fn(),
   }),
 }))
 
@@ -47,9 +51,11 @@ function renderPage() {
 }
 
 describe('RecurringPurchases', () => {
-  it('renders the page title', () => {
+  it('renders the page title', async () => {
     renderPage()
-    expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
+    })
   })
 
   it('renders the Annual Summary card', async () => {
@@ -76,7 +82,7 @@ describe('RecurringPurchases', () => {
   it('shows Save button', async () => {
     renderPage()
     await waitFor(() => {
-      expect(screen.getByText('Save')).toBeInTheDocument()
+      expect(screen.getByTitle('Save purchases')).toBeInTheDocument()
     })
   })
 })

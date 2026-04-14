@@ -19,6 +19,10 @@ vi.mock('../context', () => ({
     recipesData: { recipes: [] },
     setRecipesData: vi.fn(),
     refreshRecipesData: vi.fn().mockResolvedValue(undefined),
+    blurFinances: false,
+    toggleBlurFinances: vi.fn(),
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+    setSidebarOrder: vi.fn(),
   }),
 }))
 
@@ -51,9 +55,11 @@ function renderPage() {
 }
 
 describe('TargetAllocationMaintenance', () => {
-  it('renders the page title', () => {
+  it('renders the page title', async () => {
     renderPage()
-    expect(screen.getByText('Target Allocation Maintenance')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Target Allocation Maintenance')).toBeInTheDocument()
+    })
   })
 
   it('renders TamForm when data is loaded', async () => {

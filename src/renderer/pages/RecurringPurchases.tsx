@@ -15,7 +15,6 @@ export const RecurringPurchases = () => {
 
     return (
         <div className="flex h-full flex-col">
-            <h1 className="mb-5 font-serif text-4xl font-medium tracking-wider">Recurring Purchases</h1>
             {!isLoaded ? (
                 <Loading />
             ) : (

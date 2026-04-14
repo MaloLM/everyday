@@ -37,7 +37,6 @@ export const NetWorthAssessment = () => {
 
     return (
         <div className="flex h-full flex-col">
-            <h1 className="mb-5 font-serif text-4xl font-medium tracking-wider">Net Worth Assessment</h1>
             {isLoading ? (
                 <Loading />
             ) : (

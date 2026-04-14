@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, BarChartBig, ChefHat, Eye, EyeOff, Home, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, GripVertical, Home, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
 
 const navItems: { path: string; altPaths: string[]; label: string; icon: typeof Home }[] = [
@@ -12,11 +12,18 @@ const navItems: { path: string; altPaths: string[]; label: string; icon: typeof 
     { path: '/budget', altPaths: [], label: 'Budgeting', icon: PiggyBank },
 ]
 
+const navItemsByPath = new Map(navItems.map((item) => [item.path, item]))
+
 export const Sidebar = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
-    const { blurFinances, toggleBlurFinances } = useAppContext()
+    const [reordering, setReordering] = useState(false)
+    const [dragIndex, setDragIndex] = useState<number | null>(null)
+    const [overIndex, setOverIndex] = useState<number | null>(null)
+    const { sidebarOrder, setSidebarOrder } = useAppContext()
     const navigate = useNavigate()
     const location = useLocation()
+
+    const orderedItems = sidebarOrder.map((path) => navItemsByPath.get(path)).filter(Boolean)
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen)
@@ -30,20 +37,39 @@ export const Sidebar = () => {
     const isActive = (item: (typeof navItems)[0]) =>
         location.pathname === item.path || item.altPaths.includes(location.pathname)
 
+    const handleDragStart = (index: number) => (e: React.DragEvent) => {
+        setDragIndex(index)
+        e.dataTransfer.effectAllowed = 'move'
+    }
+
+    const handleDragOver = (index: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+        setOverIndex(index)
+    }
+
+    const handleDrop = (index: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        if (dragIndex === null || dragIndex === index) {
+            setDragIndex(null)
+            setOverIndex(null)
+            return
+        }
+        const newItems = [...orderedItems]
+        const [moved] = newItems.splice(dragIndex, 1)
+        newItems.splice(index, 0, moved)
+        setSidebarOrder(newItems.map((item) => item.path))
+        setDragIndex(null)
+        setOverIndex(null)
+    }
+
+    const handleDragEnd = () => {
+        setDragIndex(null)
+        setOverIndex(null)
+    }
+
     return (
         <>
-            <button
-                onClick={toggleBlurFinances}
-                type="button"
-                title={blurFinances ? 'Show amounts' : 'Hide amounts'}
-                className={`fixed right-3 top-3 z-50 rounded-lg border p-2 transition-colors
-                    ${blurFinances
-                        ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
-                        : 'border-lightNobleBlack bg-lightNobleBlack text-softWhite/50 hover:text-softWhite'
-                    }`}
-            >
-                {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
             {isSidebarOpen && (
                 <div className="fixed inset-0 z-30" onClick={() => setSidebarOpen(false)} />
             )}
@@ -70,20 +96,33 @@ export const Sidebar = () => {
                 <div className="sidebar-glass flex h-full flex-col overflow-y-auto border-r border-white/10 px-3 py-4">
                     <div className="mb-4 px-2.5 font-serif text-xl font-medium tracking-widest text-nobleGold">Everyday</div>
                     <ul className="space-y-1 font-medium">
-                        {navItems.map((item) => {
+                        {orderedItems.map((item, index) => {
                             const active = isActive(item)
                             const Icon = item.icon
                             return (
-                                <li key={item.path}>
+                                <li
+                                    key={item.path}
+                                    draggable={reordering}
+                                    onDragStart={reordering ? handleDragStart(index) : undefined}
+                                    onDragOver={reordering ? handleDragOver(index) : undefined}
+                                    onDrop={reordering ? handleDrop(index) : undefined}
+                                    onDragEnd={reordering ? handleDragEnd : undefined}
+                                    className={`transition-opacity ${dragIndex === index ? 'opacity-30' : ''} ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}
+                                >
                                     <a
-                                        onClick={() => navigateToPath(item.path)}
+                                        onClick={() => !reordering && navigateToPath(item.path)}
                                         className={`flex cursor-pointer items-center rounded-lg p-2.5
                                             ${active
                                                 ? 'bg-nobleGold/15 text-nobleGold'
                                                 : 'text-softWhite/70 hover:text-softWhite'
                                             }`}
                                     >
-                                        <Icon size={20} className={active ? 'text-nobleGold' : 'opacity-60'} />
+                                        {reordering && (
+                                            <div className="shrink-0 cursor-grab text-softWhite/30 hover:text-softWhite/60 active:cursor-grabbing">
+                                                <GripVertical size={16} />
+                                            </div>
+                                        )}
+                                        <Icon size={20} className={`${reordering ? 'ms-1' : ''} ${active ? 'text-nobleGold' : 'opacity-60'}`} />
                                         <span className="ms-3">{item.label}</span>
                                     </a>
                                 </li>
@@ -92,11 +131,11 @@ export const Sidebar = () => {
                     </ul>
                     <div className="mt-auto border-t border-white/10 pt-3">
                         <button
-                            onClick={toggleBlurFinances}
-                            className={`flex w-full cursor-pointer items-center rounded-lg p-2.5 ${blurFinances ? 'text-nobleGold' : 'text-softWhite/70 hover:text-softWhite'}`}
+                            onClick={() => setReordering((r) => !r)}
+                            className={`flex w-full cursor-pointer items-center rounded-lg p-2.5 ${reordering ? 'text-nobleGold' : 'text-softWhite/70 hover:text-softWhite'}`}
                         >
-                            {blurFinances ? <EyeOff size={20} /> : <Eye size={20} className="opacity-60" />}
-                            <span className="ms-3">{blurFinances ? 'Show amounts' : 'Hide amounts'}</span>
+                            <ArrowDownUp size={20} className={reordering ? '' : 'opacity-60'} />
+                            <span className="ms-3">{reordering ? 'Done reordering' : 'Reorder menu'}</span>
                         </button>
                     </div>
                 </div>

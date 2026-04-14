@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import { NetWorthData, NetWorthEntry, NwEntrySchema, CURRENCIES, computeNetWorth } from '../../../utils'
 import { Button, Card } from '../..'
-import { Save, X as XIcon } from 'lucide-react'
-import { SelectorField } from '..'
+import { Eye, EyeOff, Save } from 'lucide-react'
 import { NwItemList } from './NwItemList'
 import { NwEntryList } from './NwEntryList'
 import { NwLineChart } from './NwLineChart'
 import toast from 'react-hot-toast'
+import { useAppContext } from '../../../context'
 import { ErrorMessages } from '../../utils/ErrorMessage'
 
 interface NwFormProps {
@@ -22,6 +22,7 @@ const cloneItemsWithNewIds = (items: NetWorthEntry['items']) =>
     items.map((item) => ({ ...item, id: crypto.randomUUID() }))
 
 export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
+    const { blurFinances, toggleBlurFinances } = useAppContext()
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
     const [formKey, setFormKey] = useState(0)
 
@@ -59,48 +60,71 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
     }
 
     return (
-        <div className="flex flex-col gap-5">
-            <Card title="Net Worth Evolution">
-                <NwLineChart entries={nwData.entries} currency={nwData.currency} />
-            </Card>
+        <Formik
+            key={formKey}
+            initialValues={getInitialValues()}
+            validationSchema={NwEntrySchema}
+            onSubmit={async (values) => {
+                const entry: NetWorthEntry = {
+                    id: selectedEntryId || crypto.randomUUID(),
+                    date: values.date,
+                    items: values.items.map((item) => ({
+                        ...item,
+                        estimatedValue: Number(item.estimatedValue),
+                    })),
+                }
+                await onSaveEntry(entry)
+                setSelectedEntryId(entry.id)
+                toast.success('Entry saved')
+            }}
+        >
+            {({ values, errors, dirty, handleSubmit, setFieldValue }) => {
+                const total = computeNetWorth({ id: '', date: '', items: values.items.map((i) => ({ ...i, estimatedValue: Number(i.estimatedValue) || 0 })) })
+                const currencySymbol = CURRENCIES.get(nwData.currency) || nwData.currency
+                return (
+                    <div className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <h1 className="font-serif text-4xl font-medium tracking-wider">Net Worth Assessment</h1>
+                            <Button type="submit" filled={!dirty} title="Save entry" className="flex items-center gap-2 px-4" onClick={() => handleSubmit()}>
+                                <Save size={16} />
+                                Save
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={toggleBlurFinances}
+                                title={blurFinances ? 'Show amounts' : 'Hide amounts'}
+                                className={`rounded-lg border p-2 transition-colors ${blurFinances
+                                    ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
+                                    : 'border-softWhite/20 text-softWhite/50 hover:text-softWhite'
+                                }`}
+                            >
+                                {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                        <Card title="Net Worth Evolution">
+                            <NwLineChart entries={nwData.entries} currency={nwData.currency} />
+                        </Card>
 
-            <Card title="Audit Entry">
-                <div className="flex flex-col gap-5 lg:flex-row">
-                    <div className="w-full lg:w-1/3">
-                        <NwEntryList
-                            entries={nwData.entries}
-                            currency={nwData.currency}
-                            selectedEntryId={selectedEntryId}
-                            onSelectEntry={handleSelectEntry}
-                            onNewEntry={handleNewEntry}
-                            onDeleteEntry={handleDelete}
-                        />
-                    </div>
+                        <Card title="Audit Entry">
+                            <div className="flex flex-col gap-5 lg:flex-row">
+                                <div className="w-full lg:w-1/3">
+                                    <NwEntryList
+                                        entries={nwData.entries}
+                                        currency={nwData.currency}
+                                        selectedEntryId={selectedEntryId}
+                                        onSelectEntry={handleSelectEntry}
+                                        onNewEntry={handleNewEntry}
+                                        onDeleteEntry={handleDelete}
+                                    />
+                                </div>
 
-                    <div className="w-full lg:w-2/3">
-                        <Formik
-                            key={formKey}
-                            initialValues={getInitialValues()}
-                            validationSchema={NwEntrySchema}
-                            onSubmit={async (values) => {
-                                const entry: NetWorthEntry = {
-                                    id: selectedEntryId || crypto.randomUUID(),
-                                    date: values.date,
-                                    items: values.items.map((item) => ({
-                                        ...item,
-                                        estimatedValue: Number(item.estimatedValue),
-                                    })),
-                                }
-                                await onSaveEntry(entry)
-                                setSelectedEntryId(entry.id)
-                                toast.success(selectedEntryId ? 'Entry updated' : 'Entry created')
-                            }}
-                        >
-                            {({ values, errors, dirty, handleSubmit, setFieldValue }) => {
-                                const total = computeNetWorth({ id: '', date: '', items: values.items.map((i) => ({ ...i, estimatedValue: Number(i.estimatedValue) || 0 })) })
-                                const currencySymbol = CURRENCIES.get(nwData.currency) || nwData.currency
-                                return (
+                                <div className="w-full lg:w-2/3">
                                     <Form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-sm font-medium ${selectedEntryId ? 'text-softWhite/60' : 'text-nobleGold'}`}>
+                                                {selectedEntryId ? `Editing entry — ${values.date}` : 'New entry'}
+                                            </span>
+                                        </div>
                                         <div className="flex items-center gap-4">
                                             <div className="flex flex-col">
                                                 <label className="text-xs text-softWhite opacity-50">Date</label>
@@ -128,26 +152,13 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
                                         {errors.items && typeof errors.items === 'string' && (
                                             <ErrorMessages errorMessages={[errors.items]} />
                                         )}
-
-                                        <div className="flex gap-2">
-                                            <Button type="submit" filled={!dirty} className="flex items-center gap-2 px-4">
-                                                <Save size={16} />
-                                                {selectedEntryId ? 'Update' : 'Save'}
-                                            </Button>
-                                            {selectedEntryId && (
-                                                <Button onClick={handleNewEntry} className="flex items-center gap-1 px-4">
-                                                    <XIcon size={16} />
-                                                    Cancel
-                                                </Button>
-                                            )}
-                                        </div>
                                     </Form>
-                                )
-                            }}
-                        </Formik>
+                                </div>
+                            </div>
+                        </Card>
                     </div>
-                </div>
-            </Card>
-        </div>
+                )
+            }}
+        </Formik>
     )
 }

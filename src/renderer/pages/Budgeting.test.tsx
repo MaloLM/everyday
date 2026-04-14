@@ -18,6 +18,10 @@ vi.mock('../context', () => ({
         budgetData: { expenses: [], incomes: [], currency: 'EUR' },
         setBudgetData: vi.fn(),
         refreshBudgetData: vi.fn().mockResolvedValue(undefined),
+        blurFinances: false,
+        toggleBlurFinances: vi.fn(),
+        sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget'],
+        setSidebarOrder: vi.fn(),
     }),
 }))
 
@@ -54,9 +58,11 @@ function renderPage() {
 }
 
 describe('Budgeting', () => {
-    it('renders the page title', () => {
+    it('renders the page title', async () => {
         renderPage()
-        expect(screen.getByText('Budgeting')).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.getByText('Budgeting')).toBeInTheDocument()
+        })
     })
 
     it('renders the Monthly Summary card', async () => {
@@ -83,7 +89,7 @@ describe('Budgeting', () => {
     it('shows Save button', async () => {
         renderPage()
         await waitFor(() => {
-            expect(screen.getByText('Save')).toBeInTheDocument()
+            expect(screen.getByTitle('Save budget')).toBeInTheDocument()
         })
     })
 })

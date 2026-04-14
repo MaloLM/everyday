@@ -7,12 +7,13 @@ import {
 } from '../../../utils'
 import type { DisplayUnit } from '../../../utils/constants'
 import { Button, Card } from '../..'
-import { ClipboardCopy, Save } from 'lucide-react'
+import { ClipboardCopy, Eye, EyeOff, Save } from 'lucide-react'
 import { RpItemList } from './RpItemList'
 import { RpTagFilter } from './RpTagFilter'
 import { buildRecurringPurchasesMarkdown } from './rpMarkdown'
 import { copyMarkdownToClipboard } from '../../../utils/clipboard'
 import toast from 'react-hot-toast'
+import { useAppContext } from '../../../context'
 
 interface RpFormProps {
     rpData: RecurringPurchasesData
@@ -20,6 +21,7 @@ interface RpFormProps {
 }
 
 export const RpForm = ({ rpData, onSave }: RpFormProps) => {
+    const { blurFinances, toggleBlurFinances } = useAppContext()
     const [activeTag, setActiveTag] = useState<string | null>(null)
     const [formKey, setFormKey] = useState(0)
     const [displayUnit, setDisplayUnit] = useState<DisplayUnit>('year')
@@ -76,6 +78,24 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
 
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <h1 className="font-serif text-4xl font-medium tracking-wider">Recurring Purchases</h1>
+                            <Button type="submit" filled={!dirty} title="Save purchases" className="flex items-center gap-2 px-4">
+                                <Save size={16} />
+                                Save
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={toggleBlurFinances}
+                                title={blurFinances ? 'Show amounts' : 'Hide amounts'}
+                                className={`rounded-lg border p-2 transition-colors ${blurFinances
+                                    ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
+                                    : 'border-softWhite/20 text-softWhite/50 hover:text-softWhite'
+                                }`}
+                            >
+                                {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                         <Card
                             title={displayUnit === 'year' ? 'Annual Summary' : `Summary ${DISPLAY_UNIT_LABELS[displayUnit]}`}
                             titleButton={
@@ -141,13 +161,6 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                 setFieldValue={setFieldValue}
                                 displayUnit={displayUnit}
                             />
-
-                            <div className="flex gap-2 pt-2">
-                                <Button type="submit" filled={!dirty} className="flex items-center gap-2 px-4">
-                                    <Save size={16} />
-                                    Save
-                                </Button>
-                            </div>
                         </Card>
                     </Form>
                 )
