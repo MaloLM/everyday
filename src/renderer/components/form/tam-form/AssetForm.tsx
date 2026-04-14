@@ -22,7 +22,7 @@ export const AssetForm = (props: AssetFormProps) => {
         ${props.className}`}
         >
             <NumberField
-                className="mx-2 font-bold "
+                className="mx-2 font-bold fin-value"
                 name={`assets[${props.assetIndex}].quantityOwned`}
                 tooltip="Quantity Owned"
             />
