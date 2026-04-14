@@ -43,7 +43,7 @@ function createWindow() {
         responseHeaders: {
           ...details.responseHeaders,
           'Content-Security-Policy': [
-            "default-src 'self'; script-src 'self'; connect-src 'self' ws://localhost:8080; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'"
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' ws://localhost:8080; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'"
           ],
         },
       });

@@ -40,7 +40,7 @@ module.exports = {
     filename: '[name].bundle.js',
     chunkFilename: '[name].[contenthash:8].chunk.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: './',
+    publicPath: '/',
   },
   optimization: {
     splitChunks: {
