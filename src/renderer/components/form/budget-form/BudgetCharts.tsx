@@ -121,12 +121,12 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             : { maximumFractionDigits: 0 })
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-evenly">
             <div className="flex flex-col items-center gap-2">
                 <h3 className="text-sm font-medium text-softWhite/70">Income vs Expenses</h3>
-                <div className="relative flex items-center justify-center w-48 h-48">
+                <div className="relative flex items-center justify-center w-44 h-44">
                     <div className="fin-chart h-full w-full"><DonutChart data={balanceData} /></div>
-                    <span className={`fin-value absolute text-lg font-bold ${totalExpenses > netIncome ? 'text-error' : 'text-nobleGold'}`}>
+                    <span className={`fin-value absolute text-sm font-bold ${totalExpenses > netIncome ? 'text-error' : 'text-nobleGold'}`}>
                         {netIncome === 0 && totalExpenses === 0
                             ? '—'
                             : `${totalExpenses > netIncome ? '-' : '+'}${formatAmount(Math.abs(netIncome - totalExpenses))} ${currencySymbol}`}

@@ -165,68 +165,64 @@ export const BudgetForm = ({ budgetData, onSave }: BudgetFormProps) => {
                             </div>
                         </Card>
 
-                        <div className="flex flex-col gap-5 lg:flex-row">
-                            <div className="flex flex-1 flex-col gap-5">
-                                <Card
-                                    title="Income"
-                                    titleButton={
-                                        <button
-                                            type="button"
-                                            title="Copy incomes as markdown"
-                                            onClick={() =>
-                                                copyMarkdownToClipboard(
-                                                    buildBudgetIncomesMarkdown(normalizedIncomes, values.currency),
-                                                    'Income copied to clipboard'
-                                                )
-                                            }
-                                            className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
-                                        >
-                                            <ClipboardCopy size={14} /> Copy
-                                        </button>
-                                    }
-                                >
-                                    <BudgetIncomeList
-                                        values={{ incomes: values.incomes, currency: values.currency }}
-                                        errors={errors}
-                                        setFieldValue={setFieldValue}
-                                    />
-                                </Card>
+                        <Card title="Charts">
+                            <BudgetCharts
+                                incomes={normalizedIncomes}
+                                expenses={normalizedExpenses}
+                                currencySymbol={currencySymbol}
+                            />
+                        </Card>
 
-                                <Card
-                                    title="Expenses"
-                                    titleButton={
-                                        <button
-                                            type="button"
-                                            title="Copy expenses as markdown"
-                                            onClick={() =>
-                                                copyMarkdownToClipboard(
-                                                    buildBudgetExpensesMarkdown(normalizedExpenses, values.currency),
-                                                    'Expenses copied to clipboard'
-                                                )
-                                            }
-                                            className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
-                                        >
-                                            <ClipboardCopy size={14} /> Copy
-                                        </button>
-                                    }
-                                >
-                                    <BudgetExpenseList
-                                        values={{ expenses: values.expenses, currency: values.currency }}
-                                        errors={errors}
-                                        setFieldValue={setFieldValue}
-                                    />
-                                </Card>
-                            </div>
+                        <div className="flex flex-col gap-5">
+                            <Card
+                                title="Income"
+                                titleButton={
+                                    <button
+                                        type="button"
+                                        title="Copy incomes as markdown"
+                                        onClick={() =>
+                                            copyMarkdownToClipboard(
+                                                buildBudgetIncomesMarkdown(normalizedIncomes, values.currency),
+                                                'Income copied to clipboard'
+                                            )
+                                        }
+                                        className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                                    >
+                                        <ClipboardCopy size={14} /> Copy
+                                    </button>
+                                }
+                            >
+                                <BudgetIncomeList
+                                    values={{ incomes: values.incomes, currency: values.currency }}
+                                    errors={errors}
+                                    setFieldValue={setFieldValue}
+                                />
+                            </Card>
 
-                            <div className="lg:w-72">
-                                <Card title="Charts">
-                                    <BudgetCharts
-                                        incomes={normalizedIncomes}
-                                        expenses={normalizedExpenses}
-                                        currencySymbol={currencySymbol}
-                                    />
-                                </Card>
-                            </div>
+                            <Card
+                                title="Expenses"
+                                titleButton={
+                                    <button
+                                        type="button"
+                                        title="Copy expenses as markdown"
+                                        onClick={() =>
+                                            copyMarkdownToClipboard(
+                                                buildBudgetExpensesMarkdown(normalizedExpenses, values.currency),
+                                                'Expenses copied to clipboard'
+                                            )
+                                        }
+                                        className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                                    >
+                                        <ClipboardCopy size={14} /> Copy
+                                    </button>
+                                }
+                            >
+                                <BudgetExpenseList
+                                    values={{ expenses: values.expenses, currency: values.currency }}
+                                    errors={errors}
+                                    setFieldValue={setFieldValue}
+                                />
+                            </Card>
                         </div>
                     </Form>
                 )
