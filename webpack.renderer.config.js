@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+module.exports = (_env, argv) => ({
   mode: 'production',
   target: 'web',
   entry: { renderer: './src/renderer/index.tsx' },
@@ -40,7 +40,7 @@ module.exports = {
     filename: '[name].bundle.js',
     chunkFilename: '[name].[contenthash:8].chunk.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
+    publicPath: argv.mode === 'development' ? '/' : './',
   },
   optimization: {
     splitChunks: {
@@ -56,4 +56,4 @@ module.exports = {
       template: './public/index.html', // Update this path based on your HTML template location
     }),
   ],
-};
+});
