@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import { useIpcRenderer } from '../api/electron'
 import toast from 'react-hot-toast'
-import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA } from '../utils'
+import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA } from '../utils'
 
 interface AppContextState {
     tamData: TamFormData
@@ -15,6 +15,9 @@ interface AppContextState {
     recipesData: RecipesData
     setRecipesData: (data: RecipesData) => void
     refreshRecipesData: () => Promise<void>
+    budgetData: BudgetData
+    setBudgetData: (data: BudgetData) => void
+    refreshBudgetData: () => Promise<void>
 }
 
 const AppContext = createContext<AppContextState>({
@@ -29,6 +32,9 @@ const AppContext = createContext<AppContextState>({
     recipesData: INIT_RECIPES_DATA,
     setRecipesData: () => {},
     refreshRecipesData: async () => {},
+    budgetData: INIT_BUDGET_DATA,
+    setBudgetData: () => {},
+    refreshBudgetData: async () => {},
 })
 
 export const AppProvider = ({ children }) => {
@@ -36,7 +42,8 @@ export const AppProvider = ({ children }) => {
     const [nwData, setNwData] = useState<NetWorthData>(INIT_NW_DATA)
     const [rpData, setRpData] = useState<RecurringPurchasesData>(INIT_RP_DATA)
     const [recipesData, setRecipesData] = useState<RecipesData>(INIT_RECIPES_DATA)
-    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData } = useIpcRenderer()
+    const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
+    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData } = useIpcRenderer()
 
     const refreshNwData = useCallback(async () => {
         try {
@@ -68,6 +75,16 @@ export const AppProvider = ({ children }) => {
         }
     }, [])
 
+    const refreshBudgetData = useCallback(async () => {
+        try {
+            const data = await loadBudgetData()
+            setBudgetData(parseBudgetData(data))
+        } catch (err) {
+            console.error('Failed to load budget data:', err)
+            toast.error('Failed to load budget data')
+        }
+    }, [])
+
     useEffect(() => {
         const handleResponse = (event, responseData) => {
             if (event.error) {
@@ -83,6 +100,7 @@ export const AppProvider = ({ children }) => {
         refreshNwData()
         refreshRpData()
         refreshRecipesData()
+        refreshBudgetData()
         return cleanup
     }, [])
 
@@ -98,6 +116,9 @@ export const AppProvider = ({ children }) => {
         recipesData,
         setRecipesData,
         refreshRecipesData,
+        budgetData,
+        setBudgetData,
+        refreshBudgetData,
     }
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

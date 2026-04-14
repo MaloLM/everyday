@@ -14,6 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
   loadRpData: () => ipcRenderer.invoke('rp:load'),
   saveRpItem: (item) => ipcRenderer.invoke('rp:save-item', item),
   deleteRpItem: (itemId) => ipcRenderer.invoke('rp:delete-item', itemId),
+  loadBudgetData: () => ipcRenderer.invoke('budget:load'),
+  saveBudgetData: (data) => ipcRenderer.invoke('budget:save', data),
   loadRecipesData: () => ipcRenderer.invoke('recipes:load'),
   saveRecipe: (recipe) => ipcRenderer.invoke('recipes:save', recipe),
   deleteRecipe: (recipeId) => ipcRenderer.invoke('recipes:delete', recipeId),

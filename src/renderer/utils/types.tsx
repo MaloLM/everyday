@@ -104,3 +104,25 @@ export interface Recipe {
 export interface RecipesData {
     recipes: Recipe[]
 }
+
+export interface BudgetExpense {
+    id: string
+    label: string
+    value: number
+    details: string
+    tag: string
+}
+
+export interface BudgetIncome {
+    id: string
+    label: string
+    value: number
+    deductionRate: number
+    tag: string
+}
+
+export interface BudgetData {
+    expenses: BudgetExpense[]
+    incomes: BudgetIncome[]
+    currency: string
+}

@@ -222,14 +222,28 @@ ipcMain.handle("recipes:delete", async (event, recipeId) => {
   return data;
 });
 
+// Budget IPC handlers
+
+const BUDGET_FILE = "budget_data.json";
+
+ipcMain.handle("budget:load", async () => {
+  return await readJsonFile(BUDGET_FILE);
+});
+
+ipcMain.handle("budget:save", async (event, data) => {
+  await writeJsonFile(BUDGET_FILE, data);
+  return data;
+});
+
 // Export all data
 
 ipcMain.handle("app:export-all", async () => {
-  const [tam, netWorth, recurringPurchases, recipes] = await Promise.all([
+  const [tam, netWorth, recurringPurchases, recipes, budget] = await Promise.all([
     readJsonFile("tam_form_data.json"),
     readJsonFile(NW_FILE),
     readJsonFile(RP_FILE),
     readJsonFile(RECIPES_FILE),
+    readJsonFile(BUDGET_FILE),
   ]);
   return {
     exportedAt: new Date().toISOString(),
@@ -237,6 +251,7 @@ ipcMain.handle("app:export-all", async () => {
     netWorth,
     recurringPurchases,
     recipes,
+    budget,
   };
 });
 
@@ -246,5 +261,6 @@ ipcMain.handle("app:import-all", async (event, data) => {
     writeJsonFile(NW_FILE, data.netWorth ?? {}),
     writeJsonFile(RP_FILE, data.recurringPurchases ?? {}),
     writeJsonFile(RECIPES_FILE, data.recipes ?? {}),
+    writeJsonFile(BUDGET_FILE, data.budget ?? {}),
   ]);
 });

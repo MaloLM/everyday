@@ -75,3 +75,22 @@ export const RecipeFormSchema = Yup.object().shape({
     cost: Yup.number().nullable().min(1).max(5),
     dishesCost: Yup.number().nullable().min(1).max(5),
 })
+
+const BudgetExpenseSchema = Yup.object().shape({
+    label: Yup.string().required('Label is required').max(50, 'Label must be 50 characters or less'),
+    value: Yup.number().min(0, 'Must be non-negative').required('Value is required'),
+    details: Yup.string().max(200, 'Details must be 200 characters or less'),
+    tag: Yup.string().max(30, 'Tag must be 30 characters or less'),
+})
+
+const BudgetIncomeSchema = Yup.object().shape({
+    label: Yup.string().required('Label is required').max(50, 'Label must be 50 characters or less'),
+    value: Yup.number().min(0, 'Must be non-negative').required('Value is required'),
+    deductionRate: Yup.number().min(0, 'Must be between 0 and 100').max(100, 'Must be between 0 and 100'),
+    tag: Yup.string().max(30, 'Tag must be 30 characters or less'),
+})
+
+export const BudgetFormSchema = Yup.object().shape({
+    expenses: Yup.array().of(BudgetExpenseSchema),
+    incomes: Yup.array().of(BudgetIncomeSchema),
+})

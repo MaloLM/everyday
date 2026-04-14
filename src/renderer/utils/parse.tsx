@@ -1,5 +1,5 @@
-import { ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA } from './constants'
+import { BudgetData, BudgetExpense, BudgetIncome, ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -178,4 +178,39 @@ export function computeAnnualCost(item: RecurringPurchaseItem): number {
 
 export function computeTotalAnnualCost(items: RecurringPurchaseItem[]): number {
     return items.reduce((sum, item) => sum + computeAnnualCost(item), 0)
+}
+
+export function parseBudgetData(input: string | object): BudgetData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || (!data.expenses && !data.incomes)) {
+            return INIT_BUDGET_DATA
+        }
+
+        data.expenses = (data.expenses || []).map((item: any) => ({
+            ...item,
+            id: item.id ?? crypto.randomUUID(),
+        }))
+        data.incomes = (data.incomes || []).map((item: any) => ({
+            ...item,
+            id: item.id ?? crypto.randomUUID(),
+        }))
+
+        return data as BudgetData
+    } catch {
+        return INIT_BUDGET_DATA
+    }
+}
+
+export function computeNetIncome(incomes: BudgetIncome[]): number {
+    return incomes.reduce((sum, income) => {
+        const rate = Number(income.deductionRate) || 0
+        return sum + income.value * (1 - rate / 100)
+    }, 0)
+}
+
+export function computeTotalExpenses(expenses: BudgetExpense[]): number {
+    return expenses.reduce((sum, expense) => sum + expense.value, 0)
 }

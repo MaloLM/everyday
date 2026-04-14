@@ -18,6 +18,9 @@ const RecurringPurchases = lazy(() =>
 const Recipes = lazy(() =>
     import('./pages/Recipes').then(m => ({ default: m.Recipes }))
 )
+const Budgeting = lazy(() =>
+    import('./pages/Budgeting').then(m => ({ default: m.Budgeting }))
+)
 
 const App = () => {
     return (
@@ -32,6 +35,7 @@ const App = () => {
                             <Route path="/nw" element={<NetWorthAssessment />} />
                             <Route path="/rp" element={<RecurringPurchases />} />
                             <Route path="/recipes" element={<Recipes />} />
+                            <Route path="/budget" element={<Budgeting />} />
                             <Route path="*" element={<NotFoundComponent />} />
                         </Routes>
                         </Suspense>

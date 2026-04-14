@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, BarChartBig, ChefHat, Home, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, BarChartBig, ChefHat, Home, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 
 const navItems: { path: string; altPaths: string[]; label: string; icon: typeof Home }[] = [
     { path: '/', altPaths: [], label: 'Home', icon: Home },
@@ -8,6 +8,7 @@ const navItems: { path: string; altPaths: string[]; label: string; icon: typeof 
     { path: '/nw', altPaths: [], label: 'Net Worth Assessment', icon: Wallet },
     { path: '/rp', altPaths: [], label: 'Recurring Purchases', icon: ShoppingCart },
     { path: '/recipes', altPaths: [], label: 'Recipes', icon: ChefHat },
+    { path: '/budget', altPaths: [], label: 'Budgeting', icon: PiggyBank },
 ]
 
 export const Sidebar = () => {
