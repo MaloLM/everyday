@@ -22,20 +22,23 @@ The EVERYDAY app leverages the Electron framework, which allows for a separation
 ### Codebase Structure
 
 -   `src`: The source directory containing all the application code.
-    -   `data`: Stores data files used by the application, such as `tam_form_data.json`, which could contain form data for the Target Allocation Maintenance feature.
     -   `main`: Contains the backend logic of the Electron app.
         -   `main.js`: The entry point for the Electron main process.
         -   `preload.js`: Script that can safely run before the renderer process is loaded.
-        -   `services`: Contains backend services.
+        -   `services`: Contains backend services (file I/O, IPC handlers for each feature's data).
     -   `renderer`: Contains the rendering logic for the Electron app.
-        -   `App.tsx`: The main React component that wraps the entire renderer process UI.
-        -   `api`: Contains API-related code, possibly for communicating between the renderer and main processes.
+        -   `App.tsx`: The main React component that wraps the entire renderer process UI. Defines all routes with lazy-loading.
+        -   `api`: Contains API-related code for communicating between the renderer and main processes via IPC.
         -   `assets`: Static assets like images, logos, etc.
-        -   `components`: Reusable React components.
-        -   `context`: React Contexts for state management across the application.
-        -   `pages`: React components that represent entire pages or routes in the application.
+        -   `components`: Reusable React components organized as follows:
+            -   Root-level shared components: `Button`, `Card`, `Layout`, `Sidebar`, chart wrappers (`BarChart`, `DonutChart`, `LineChart`), `HelpButton`.
+            -   `form/`: Feature-specific form directories (`tam-form/`, `nw-form/`, `rp-form/`, `recipe-form/`, `budget-form/`, `sp-form/`) plus shared form fields (`NumberField`, `TextField`, `SliderField`, `SelectorField`).
+            -   `recipe/`: Recipe display components (`RecipeList`, `RecipeView`, `RecipeMarkdownRenderer`, `RecipeIndicators`).
+            -   `utils/`: Utility components (`CustomToaster`, `Loading`, `ErrorMessage`).
+        -   `context`: React Contexts for state management. `AppContext` centralizes all feature data (TAM, Net Worth, Recurring Purchases, Recipes, Budget, Savings Projects) as well as UI state (sidebar order, finance blur toggle).
+        -   `pages`: Page components for each feature: `Home`, `TargetAllocationMaintenance`, `NetWorthAssessment`, `RecurringPurchases`, `Recipes`, `Budgeting`, `SavingsProjects`, `NotFound`.
         -   `styles`: Contains global CSS files for styling the application.
-        -   `utils`: Utility functions and types for the application.
+        -   `utils`: Utility functions and types — `types.tsx` (TypeScript interfaces), `constants.tsx` (colors, currencies, initial data), `parse.tsx` (data parsers), `form-validation.tsx` (Yup schemas), `clipboard.ts`.
 
 ### Configuration Files
 
@@ -57,22 +60,24 @@ The app is built using a variety of dependencies listed in the project's `packag
 
 -   **Main Dependencies**:
 
-    -   `chart.js`: Charting library used for visualizations like the pie and bar charts.
+    -   `chart.js` + `react-chartjs-2` + `chartjs-adapter-date-fns`: Charting library used for bar charts, donut charts, line charts, and treemaps.
+    -   `date-fns`: Date manipulation and formatting.
     -   `formik`: Library to manage form state in React.
-    -   `fs`: Filesystem module to interact with the file system.
     -   `lucide-react`: React icons library.
-    -   `path`: Utility module to handle file paths.
-    -   `react-chartjs-2`: React wrapper for `chart.js`.
     -   `react-hot-toast`: Library for creating toast notifications.
+    -   `react-markdown` + `remark-gfm`: Markdown rendering with GitHub Flavored Markdown support (used in recipes).
     -   `react-router-dom`: DOM bindings for React Router.
     -   `yup`: Schema builder for value parsing and validation.
 
 -   **Development Dependencies**:
 
-    -   Babel and TypeScript-related packages for compiling JavaScript and TypeScript.
-    -   Electron and Webpack for bundling and running the Electron application.
-    -   TailwindCSS and PostCSS for styling.
-    -   Various loaders and plugins for handling different file types in the Webpack build process.
+    -   `react` + `react-dom`: UI library.
+    -   `typescript`: Type checking.
+    -   `electron` + `electron-builder`: Application framework and packaging.
+    -   `webpack` + `webpack-cli` + `webpack-dev-server`: Bundling and dev server.
+    -   `tailwindcss` + `postcss` + `autoprefixer`: Utility-first CSS framework and tooling.
+    -   `vitest` + `@testing-library/react` + `@testing-library/jest-dom` + `@testing-library/user-event` + `jsdom`: Testing framework and utilities.
+    -   Various loaders (`ts-loader`, `css-loader`, `style-loader`, `postcss-loader`) and plugins (`html-webpack-plugin`, `copy-webpack-plugin`) for Webpack.
 
 ## Setup Development Mode
 
@@ -251,10 +256,13 @@ To add a new feature to the EVERYDAY app, follow these steps which cover changes
 
 1. **API Endpoint**: Add the new endpoint function within the `renderer/api/electron.js` file. This should mirror the structure of existing endpoints to maintain consistency.
 2. **Function Declaration**: Declare the function signature in the `src/type.d.ts` file to provide TypeScript definitions, which will prevent IDE errors related to undefined functions.
-3. **Feature Page**: Create a new page component in the `renderer/pages` directory that will serve as the interface for your new feature. Utilize the newly created API function within this component.
-4. **Routing**: Integrate the new page into the application's routing by adding an entry in the `renderer/App.tsx` file. Assign it a route path that reflects the feature name (e.g., `/feature-name`).
-5. **Sidebar Link**: Add a new link in the `renderer/components/Sidebar.tsx` for easy navigation to your feature. Ensure consistency with existing links and utilize an appropriate icon from the Lucide Icon Library. Icons can be searched and selected from the [Lucide Icon Library](https://lucide.dev/icons/).
-6. **Feature Development**: Develop the feature using existing UI components like `Card`, `Button`, and form `Fields` to ensure a consistent look and feel. For design patterns and component examples, you can reference the [FlowBite Library](https://flowbite.com/docs/getting-started/introduction/). Note that it's not necessary to install FlowBite; it's merely for visual and functional reference.
+3. **Context Integration**: Add state and refresh functions for the new feature's data in `renderer/context/AppContext.tsx`, following the pattern used by existing features (e.g., `budgetData` / `setBudgetData` / `refreshBudgetData`).
+4. **Data Types & Parsing**: Define TypeScript interfaces in `renderer/utils/types.tsx` and add a parser function in `renderer/utils/parse.tsx`. Add Yup validation schemas in `renderer/utils/form-validation.tsx`.
+5. **Feature Page**: Create a new page component in the `renderer/pages` directory that will serve as the interface for your new feature. Utilize the newly created API function within this component.
+6. **Routing**: Integrate the new page into the application's routing by adding a lazy-loaded entry in the `renderer/App.tsx` file. Assign it a route path that reflects the feature name (e.g., `/feature-name`). Follow the existing pattern using `React.lazy()` and `Suspense`.
+7. **Sidebar Link**: Add a new link in the `renderer/components/Sidebar.tsx` for easy navigation to your feature. Ensure consistency with existing links and utilize an appropriate icon from the Lucide Icon Library. Icons can be searched and selected from the [Lucide Icon Library](https://lucide.dev/icons/).
+8. **Feature Development**: Create form components in `renderer/components/form/<feature>-form/` using existing UI components like `Card`, `Button`, and form `Fields` (NumberField, TextField, SliderField, SelectorField) to ensure a consistent look and feel. For design patterns and component examples, you can reference the [FlowBite Library](https://flowbite.com/docs/getting-started/introduction/). Note that it's not necessary to install FlowBite; it's merely for visual and functional reference.
+9. **Tests**: Add `.test.tsx` files next to each component. Add an npm script `"test:<feature>": "vitest run --project renderer <feature>-form"` in `package.json`.
 
 ## External Resources
 

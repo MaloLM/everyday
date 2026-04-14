@@ -3,7 +3,7 @@
 
 ## Introduction
 
-EVERYDAY is a local Electron application designed for everyday use cases. Built with Electron, React, TailwindCSS, Webpack, and TypeScript, this offline app offers multiple tools to assist with various tasks. The app's first feature is the Target Allocation Maintenance, which allows users to manage their asset allocation efficiently.
+EVERYDAY is a local Electron application designed for everyday use cases. Built with Electron, React, TailwindCSS, Webpack, and TypeScript, this offline app offers multiple tools to assist with personal finance management, meal planning, and more. All data stays on your machine.
 
 ## Table of Contents
 
@@ -20,8 +20,14 @@ EVERYDAY is a local Electron application designed for everyday use cases. Built 
 ## Features
 
 -   **Target Allocation Maintenance**: List your assets, set target percentages for each, enter a budget, and get a breakdown of what to buy next to reach your desired allocation.
--   **Net Worth Assessment**: Track net worth over time by creating dated entries with assets and liabilities. Visualize the evolution on a line chart and export it as PNG.
+-   **Net Worth Assessment**: Track net worth over time by creating dated entries with assets and liabilities. Visualize the evolution on a line chart, view asset allocation as a treemap, and export charts as PNG.
 -   **Recurring Purchases**: Log recurring expenses with custom frequencies (daily, weekly, monthly, yearly), organize them with tags and emojis, and see the annualized cost at a glance.
+-   **Recipes**: A personal cookbook to store recipes with ingredients, tools, preparation costs, and markdown instructions with live preview.
+-   **Budgeting**: Plan monthly budgets by listing incomes (with deduction rates) and expenses. Filter by tags and visualize the breakdown with charts.
+-   **Savings Projects**: Define savings goals with a target amount, starting value, and monthly contribution. Track progress over time in a month-by-month table.
+-   **Home & Backup**: A central dashboard with quick access to every tool, plus full data import/export for local backups.
+-   **Privacy Blur**: A global toggle to blur all financial amounts across the app.
+-   **Draggable Sidebar**: Reorder navigation items via drag-and-drop; the order is persisted locally.
 
 ## Installation
 
@@ -41,7 +47,11 @@ For easy local setup, follow the bellow commands (tested on MacOS):
 
 ## Usage
 
-EVERYDAY is organized around three tools, each accessible from the sidebar.
+EVERYDAY is organized around six tools plus a home dashboard, each accessible from the sidebar. The sidebar order can be customized via drag-and-drop.
+
+### Home
+
+The landing page provides quick-access cards to every tool and lets you **export** all local data as a JSON backup or **import** a previously exported backup.
 
 ### Target Allocation Maintenance
 
@@ -49,11 +59,23 @@ Add the assets in your portfolio, set the target percentage for each, then enter
 
 ### Net Worth Assessment
 
-Create timestamped entries listing your assets and liabilities with their estimated values. The app plots a line chart of your net worth over time that you can export as PNG.
+Create timestamped entries listing your assets and liabilities with their estimated values. Optionally set a yield percentage per asset. The app plots a line chart of your net worth over time and an asset allocation treemap, both exportable as PNG.
 
 ### Recurring Purchases
 
 Add recurring expenses with an emoji, a price, a quantity, and a frequency (e.g. every 2 weeks). Tag items to filter and group them. The app calculates the annualized cost of each item and supports 10 currencies.
+
+### Recipes
+
+Store your recipes with a list of ingredients (name, quantity, unit), required tools, estimated preparation cost, and markdown-formatted instructions with live preview. Browse all recipes in a searchable list.
+
+### Budgeting
+
+Create a monthly budget by listing incomes (with an optional deduction rate for taxes/contributions) and expenses. Tag items for filtering, and view the breakdown through interactive charts.
+
+### Savings Projects
+
+Define one or more savings goals with a target amount, starting value, and planned monthly contribution. A month-by-month table shows projected progress toward each goal.
 
 ## Testing
 
@@ -70,6 +92,7 @@ EVERYDAY uses [Vitest](https://vitest.dev/) with [React Testing Library](https:/
 | `npm run test:tam` | TAM feature only |
 | `npm run test:nw` | Net Worth feature only |
 | `npm run test:shared` | Shared/wrapper components (Button, Card, Layout, Sidebar, form fields, Context) |
+| `npm run test:coverage` | All tests with coverage report |
 
 ### Adding tests for a new feature
 
@@ -83,11 +106,16 @@ No Vitest config changes are needed.
 
 EVERYDAY is built using several key technologies and libraries, including:
 
--   Electron (v28.1)
--   React (v18.2.0)
+-   Electron (v39)
+-   React (v18.2)
 -   TailwindCSS (v3.4)
 -   Webpack (v5.89)
 -   TypeScript (v5.3)
+-   Chart.js (v4.4) & react-chartjs-2
+-   Formik & Yup (form state & validation)
+-   react-markdown & remark-gfm (markdown rendering)
+-   date-fns (date utilities)
+-   Vitest & React Testing Library (testing)
 
 For a full list of dependencies, refer to the `package.json` file's `devDependencies` and `dependencies` sections.
 
