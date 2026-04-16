@@ -1,5 +1,5 @@
-import { BudgetData, BudgetExpense, BudgetIncome, ChartData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData, SavingsProject, SavingsProjectsData } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA } from './constants'
+import { BudgetData, BudgetExpense, BudgetIncome, ChartData, ExpenseAnalysisData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData, SavingsProject, SavingsProjectsData } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA } from './constants'
 
 export function parseTamFormData(input: string | object): TamFormData {
     const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
@@ -239,6 +239,30 @@ export function parseSavingsProjectsData(input: string | object): SavingsProject
 export function computeProjectTotal(project: SavingsProject): number {
     return (Number(project.startingValue) || 0) +
         Object.values(project.monthlyContributions).reduce((sum, v) => sum + (Number(v) || 0), 0)
+}
+
+export function parseEaData(input: string | object): ExpenseAnalysisData {
+    const jsonString = typeof input === 'string' ? input : JSON.stringify(input)
+
+    try {
+        const data = JSON.parse(jsonString)
+        if (!data || Object.keys(data).length === 0 || !data.imports) {
+            return INIT_EA_DATA
+        }
+
+        data.imports = data.imports.map((imp: any) => ({
+            ...imp,
+            id: imp.id ?? crypto.randomUUID(),
+            transactions: (imp.transactions || []).map((t: any) => ({
+                ...t,
+                id: t.id ?? crypto.randomUUID(),
+            })),
+        }))
+
+        return data as ExpenseAnalysisData
+    } catch {
+        return INIT_EA_DATA
+    }
 }
 
 export function getMonthColumns(projects: SavingsProject[], extraMonths = 11): string[] {

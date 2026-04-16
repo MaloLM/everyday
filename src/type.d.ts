@@ -19,6 +19,9 @@ declare global {
       saveBudgetData: (data: any) => Promise<any>;
       loadSavingsProjectsData: () => Promise<any>;
       saveSavingsProjectsData: (data: any) => Promise<any>;
+      loadEaData: () => Promise<any>;
+      saveEaImport: (importData: any) => Promise<any>;
+      deleteEaImport: (importId: string) => Promise<any>;
       exportAllData: () => Promise<any>;
       importAllData: (data: any) => Promise<void>;
     };

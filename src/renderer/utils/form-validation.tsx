@@ -106,3 +106,19 @@ const SavingsProjectSchema = Yup.object().shape({
 export const SavingsProjectsFormSchema = Yup.object().shape({
     projects: Yup.array().of(SavingsProjectSchema),
 })
+
+const EaTransactionSchema = Yup.object().shape({
+    description: Yup.string().required('Description is required').max(200, 'Description must be 200 characters or less'),
+    type: Yup.string().max(50, 'Type must be 50 characters or less'),
+    amount: Yup.number().required('Amount is required'),
+    fee: Yup.number().required('Fee is required'),
+    currency: Yup.string().max(10, 'Currency must be 10 characters or less'),
+    tag: Yup.string().max(30, 'Tag must be 30 characters or less'),
+    flagged: Yup.boolean(),
+})
+
+export const EaImportSchema = Yup.object().shape({
+    title: Yup.string().required('Title is required').max(100, 'Title must be 100 characters or less'),
+    bankSource: Yup.string().required('Bank source is required'),
+    transactions: Yup.array().of(EaTransactionSchema),
+})

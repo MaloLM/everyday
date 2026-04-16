@@ -21,6 +21,9 @@ contextBridge.exposeInMainWorld('electron', {
   deleteRecipe: (recipeId) => ipcRenderer.invoke('recipes:delete', recipeId),
   loadSavingsProjectsData: () => ipcRenderer.invoke('sp:load'),
   saveSavingsProjectsData: (data) => ipcRenderer.invoke('sp:save', data),
+  loadEaData: () => ipcRenderer.invoke('ea:load'),
+  saveEaImport: (importData) => ipcRenderer.invoke('ea:save-import', importData),
+  deleteEaImport: (importId) => ipcRenderer.invoke('ea:delete-import', importId),
   exportAllData: () => ipcRenderer.invoke('app:export-all'),
   importAllData: (data) => ipcRenderer.invoke('app:import-all', data),
 });

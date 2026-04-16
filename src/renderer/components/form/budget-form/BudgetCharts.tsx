@@ -1,19 +1,7 @@
 import { useMemo } from 'react'
 import { DonutChart } from '../../DonutChart'
 import { BudgetExpense, BudgetIncome, computeNetIncome, computeTotalExpenses } from '../../../utils'
-import { COLORS } from '../../../utils/constants'
-
-const TAG_COLORS = [
-    '#eccba0',
-    '#a69151',
-    '#ad8851',
-    '#241935',
-    '#8c9364',
-    '#cfc1b2',
-    '#947c5c',
-    '#4c3c24',
-    '#d4c9b3',
-]
+import { COLORS, TAG_COLORS } from '../../../utils/constants'
 
 interface BudgetChartsProps {
     incomes: BudgetIncome[]

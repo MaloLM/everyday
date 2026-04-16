@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import { useIpcRenderer } from '../api/electron'
 import toast from 'react-hot-toast'
-import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA } from '../utils'
+import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, ExpenseAnalysisData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, parseEaData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA } from '../utils'
 
 interface AppContextState {
     tamData: TamFormData
@@ -21,6 +21,9 @@ interface AppContextState {
     spData: SavingsProjectsData
     setSpData: (data: SavingsProjectsData) => void
     refreshSpData: () => Promise<void>
+    eaData: ExpenseAnalysisData
+    setEaData: (data: ExpenseAnalysisData) => void
+    refreshEaData: () => Promise<void>
     blurFinances: boolean
     toggleBlurFinances: () => void
     sidebarOrder: string[]
@@ -45,9 +48,12 @@ const AppContext = createContext<AppContextState>({
     spData: INIT_SP_DATA,
     setSpData: () => {},
     refreshSpData: async () => {},
+    eaData: INIT_EA_DATA,
+    setEaData: () => {},
+    refreshEaData: async () => {},
     blurFinances: false,
     toggleBlurFinances: () => {},
-    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp'],
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea'],
     setSidebarOrder: () => {},
 })
 
@@ -58,8 +64,9 @@ export const AppProvider = ({ children }) => {
     const [recipesData, setRecipesData] = useState<RecipesData>(INIT_RECIPES_DATA)
     const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
     const [spData, setSpData] = useState<SavingsProjectsData>(INIT_SP_DATA)
+    const [eaData, setEaData] = useState<ExpenseAnalysisData>(INIT_EA_DATA)
     const [blurFinances, setBlurFinances] = useState<boolean>(() => localStorage.getItem('blurFinances') === 'true')
-    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp']
+    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea']
     const [sidebarOrder, setSidebarOrderState] = useState<string[]>(() => {
         const stored = localStorage.getItem('sidebarOrder')
         if (stored) {
@@ -74,7 +81,7 @@ export const AppProvider = ({ children }) => {
         }
         return defaultOrder
     })
-    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData, loadSavingsProjectsData } = useIpcRenderer()
+    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData, loadSavingsProjectsData, loadEaData } = useIpcRenderer()
 
     const setSidebarOrder = useCallback((order: string[]) => {
         setSidebarOrderState(order)
@@ -139,6 +146,16 @@ export const AppProvider = ({ children }) => {
         }
     }, [])
 
+    const refreshEaData = useCallback(async () => {
+        try {
+            const data = await loadEaData()
+            setEaData(parseEaData(data))
+        } catch (err) {
+            console.error('Failed to load expense analysis data:', err)
+            toast.error('Failed to load expense analysis data')
+        }
+    }, [])
+
     useEffect(() => {
         const handleResponse = (event, responseData) => {
             if (event.error) {
@@ -156,6 +173,7 @@ export const AppProvider = ({ children }) => {
         refreshRecipesData()
         refreshBudgetData()
         refreshSpData()
+        refreshEaData()
         return cleanup
     }, [])
 
@@ -177,6 +195,9 @@ export const AppProvider = ({ children }) => {
         spData,
         setSpData,
         refreshSpData,
+        eaData,
+        setEaData,
+        refreshEaData,
         blurFinances,
         toggleBlurFinances,
         sidebarOrder,

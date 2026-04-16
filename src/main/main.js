@@ -248,16 +248,49 @@ ipcMain.handle("sp:save", async (event, data) => {
   return data;
 });
 
+// Expense Analysis IPC handlers
+
+const EA_FILE = "expense_analysis_data.json";
+
+ipcMain.handle("ea:load", async () => {
+  return await readJsonFile(EA_FILE);
+});
+
+ipcMain.handle("ea:save-import", async (event, importData) => {
+  let data = await readJsonFile(EA_FILE);
+  if (!data.imports) data = { imports: [] };
+
+  const idx = data.imports.findIndex((i) => i.id === importData.id);
+  if (idx >= 0) {
+    data.imports[idx] = importData;
+  } else {
+    data.imports.push(importData);
+  }
+
+  await writeJsonFile(EA_FILE, data);
+  return data;
+});
+
+ipcMain.handle("ea:delete-import", async (event, importId) => {
+  let data = await readJsonFile(EA_FILE);
+  if (!data.imports) data = { imports: [] };
+
+  data.imports = data.imports.filter((i) => i.id !== importId);
+  await writeJsonFile(EA_FILE, data);
+  return data;
+});
+
 // Export all data
 
 ipcMain.handle("app:export-all", async () => {
-  const [tam, netWorth, recurringPurchases, recipes, budget, savingsProjects] = await Promise.all([
+  const [tam, netWorth, recurringPurchases, recipes, budget, savingsProjects, expenseAnalysis] = await Promise.all([
     readJsonFile("tam_form_data.json"),
     readJsonFile(NW_FILE),
     readJsonFile(RP_FILE),
     readJsonFile(RECIPES_FILE),
     readJsonFile(BUDGET_FILE),
     readJsonFile(SP_FILE),
+    readJsonFile(EA_FILE),
   ]);
   return {
     exportedAt: new Date().toISOString(),
@@ -267,6 +300,7 @@ ipcMain.handle("app:export-all", async () => {
     recipes,
     budget,
     savingsProjects,
+    expenseAnalysis,
   };
 });
 
@@ -278,5 +312,6 @@ ipcMain.handle("app:import-all", async (event, data) => {
     writeJsonFile(RECIPES_FILE, data.recipes ?? {}),
     writeJsonFile(BUDGET_FILE, data.budget ?? {}),
     writeJsonFile(SP_FILE, data.savingsProjects ?? {}),
+    writeJsonFile(EA_FILE, data.expenseAnalysis ?? {}),
   ]);
 });

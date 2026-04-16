@@ -1,4 +1,4 @@
-import { BudgetData, ChartData, NetWorthData, RecurringPurchasesData, RecipesData, SavingsProjectsData, TamFormData } from './types'
+import { BudgetData, ChartData, ExpenseAnalysisData, NetWorthData, RecurringPurchasesData, RecipesData, SavingsProjectsData, TamFormData } from './types'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../tailwind.config'
 
@@ -89,6 +89,22 @@ export const INIT_SP_DATA: SavingsProjectsData = {
     projects: [],
     currency: 'EUR',
 }
+
+export const INIT_EA_DATA: ExpenseAnalysisData = {
+    imports: [],
+}
+
+export const TAG_COLORS = [
+    '#eccba0',
+    '#a69151',
+    '#ad8851',
+    '#241935',
+    '#8c9364',
+    '#cfc1b2',
+    '#947c5c',
+    '#4c3c24',
+    '#d4c9b3',
+]
 
 export const INIT_TAM_DATA: TamFormData = {
     assets: [

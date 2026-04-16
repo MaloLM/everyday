@@ -11,6 +11,7 @@ const mockRefreshRpData = vi.fn()
 const mockRefreshRecipesData = vi.fn()
 const mockRefreshBudgetData = vi.fn()
 const mockRefreshSpData = vi.fn()
+const mockRefreshEaData = vi.fn()
 
 vi.mock('../api/electron', () => ({
     useIpcRenderer: () => ({
@@ -27,6 +28,7 @@ vi.mock('../context', () => ({
         refreshRecipesData: mockRefreshRecipesData,
         refreshBudgetData: mockRefreshBudgetData,
         refreshSpData: mockRefreshSpData,
+        refreshEaData: mockRefreshEaData,
     }),
 }))
 
@@ -60,6 +62,7 @@ describe('Home', () => {
         mockRefreshRecipesData.mockResolvedValue(undefined)
         mockRefreshBudgetData.mockResolvedValue(undefined)
         mockRefreshSpData.mockResolvedValue(undefined)
+        mockRefreshEaData.mockResolvedValue(undefined)
     })
 
     it('renders the page title', () => {
@@ -88,6 +91,7 @@ describe('Home', () => {
         expect(screen.getByText('Net Worth')).toBeInTheDocument()
         expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
         expect(screen.getByText('Recipes')).toBeInTheDocument()
+        expect(screen.getByText('Expense Analysis')).toBeInTheDocument()
     })
 
     it('calls exportAllData on click', async () => {

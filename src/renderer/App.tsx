@@ -24,6 +24,9 @@ const Budgeting = lazy(() =>
 const SavingsProjects = lazy(() =>
     import('./pages/SavingsProjects').then(m => ({ default: m.SavingsProjects }))
 )
+const ExpenseAnalysis = lazy(() =>
+    import('./pages/ExpenseAnalysis').then(m => ({ default: m.ExpenseAnalysis }))
+)
 
 const AppShell = () => {
     const { blurFinances } = useAppContext()
@@ -40,6 +43,8 @@ const AppShell = () => {
                         <Route path="/recipes" element={<Recipes />} />
                         <Route path="/budget" element={<Budgeting />} />
                         <Route path="/sp" element={<SavingsProjects />} />
+                        <Route path="/ea" element={<ExpenseAnalysis />} />
+                        <Route path="/ea/:importId" element={<ExpenseAnalysis />} />
                         <Route path="*" element={<NotFoundComponent />} />
                     </Routes>
                     </Suspense>

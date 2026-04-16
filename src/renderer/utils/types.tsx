@@ -140,3 +140,26 @@ export interface SavingsProjectsData {
     projects: SavingsProject[]
     currency: string
 }
+
+export interface EaTransaction {
+    id: string
+    type: string
+    description: string
+    amount: number
+    fee: number
+    currency: string
+    tag: string
+    flagged: boolean
+}
+
+export interface EaImport {
+    id: string
+    title: string
+    date: string
+    bankSource: string
+    transactions: EaTransaction[]
+}
+
+export interface ExpenseAnalysisData {
+    imports: EaImport[]
+}

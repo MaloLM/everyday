@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, FileSpreadsheet, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
 
 const navItems: { path: string; altPaths: string[]; label: string; icon: typeof Home }[] = [
@@ -11,6 +11,7 @@ const navItems: { path: string; altPaths: string[]; label: string; icon: typeof 
     { path: '/recipes', altPaths: [], label: 'Recipes', icon: ChefHat },
     { path: '/budget', altPaths: [], label: 'Budgeting', icon: PiggyBank },
     { path: '/sp', altPaths: [], label: 'Savings Projects', icon: Landmark },
+    { path: '/ea', altPaths: [], label: 'Expense Analysis', icon: FileSpreadsheet },
 ]
 
 const navItemsByPath = new Map(navItems.map((item) => [item.path, item]))
@@ -36,7 +37,8 @@ export const Sidebar = () => {
     }
 
     const isActive = (item: (typeof navItems)[0]) =>
-        location.pathname === item.path || item.altPaths.includes(location.pathname)
+        location.pathname === item.path || item.altPaths.includes(location.pathname) ||
+        (item.path !== '/' && location.pathname.startsWith(item.path + '/'))
 
     const handleDragStart = (index: number) => (e: React.DragEvent) => {
         setDragIndex(index)

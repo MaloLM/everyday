@@ -18,6 +18,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Net Worth Assessment')).toBeInTheDocument()
     expect(screen.getByText('Recurring Purchases')).toBeInTheDocument()
     expect(screen.getByText('Recipes')).toBeInTheDocument()
+    expect(screen.getByText('Expense Analysis')).toBeInTheDocument()
   })
 
   it('renders a toggle button', () => {

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BarChartBig, ChefHat, Download, Landmark, PiggyBank, ShoppingCart, Upload, Wallet } from 'lucide-react'
+import { BarChartBig, ChefHat, Download, FileSpreadsheet, Landmark, PiggyBank, ShoppingCart, Upload, Wallet } from 'lucide-react'
 import { useIpcRenderer } from '../api/electron'
 import { useAppContext } from '../context'
 import toast from 'react-hot-toast'
@@ -42,12 +42,18 @@ const features = [
         title: 'Savings Projects',
         description: 'Plan and track savings goals. Set objectives, monitor monthly contributions, and watch your projects grow over time.',
     },
+    {
+        path: '/ea',
+        icon: FileSpreadsheet,
+        title: 'Expense Analysis',
+        description: 'Import bank CSV statements, tag and analyze transactions, visualize spending by category with charts.',
+    },
 ]
 
 export const Home = () => {
     const navigate = useNavigate()
     const { exportAllData, importAllData, sendRequestData } = useIpcRenderer()
-    const { refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData } = useAppContext()
+    const { refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData } = useAppContext()
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleExport = async () => {
@@ -71,7 +77,7 @@ export const Home = () => {
             const data = JSON.parse(text)
             await importAllData(data)
             sendRequestData()
-            await Promise.all([refreshNwData(), refreshRpData(), refreshRecipesData(), refreshBudgetData(), refreshSpData()])
+            await Promise.all([refreshNwData(), refreshRpData(), refreshRecipesData(), refreshBudgetData(), refreshSpData(), refreshEaData()])
             toast.success('Data imported successfully')
         } catch {
             toast.error('Failed to import data')

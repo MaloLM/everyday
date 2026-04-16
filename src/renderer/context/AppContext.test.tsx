@@ -17,15 +17,25 @@ vi.mock('../api/electron', () => ({
     loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
     saveRecipe: vi.fn(),
     deleteRecipe: vi.fn(),
+    loadBudgetData: vi.fn().mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' }),
+    saveBudgetData: vi.fn(),
+    loadSavingsProjectsData: vi.fn().mockResolvedValue({ projects: [], currency: 'EUR' }),
+    saveSavingsProjectsData: vi.fn(),
+    loadEaData: vi.fn().mockResolvedValue({ imports: [] }),
+    saveEaImport: vi.fn(),
+    deleteEaImport: vi.fn(),
+    exportAllData: vi.fn().mockResolvedValue({}),
+    importAllData: vi.fn().mockResolvedValue(undefined),
   }),
 }))
 
 function TestConsumer() {
-  const { tamData, nwData } = useAppContext()
+  const { tamData, nwData, eaData } = useAppContext()
   return (
     <div>
       <span data-testid="tam-budget">{tamData?.budget ?? 'loading'}</span>
       <span data-testid="nw-currency">{nwData?.currency ?? 'loading'}</span>
+      <span data-testid="ea-imports">{eaData?.imports?.length ?? 'loading'}</span>
     </div>
   )
 }
@@ -49,5 +59,16 @@ describe('AppContext', () => {
       </AppProvider>
     )
     expect(screen.getByTestId('tam-budget')).toHaveTextContent('loading')
+  })
+
+  it('provides default eaData with empty imports', async () => {
+    render(
+      <AppProvider>
+        <TestConsumer />
+      </AppProvider>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId('ea-imports')).toHaveTextContent('0')
+    })
   })
 })
