@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
@@ -34,6 +34,13 @@ export const ExpenseAnalysis = () => {
         }
         await refreshEaData()
     }
+
+    const handleReorder = useCallback((fromIndex: number, toIndex: number) => {
+        const newImports = [...eaData.imports]
+        const [moved] = newImports.splice(fromIndex, 1)
+        newImports.splice(toIndex, 0, moved)
+        saveEaData({ ...eaData, imports: newImports }).then(() => refreshEaData())
+    }, [eaData, saveEaData, refreshEaData])
 
     if (!isLoaded) {
         return (
@@ -79,6 +86,7 @@ export const ExpenseAnalysis = () => {
                     await saveEaData({ ...eaData, tags })
                     await refreshEaData()
                 }}
+                onReorder={handleReorder}
                 onRefresh={refreshEaData}
             />
         </div>

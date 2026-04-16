@@ -1,12 +1,14 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, Eye, EyeOff, Plus, Upload, X } from 'lucide-react'
+import { Download, Eye, EyeOff, GripVertical, Plus, Upload, X } from 'lucide-react'
 import { EaImport } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
 import { Button, Card } from '..'
 import { EaCsvImportWizard } from './EaCsvImportWizard'
 import { EaExpenseChart } from './EaExpenseChart'
+import { EaEvolutionChart } from './EaEvolutionChart'
 import { useAppContext } from '../../context'
+import { useDragReorder } from '../../hooks/useDragReorder'
 import toast from 'react-hot-toast'
 
 interface EaImportListProps {
@@ -14,15 +16,17 @@ interface EaImportListProps {
     allKnownTags: string[]
     onSaveImport: (importData: EaImport) => Promise<void>
     onSaveTags: (tags: string[]) => Promise<void>
+    onReorder: (fromIndex: number, toIndex: number) => void
     onRefresh: () => Promise<void>
 }
 
-export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, onRefresh }: EaImportListProps) => {
+export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, onReorder, onRefresh }: EaImportListProps) => {
     const navigate = useNavigate()
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const [isImporting, setIsImporting] = useState(false)
     const [newTag, setNewTag] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
 
     const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -61,7 +65,8 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
         URL.revokeObjectURL(url)
     }
 
-    const sortedImports = [...imports].sort((a, b) => b.date.localeCompare(a.date))
+    // Array order is the explicit display order (top = most recent, bottom = oldest)
+    const sortedImports = imports
 
     const allTransactions = imports.flatMap((imp) => imp.transactions)
     const globalCurrency = allTransactions.length > 0
@@ -180,17 +185,26 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
 
             {sortedImports.length > 0 && (
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-                    <div className="flex min-w-0 flex-1 flex-col gap-4">
-                        {sortedImports.map((imp) => {
+                    <div className="flex min-w-0 basis-1/2 flex-col gap-4">
+                        {sortedImports.map((imp, index) => {
                             const total = imp.transactions.reduce((s, t) => s + Math.abs(t.amount), 0)
                             const currency = imp.transactions.length > 0
                                 ? CURRENCIES.get(imp.transactions[0].currency) || imp.transactions[0].currency
                                 : '€'
                             return (
-                                <button
+                                <div
                                     key={imp.id}
+                                    {...dragHandlers(index)}
+                                    className={`flex items-center gap-2 transition-opacity ${
+                                        dragIndex === index ? 'opacity-30' : ''
+                                    } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}
+                                >
+                                <div className="shrink-0 cursor-grab text-softWhite/30 hover:text-softWhite/60 active:cursor-grabbing">
+                                    <GripVertical size={16} />
+                                </div>
+                                <button
                                     onClick={() => navigate(`/ea/${imp.id}`)}
-                                    className="group relative flex flex-col items-start rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left transition-all duration-300 hover:border-nobleGold/30 hover:bg-nobleGold/[0.06]"
+                                    className="group relative flex flex-1 flex-col items-start rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left transition-all duration-300 hover:border-nobleGold/30 hover:bg-nobleGold/[0.06]"
                                 >
                                     <div
                                         className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100"
@@ -214,15 +228,21 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
                                     </div>
                                     <p className="mt-1 text-xs text-softWhite/40">{imp.transactions.length} transactions</p>
                                 </button>
+                                </div>
                             )
                         })}
                     </div>
 
                     {allTransactions.length > 0 && (
-                        <div className="lg:sticky lg:top-4 lg:w-80 lg:shrink-0">
+                        <div className="flex basis-1/2 flex-col gap-4 lg:sticky lg:top-4">
                             <Card title="Overall Expenses">
                                 <EaExpenseChart transactions={allTransactions} currencySymbol={globalCurrency} />
                             </Card>
+                            {sortedImports.length >= 2 && (
+                                <Card title="Spending Evolution">
+                                    <EaEvolutionChart imports={sortedImports} currencySymbol={globalCurrency} />
+                                </Card>
+                            )}
                         </div>
                     )}
                 </div>
