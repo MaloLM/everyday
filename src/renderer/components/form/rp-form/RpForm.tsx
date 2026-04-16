@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Form, Formik } from 'formik'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import {
     RecurringPurchasesData, RecurringPurchaseItem,
     RpFormSchema, CURRENCIES, computeTotalAnnualCost,
@@ -31,6 +32,9 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
         setDisplayUnit(RECURRENCE_UNITS[(idx + 1) % RECURRENCE_UNITS.length])
     }
 
+    const submitRef = useRef<{ dirty: boolean; handleSubmit: () => void } | null>(null)
+    useSaveShortcut(() => { if (submitRef.current?.dirty) submitRef.current.handleSubmit() })
+
     const allTags = [...new Set(rpData.items.map((i) => i.tag).filter(Boolean))]
     const currencySymbol = CURRENCIES.get(rpData.currency) || rpData.currency
 
@@ -60,6 +64,8 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
             }}
         >
             {({ values, errors, dirty, handleSubmit, setFieldValue }) => {
+                submitRef.current = { dirty, handleSubmit }
+
                 const displayItems = activeTag
                     ? values.items.filter((i) => i.tag === activeTag)
                     : values.items

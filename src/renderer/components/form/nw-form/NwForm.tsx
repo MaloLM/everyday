@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Form, Formik } from 'formik'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import { NetWorthData, NetWorthEntry, NwEntrySchema, CURRENCIES, computeNetWorth } from '../../../utils'
 import { Button, Card } from '../..'
 import { Eye, EyeOff, Save } from 'lucide-react'
@@ -26,6 +27,8 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
     const [formKey, setFormKey] = useState(0)
+    const submitRef = useRef<{ dirty: boolean; handleSubmit: () => void } | null>(null)
+    useSaveShortcut(() => { if (submitRef.current?.dirty) submitRef.current.handleSubmit() })
 
     const selectedEntry = nwData.entries.find((e) => e.id === selectedEntryId) || null
 
@@ -81,6 +84,8 @@ export const NwForm = ({ nwData, onSaveEntry, onDeleteEntry }: NwFormProps) => {
             }}
         >
             {({ values, errors, dirty, handleSubmit, setFieldValue }) => {
+                submitRef.current = { dirty, handleSubmit }
+
                 const total = computeNetWorth({ id: '', date: '', items: values.items.map((i) => ({ ...i, estimatedValue: Number(i.estimatedValue) || 0 })) })
                 const currencySymbol = CURRENCIES.get(nwData.currency) || nwData.currency
                 return (

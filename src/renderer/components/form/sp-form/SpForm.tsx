@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Form, Formik } from 'formik'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import {
     SavingsProjectsData,
     SavingsProjectsFormSchema,
@@ -24,6 +25,8 @@ interface SpFormProps {
 export const SpForm = ({ spData, onSave }: SpFormProps) => {
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const [formKey, setFormKey] = useState(0)
+    const submitRef = useRef<{ dirty: boolean; handleSubmit: () => void } | null>(null)
+    useSaveShortcut(() => { if (submitRef.current?.dirty) submitRef.current.handleSubmit() })
 
     return (
         <Formik
@@ -58,6 +61,8 @@ export const SpForm = ({ spData, onSave }: SpFormProps) => {
             }}
         >
             {({ values, dirty, handleSubmit, setFieldValue }) => {
+                submitRef.current = { dirty, handleSubmit }
+
                 const currencySymbol = CURRENCIES.get(values.currency) || values.currency
 
                 const normalizedProjects = values.projects.map((p) => ({

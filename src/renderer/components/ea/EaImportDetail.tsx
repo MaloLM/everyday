@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSaveShortcut } from '../../hooks/useSaveShortcut'
 import { ArrowLeft, Download, Eye, EyeOff, Save, Trash2 } from 'lucide-react'
 import { EaImport, EaTransaction } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
@@ -24,6 +25,7 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [dirty, setDirty] = useState(false)
     const [activeTag, setActiveTag] = useState<string | null>(null)
+    useSaveShortcut(() => { if (dirty) handleSave() })
 
     const currencySymbol = transactions.length > 0
         ? CURRENCIES.get(transactions[0].currency) || transactions[0].currency

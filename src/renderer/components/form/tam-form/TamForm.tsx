@@ -1,6 +1,7 @@
 import { Form, Formik } from 'formik'
 import { useEffect, useRef, useState } from 'react'
 import { TamFormResponse, TamFormSchema, ChartData, TamFormData, parseToChartData } from '../../../utils'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import { Button, Card } from '../..'
 import { ClipboardCopy, Eye, EyeOff, Save } from 'lucide-react'
 import { TamDonutChart } from './TamDonutChart'
@@ -23,12 +24,20 @@ interface TamFormProps {
 export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFormProps) => {
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const formRef = useRef<HTMLDivElement>(null)
+    const formikRef = useRef<{ values: any; dirty: boolean; resetForm: (nextState?: any) => void } | null>(null)
     const [chartData, setChartData] = useState<ChartData>({} as ChartData)
     useEffect(() => {
         if (computeResult && computeResult.assets && computeResult.assets.length > 0) {
             setChartData(parseToChartData(computeResult))
         }
     }, [computeResult])
+
+    useSaveShortcut(() => {
+        if (formikRef.current?.dirty) {
+            saveConfig(formikRef.current.values)
+            formikRef.current.resetForm({ values: formikRef.current.values })
+        }
+    })
 
     const handleUpdate = (setFieldValue, values) => {
         updateChart()
@@ -76,6 +85,8 @@ export const TamForm = ({ tamData, onSubmit, computeResult, saveConfig }: TamFor
             }}
         >
             {({ values, errors, dirty, handleSubmit, setFieldValue, isValid, resetForm }) => {
+                formikRef.current = { values, dirty, resetForm }
+
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">

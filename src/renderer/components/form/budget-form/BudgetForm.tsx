@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Form, Formik, useFormikContext } from 'formik'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import {
     BudgetData,
     BudgetFormSchema, CURRENCIES, CURRENCY_OPTIONS,
@@ -25,6 +26,8 @@ interface BudgetFormProps {
 const BudgetFormInner = ({ activeTag, setActiveTag }: { activeTag: string | null, setActiveTag: (tag: string | null) => void }) => {
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const { values, errors, dirty, handleSubmit, setFieldValue } = useFormikContext<{ incomes: BudgetData['incomes'], expenses: BudgetData['expenses'], currency: string }>()
+
+    useSaveShortcut(() => { if (dirty) handleSubmit() })
 
     const currencySymbol = CURRENCIES.get(values.currency) || values.currency
 

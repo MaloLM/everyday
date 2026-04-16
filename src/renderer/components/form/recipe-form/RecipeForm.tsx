@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Formik, Form } from 'formik'
+import { useSaveShortcut } from '../../../hooks/useSaveShortcut'
 import { Eye, EyeOff, Clock, Euro, CookingPot } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Recipe } from '../../../utils/types'
@@ -20,7 +21,9 @@ interface RecipeFormProps {
 
 export const RecipeForm = ({ recipe, onSave, onCancel }: RecipeFormProps) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const submitRef = useRef<{ dirty: boolean; handleSubmit: () => void } | null>(null)
     const [showPreview, setShowPreview] = useState(false)
+    useSaveShortcut(() => { if (submitRef.current?.dirty) submitRef.current.handleSubmit() })
 
     const isNew = !recipe
     const now = new Date().toISOString()
@@ -57,7 +60,9 @@ export const RecipeForm = ({ recipe, onSave, onCancel }: RecipeFormProps) => {
                 toast.success(isNew ? 'Recipe created' : 'Recipe updated')
             }}
         >
-            {({ values, errors, dirty, setFieldValue, handleSubmit }) => (
+            {({ values, errors, dirty, setFieldValue, handleSubmit }) => {
+                submitRef.current = { dirty, handleSubmit }
+                return (
                 <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     {/* Title */}
                     <input
@@ -165,7 +170,7 @@ export const RecipeForm = ({ recipe, onSave, onCancel }: RecipeFormProps) => {
                         </Button>
                     </div>
                 </Form>
-            )}
+            )}}
         </Formik>
     )
 }
