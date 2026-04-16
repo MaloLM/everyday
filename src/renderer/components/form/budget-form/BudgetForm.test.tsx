@@ -10,8 +10,8 @@ vi.mock('../../../context', () => ({
     }),
 }))
 
-vi.mock('../../DonutChart', () => ({
-    DonutChart: () => <div data-testid="donut-chart" />,
+vi.mock('react-chartjs-2', () => ({
+    Doughnut: () => <div data-testid="donut-chart" />,
 }))
 
 import { BudgetForm } from './BudgetForm'
