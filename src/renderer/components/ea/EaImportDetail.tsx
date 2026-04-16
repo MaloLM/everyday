@@ -11,11 +11,12 @@ import toast from 'react-hot-toast'
 
 interface EaImportDetailProps {
     importData: EaImport
+    allKnownTags: string[]
     onSave: (updated: EaImport) => Promise<void>
     onDelete: (importId: string) => Promise<void>
 }
 
-export const EaImportDetail = ({ importData, onSave, onDelete }: EaImportDetailProps) => {
+export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: EaImportDetailProps) => {
     const navigate = useNavigate()
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const [title, setTitle] = useState(importData.title)
@@ -167,6 +168,7 @@ export const EaImportDetail = ({ importData, onSave, onDelete }: EaImportDetailP
                     )}
                     <EaTransactionTable
                         transactions={filteredTransactions}
+                        allTags={allKnownTags}
                         onUpdateTransaction={(index, field, value) => {
                             const realIndex = activeTag
                                 ? transactions.findIndex((t) => t.id === filteredTransactions[index].id)

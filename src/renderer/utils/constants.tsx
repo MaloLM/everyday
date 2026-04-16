@@ -92,6 +92,7 @@ export const INIT_SP_DATA: SavingsProjectsData = {
 
 export const INIT_EA_DATA: ExpenseAnalysisData = {
     imports: [],
+    tags: [],
 }
 
 export const TAG_COLORS = [

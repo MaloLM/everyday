@@ -162,4 +162,5 @@ export interface EaImport {
 
 export interface ExpenseAnalysisData {
     imports: EaImport[]
+    tags: string[]
 }

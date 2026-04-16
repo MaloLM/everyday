@@ -14,6 +14,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -26,6 +27,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -38,6 +40,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -51,6 +54,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={onToggleFlag}
             />
@@ -65,6 +69,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={onUpdateTransaction}
                 onToggleFlag={vi.fn()}
             />
@@ -78,6 +83,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={[]}
+                allTags={[]}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -89,6 +95,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -100,6 +107,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={vi.fn()}
                 onToggleFlag={vi.fn()}
             />
@@ -113,6 +121,7 @@ describe('EaTransactionTable', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
+                allTags={['Food']}
                 onUpdateTransaction={onUpdateTransaction}
                 onToggleFlag={vi.fn()}
             />

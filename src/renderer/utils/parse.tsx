@@ -259,6 +259,10 @@ export function parseEaData(input: string | object): ExpenseAnalysisData {
             })),
         }))
 
+        if (!Array.isArray(data.tags)) {
+            data.tags = []
+        }
+
         return data as ExpenseAnalysisData
     } catch {
         return INIT_EA_DATA

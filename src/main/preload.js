@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('electron', {
   loadSavingsProjectsData: () => ipcRenderer.invoke('sp:load'),
   saveSavingsProjectsData: (data) => ipcRenderer.invoke('sp:save', data),
   loadEaData: () => ipcRenderer.invoke('ea:load'),
+  saveEaData: (data) => ipcRenderer.invoke('ea:save', data),
   saveEaImport: (importData) => ipcRenderer.invoke('ea:save-import', importData),
   deleteEaImport: (importId) => ipcRenderer.invoke('ea:delete-import', importId),
   exportAllData: () => ipcRenderer.invoke('app:export-all'),

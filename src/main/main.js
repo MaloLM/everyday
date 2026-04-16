@@ -271,6 +271,11 @@ ipcMain.handle("ea:save-import", async (event, importData) => {
   return data;
 });
 
+ipcMain.handle("ea:save", async (event, data) => {
+  await writeJsonFile(EA_FILE, data);
+  return data;
+});
+
 ipcMain.handle("ea:delete-import", async (event, importId) => {
   let data = await readJsonFile(EA_FILE);
   if (!data.imports) data = { imports: [] };

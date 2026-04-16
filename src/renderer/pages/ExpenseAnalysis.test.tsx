@@ -16,6 +16,7 @@ vi.mock('../context', () => ({
                     ],
                 },
             ],
+            tags: [],
         },
         refreshEaData: vi.fn().mockResolvedValue(undefined),
     }),
@@ -24,6 +25,7 @@ vi.mock('../context', () => ({
 vi.mock('../api/electron', () => ({
     useIpcRenderer: () => ({
         saveEaImport: vi.fn().mockResolvedValue({}),
+        saveEaData: vi.fn().mockResolvedValue({}),
         deleteEaImport: vi.fn().mockResolvedValue({}),
     }),
 }))

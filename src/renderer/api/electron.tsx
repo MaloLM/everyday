@@ -59,6 +59,10 @@ export function useIpcRenderer() {
         return window.electron.loadEaData()
     }
 
+    const saveEaData = (data: any): Promise<any> => {
+        return window.electron.saveEaData(data)
+    }
+
     const saveEaImport = (importData: any): Promise<any> => {
         return window.electron.saveEaImport(importData)
     }
@@ -87,5 +91,5 @@ export function useIpcRenderer() {
         return window.electron.importAllData(data)
     }
 
-    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadBudgetData, saveBudgetData, loadSavingsProjectsData, saveSavingsProjectsData, loadEaData, saveEaImport, deleteEaImport, loadRecipesData, saveRecipe, deleteRecipe, exportAllData, importAllData }
+    return { sendRequestData, sendWriteData, onResponseData, saveFormData, loadNetWorthData, saveNetWorthEntry, deleteNetWorthEntry, loadRpData, saveRpItem, deleteRpItem, loadBudgetData, saveBudgetData, loadSavingsProjectsData, saveSavingsProjectsData, loadEaData, saveEaData, saveEaImport, deleteEaImport, loadRecipesData, saveRecipe, deleteRecipe, exportAllData, importAllData }
 }

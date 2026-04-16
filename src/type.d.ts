@@ -20,6 +20,7 @@ declare global {
       loadSavingsProjectsData: () => Promise<any>;
       saveSavingsProjectsData: (data: any) => Promise<any>;
       loadEaData: () => Promise<any>;
+      saveEaData: (data: any) => Promise<any>;
       saveEaImport: (importData: any) => Promise<any>;
       deleteEaImport: (importId: string) => Promise<any>;
       exportAllData: () => Promise<any>;

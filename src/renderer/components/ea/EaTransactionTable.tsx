@@ -1,14 +1,16 @@
 import { Flag } from 'lucide-react'
 import { EaTransaction } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
+import { EaTagInput } from './EaTagInput'
 
 interface EaTransactionTableProps {
     transactions: EaTransaction[]
+    allTags: string[]
     onUpdateTransaction: (index: number, field: keyof EaTransaction, value: string | number | boolean) => void
     onToggleFlag: (index: number) => void
 }
 
-export const EaTransactionTable = ({ transactions, onUpdateTransaction, onToggleFlag }: EaTransactionTableProps) => {
+export const EaTransactionTable = ({ transactions, allTags, onUpdateTransaction, onToggleFlag }: EaTransactionTableProps) => {
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -43,13 +45,10 @@ export const EaTransactionTable = ({ transactions, onUpdateTransaction, onToggle
                             </td>
                             <td className="px-3 py-2 text-softWhite/60">{CURRENCIES.get(t.currency) || t.currency}</td>
                             <td className="px-3 py-2">
-                                <input
-                                    type="text"
+                                <EaTagInput
                                     value={t.tag}
-                                    onChange={(e) => onUpdateTransaction(i, 'tag', e.target.value)}
-                                    placeholder="tag"
-                                    className="field w-24 bg-transparent px-1 py-0.5 text-sm text-softWhite/80"
-                                    maxLength={30}
+                                    allTags={allTags}
+                                    onChange={(v) => onUpdateTransaction(i, 'tag', v)}
                                 />
                             </td>
                             <td className="px-3 py-2">

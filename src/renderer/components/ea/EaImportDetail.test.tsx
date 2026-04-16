@@ -33,6 +33,7 @@ function renderDetail(props?: Partial<{ onSave: any; onDelete: any }>) {
         <MemoryRouter>
             <EaImportDetail
                 importData={mockImport}
+                allKnownTags={['Food']}
                 onSave={props?.onSave ?? vi.fn().mockResolvedValue(undefined)}
                 onDelete={props?.onDelete ?? vi.fn().mockResolvedValue(undefined)}
             />
