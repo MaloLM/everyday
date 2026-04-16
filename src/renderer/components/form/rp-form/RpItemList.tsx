@@ -16,11 +16,12 @@ interface RpItemListProps {
     setFieldValue: (field: string, value: any) => void
     displayUnit: DisplayUnit
     activeTag?: string | null
+    search?: string
 }
 
 const MAX_ITEMS = 100
 
-export const RpItemList = ({ values, errors, setFieldValue, displayUnit, activeTag }: RpItemListProps) => {
+export const RpItemList = ({ values, errors, setFieldValue, displayUnit, activeTag, search }: RpItemListProps) => {
     const lastItemRef = useRef<HTMLDivElement>(null)
 
     const onReorder = useCallback((from: number, to: number) => {
@@ -36,7 +37,9 @@ export const RpItemList = ({ values, errors, setFieldValue, displayUnit, activeT
         <div className="flex w-full flex-col">
             <div className="flex max-h-[28rem] w-full flex-col gap-1 overflow-y-auto py-1 pr-4 md:min-h-24">
                 {values.items.map((item, index) => {
-                    const hidden = activeTag ? item.tag !== activeTag : false
+                    const searchLower = search?.toLowerCase() || ''
+                    const hidden = (activeTag ? item.tag !== activeTag : false) ||
+                        (searchLower ? !item.name.toLowerCase().includes(searchLower) && !item.tag.toLowerCase().includes(searchLower) : false)
                     return (
                     <div
                         ref={index === values.items.length - 1 ? lastItemRef : null}

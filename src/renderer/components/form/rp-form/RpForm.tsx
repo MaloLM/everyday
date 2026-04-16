@@ -8,7 +8,7 @@ import {
 } from '../../../utils'
 import type { DisplayUnit } from '../../../utils/constants'
 import { Button, Card } from '../..'
-import { ClipboardCopy, Eye, EyeOff, Save } from 'lucide-react'
+import { ClipboardCopy, Eye, EyeOff, Save, Search } from 'lucide-react'
 import { RpItemList } from './RpItemList'
 import { RpTagFilter } from './RpTagFilter'
 import { buildRecurringPurchasesMarkdown } from './rpMarkdown'
@@ -24,6 +24,7 @@ interface RpFormProps {
 export const RpForm = ({ rpData, onSave }: RpFormProps) => {
     const { blurFinances, toggleBlurFinances } = useAppContext()
     const [activeTag, setActiveTag] = useState<string | null>(null)
+    const [search, setSearch] = useState('')
     const [formKey, setFormKey] = useState(0)
     const [displayUnit, setDisplayUnit] = useState<DisplayUnit>('year')
 
@@ -161,13 +162,26 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                         </Card>
 
                         <Card title="Purchases">
-                            <RpItemList
-                                values={{ items: values.items, currency: rpData.currency }}
-                                errors={errors}
-                                setFieldValue={setFieldValue}
-                                displayUnit={displayUnit}
-                                activeTag={activeTag}
-                            />
+                            <div className="flex flex-col gap-3">
+                                <div className="relative">
+                                    <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-softWhite/40" />
+                                    <input
+                                        type="text"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Search by name or tag…"
+                                        className="w-full rounded-none border-0 border-b border-softWhite/20 bg-transparent py-2 pl-9 pr-3 text-sm text-softWhite/80 placeholder:text-softWhite/30 hover:border-nobleGold focus:border-nobleGold focus:outline-none"
+                                    />
+                                </div>
+                                <RpItemList
+                                    values={{ items: values.items, currency: rpData.currency }}
+                                    errors={errors}
+                                    setFieldValue={setFieldValue}
+                                    displayUnit={displayUnit}
+                                    activeTag={activeTag}
+                                    search={search}
+                                />
+                            </div>
                         </Card>
                     </Form>
                 )

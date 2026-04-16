@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSaveShortcut } from '../../hooks/useSaveShortcut'
-import { ArrowLeft, Download, Eye, EyeOff, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, Download, Eye, EyeOff, Save, Search, Trash2 } from 'lucide-react'
 import { EaImport, EaTransaction } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
 import { Card, Button, ConfirmModal } from '..'
@@ -25,6 +25,7 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [dirty, setDirty] = useState(false)
     const [activeTag, setActiveTag] = useState<string | null>(null)
+    const [search, setSearch] = useState('')
     useSaveShortcut(() => { if (dirty) handleSave() })
 
     const currencySymbol = transactions.length > 0
@@ -34,9 +35,11 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
     const totalExpenses = transactions.reduce((sum, t) => sum + Math.abs(t.amount), 0)
 
     const allTags = [...new Set(transactions.map((t) => t.tag).filter(Boolean))]
-    const filteredTransactions = activeTag
-        ? transactions.filter((t) => t.tag === activeTag)
-        : transactions
+    const searchLower = search.toLowerCase()
+    const filteredTransactions = transactions.filter((t) =>
+        (!activeTag || t.tag === activeTag) &&
+        (!searchLower || t.description.toLowerCase().includes(searchLower) || t.tag.toLowerCase().includes(searchLower))
+    )
 
     const handleUpdateTransaction = (index: number, field: keyof EaTransaction, value: string | number | boolean) => {
         setTransactions((prev) => {
@@ -161,6 +164,16 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
 
             <Card title="Transactions">
                 <div className="flex flex-col gap-4">
+                    <div className="relative">
+                        <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-softWhite/40" />
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search by description or tag…"
+                            className="w-full rounded-none border-0 border-b border-softWhite/20 bg-transparent py-2 pl-9 pr-3 text-sm text-softWhite/80 placeholder:text-softWhite/30 hover:border-nobleGold focus:border-nobleGold focus:outline-none"
+                        />
+                    </div>
                     {allTags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                             <button
@@ -194,13 +207,13 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
                         transactions={filteredTransactions}
                         allTags={allKnownTags}
                         onUpdateTransaction={(index, field, value) => {
-                            const realIndex = activeTag
+                            const realIndex = activeTag || search
                                 ? transactions.findIndex((t) => t.id === filteredTransactions[index].id)
                                 : index
                             handleUpdateTransaction(realIndex, field, value)
                         }}
                         onToggleFlag={(index) => {
-                            const realIndex = activeTag
+                            const realIndex = activeTag || search
                                 ? transactions.findIndex((t) => t.id === filteredTransactions[index].id)
                                 : index
                             handleToggleFlag(realIndex)
