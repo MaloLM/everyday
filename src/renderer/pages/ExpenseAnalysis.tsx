@@ -17,15 +17,9 @@ export const ExpenseAnalysis = () => {
         refreshEaData().then(() => setIsLoaded(true))
     }, [])
 
-    // Union of persisted tags + all tags found across every transaction
+    // Persisted tag list only — tags are added here automatically on import save
     const allKnownTags = useMemo(() => {
-        const set = new Set(eaData.tags || [])
-        for (const imp of eaData.imports) {
-            for (const t of imp.transactions) {
-                if (t.tag) set.add(t.tag)
-            }
-        }
-        return [...set].sort()
+        return [...(eaData.tags || [])].sort()
     }, [eaData])
 
     // Persist any new tags discovered during a save

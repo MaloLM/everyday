@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Download, Plus, Upload, X } from 'lucide-react'
+import { Download, Eye, EyeOff, Plus, Upload, X } from 'lucide-react'
 import { EaImport } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
 import { Button, Card } from '..'
 import { EaCsvImportWizard } from './EaCsvImportWizard'
 import { EaExpenseChart } from './EaExpenseChart'
+import { useAppContext } from '../../context'
 import toast from 'react-hot-toast'
 
 interface EaImportListProps {
@@ -18,6 +19,7 @@ interface EaImportListProps {
 
 export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, onRefresh }: EaImportListProps) => {
     const navigate = useNavigate()
+    const { blurFinances, toggleBlurFinances } = useAppContext()
     const [isImporting, setIsImporting] = useState(false)
     const [newTag, setNewTag] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -85,6 +87,17 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
                     <Plus size={16} />
                     New Import
                 </Button>
+                <button
+                    type="button"
+                    onClick={toggleBlurFinances}
+                    title={blurFinances ? 'Show amounts' : 'Hide amounts'}
+                    className={`rounded-lg border p-2 transition-colors ${blurFinances
+                        ? 'border-nobleGold/30 bg-nobleGold/10 text-nobleGold'
+                        : 'border-softWhite/20 text-softWhite/50 hover:text-softWhite'
+                    }`}
+                >
+                    {blurFinances ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
                 <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
