@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { parseToTamResponse, TamFormData, TamFormResponse } from '../utils'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
 import { TamForm } from '../components/form/tam-form/TamForm'
 import toast from 'react-hot-toast'
@@ -10,7 +10,7 @@ export const TargetAllocationMaintenance = () => {
     const { tamData } = useAppContext()
     const [isLoading, setIsloading] = useState<boolean>(true)
     const [computeResult, setComputeResult] = useState<TamFormResponse>({} as TamFormResponse)
-    const { sendWriteData, saveFormData } = useIpcRenderer()
+    const { sendData: sendWriteData, saveTAMForm: saveFormData } = ipc
 
     useEffect(() => {
         if (tamData && tamData.assets && tamData.budget && tamData.currency) {

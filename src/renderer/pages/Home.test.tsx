@@ -3,9 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
-const mockExportAllData = vi.fn()
-const mockImportAllData = vi.fn()
-const mockSendRequestData = vi.fn()
+const { mockExportAllData, mockImportAllData, mockSendRequestData } = vi.hoisted(() => ({
+    mockExportAllData: vi.fn(),
+    mockImportAllData: vi.fn(),
+    mockSendRequestData: vi.fn(),
+}))
+
 const mockRefreshNwData = vi.fn()
 const mockRefreshRpData = vi.fn()
 const mockRefreshRecipesData = vi.fn()
@@ -14,11 +17,11 @@ const mockRefreshSpData = vi.fn()
 const mockRefreshEaData = vi.fn()
 
 vi.mock('../api/electron', () => ({
-    useIpcRenderer: () => ({
+    ipc: {
         exportAllData: mockExportAllData,
         importAllData: mockImportAllData,
-        sendRequestData: mockSendRequestData,
-    }),
+        requestData: mockSendRequestData,
+    },
 }))
 
 vi.mock('../context', () => ({

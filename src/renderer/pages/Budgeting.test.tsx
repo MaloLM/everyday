@@ -32,11 +32,11 @@ vi.mock('../context', () => ({
 }))
 
 vi.mock('../api/electron', () => ({
-    useIpcRenderer: () => ({
-        sendRequestData: vi.fn(),
-        sendWriteData: vi.fn(),
+    ipc: {
+        requestData: vi.fn(),
+        sendData: vi.fn(),
         onResponseData: vi.fn().mockReturnValue(vi.fn()),
-        saveFormData: vi.fn(),
+        saveTAMForm: vi.fn(),
         loadNetWorthData: vi.fn(),
         saveNetWorthEntry: vi.fn(),
         deleteNetWorthEntry: vi.fn(),
@@ -55,7 +55,7 @@ vi.mock('../api/electron', () => ({
         deleteEaImport: vi.fn(),
         exportAllData: vi.fn().mockResolvedValue({}),
         importAllData: vi.fn().mockResolvedValue(undefined),
-    }),
+    },
 }))
 
 import { Budgeting } from './Budgeting'

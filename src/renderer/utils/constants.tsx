@@ -49,6 +49,8 @@ export const CURRENCIES = new Map<string, string>([
     ['NZD', 'NZ$'], // New Zealand Dollar
 ])
 
+export const CURRENCY_OPTIONS = Array.from(CURRENCIES.keys())
+
 export const INIT_NW_DATA: NetWorthData = {
     entries: [],
     currency: 'EUR',

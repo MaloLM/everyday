@@ -23,11 +23,11 @@ vi.mock('../context', () => ({
 }))
 
 vi.mock('../api/electron', () => ({
-    useIpcRenderer: () => ({
+    ipc: {
         saveEaImport: vi.fn().mockResolvedValue({}),
         saveEaData: vi.fn().mockResolvedValue({}),
         deleteEaImport: vi.fn().mockResolvedValue({}),
-    }),
+    },
 }))
 
 vi.mock('../components/DonutChart', () => ({

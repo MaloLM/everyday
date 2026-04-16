@@ -23,11 +23,11 @@ vi.mock('../context', () => ({
 }))
 
 vi.mock('../api/electron', () => ({
-  useIpcRenderer: () => ({
-    sendRequestData: vi.fn(),
-    sendWriteData: vi.fn(),
+  ipc: {
+    requestData: vi.fn(),
+    sendData: vi.fn(),
     onResponseData: vi.fn().mockReturnValue(vi.fn()),
-    saveFormData: vi.fn(),
+    saveTAMForm: vi.fn(),
     loadNetWorthData: vi.fn(),
     saveNetWorthEntry: vi.fn(),
     deleteNetWorthEntry: vi.fn(),
@@ -37,7 +37,7 @@ vi.mock('../api/electron', () => ({
     loadRecipesData: vi.fn().mockResolvedValue({ recipes: [] }),
     saveRecipe: vi.fn().mockResolvedValue({ recipes: [] }),
     deleteRecipe: vi.fn().mockResolvedValue({ recipes: [] }),
-  }),
+  },
 }))
 
 import { Recipes } from './Recipes'

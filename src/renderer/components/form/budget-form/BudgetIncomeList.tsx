@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useRef, useCallback } from 'react'
 import { Button } from '../../Button'
 import { Plus, GripVertical } from 'lucide-react'
 import { BudgetIncomeForm } from './BudgetIncomeForm'
 import { BudgetIncome, CURRENCIES } from '../../../utils'
+import { useDragReorder } from '../../../hooks/useDragReorder'
 import toast from 'react-hot-toast'
 
 interface BudgetIncomeListProps {
@@ -18,39 +19,15 @@ const MAX_ITEMS = 100
 
 export const BudgetIncomeList = ({ values, errors, setFieldValue }: BudgetIncomeListProps) => {
     const lastItemRef = useRef<HTMLDivElement>(null)
-    const [dragIndex, setDragIndex] = useState<number | null>(null)
-    const [overIndex, setOverIndex] = useState<number | null>(null)
 
-    const handleDragStart = (index: number) => (e: React.DragEvent) => {
-        setDragIndex(index)
-        e.dataTransfer.effectAllowed = 'move'
-    }
-
-    const handleDragOver = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        e.dataTransfer.dropEffect = 'move'
-        setOverIndex(index)
-    }
-
-    const handleDrop = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        if (dragIndex === null || dragIndex === index) {
-            setDragIndex(null)
-            setOverIndex(null)
-            return
-        }
+    const onReorder = useCallback((from: number, to: number) => {
         const newItems = [...values.incomes]
-        const [moved] = newItems.splice(dragIndex, 1)
-        newItems.splice(index, 0, moved)
+        const [moved] = newItems.splice(from, 1)
+        newItems.splice(to, 0, moved)
         setFieldValue('incomes', newItems)
-        setDragIndex(null)
-        setOverIndex(null)
-    }
+    }, [values.incomes, setFieldValue])
 
-    const handleDragEnd = () => {
-        setDragIndex(null)
-        setOverIndex(null)
-    }
+    const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
 
     return (
         <div className="flex w-full flex-col">
@@ -59,11 +36,7 @@ export const BudgetIncomeList = ({ values, errors, setFieldValue }: BudgetIncome
                     <div
                         ref={index === values.incomes.length - 1 ? lastItemRef : null}
                         key={item.id ?? index}
-                        draggable
-                        onDragStart={handleDragStart(index)}
-                        onDragOver={handleDragOver(index)}
-                        onDrop={handleDrop(index)}
-                        onDragEnd={handleDragEnd}
+                        {...dragHandlers(index)}
                         className={`flex items-center gap-1 transition-opacity ${
                             dragIndex === index ? 'opacity-30' : ''
                         } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}

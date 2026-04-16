@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
 import { useAppContext } from '../context'
 import { EaImportList } from '../components/ea/EaImportList'
@@ -10,7 +10,7 @@ import { ExpenseAnalysisData } from '../utils/types'
 export const ExpenseAnalysis = () => {
     const { importId } = useParams<{ importId?: string }>()
     const { eaData, refreshEaData } = useAppContext()
-    const { saveEaImport, deleteEaImport, saveEaData } = useIpcRenderer()
+    const { saveEaImport, deleteEaImport, saveEaData } = ipc
     const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {

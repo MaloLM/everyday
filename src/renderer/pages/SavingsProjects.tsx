@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
 import { SpForm } from '../components/form/sp-form/SpForm'
 import { useAppContext } from '../context'
 
 export const SavingsProjects = () => {
     const { spData, refreshSpData } = useAppContext()
-    const { saveSavingsProjectsData } = useIpcRenderer()
+    const { saveSavingsProjectsData } = ipc
     const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {

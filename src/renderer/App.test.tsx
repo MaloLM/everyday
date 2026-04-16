@@ -29,11 +29,11 @@ vi.mock('./context', () => ({
 }))
 
 vi.mock('./api/electron', () => ({
-  useIpcRenderer: () => ({
-    sendRequestData: vi.fn(),
-    sendWriteData: vi.fn().mockResolvedValue({ status: 'ok', message: [] }),
+  ipc: {
+    requestData: vi.fn(),
+    sendData: vi.fn().mockResolvedValue({ status: 'ok', message: [] }),
     onResponseData: vi.fn().mockReturnValue(vi.fn()),
-    saveFormData: vi.fn(),
+    saveTAMForm: vi.fn(),
     loadNetWorthData: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
     saveNetWorthEntry: vi.fn(),
     deleteNetWorthEntry: vi.fn(),
@@ -48,7 +48,7 @@ vi.mock('./api/electron', () => ({
     deleteEaImport: vi.fn(),
     exportAllData: vi.fn().mockResolvedValue({}),
     importAllData: vi.fn().mockResolvedValue(undefined),
-  }),
+  },
 }))
 
 import { TargetAllocationMaintenance } from './pages/TargetAllocationMaintenance'

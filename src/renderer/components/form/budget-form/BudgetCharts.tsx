@@ -10,18 +10,8 @@ interface BudgetChartsProps {
 }
 
 export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetChartsProps) => {
-    const normalizedIncomes = incomes.map((i) => ({
-        ...i,
-        value: Number(i.value) || 0,
-        deductionRate: Number(i.deductionRate) || 0,
-    }))
-    const normalizedExpenses = expenses.map((e) => ({
-        ...e,
-        value: Number(e.value) || 0,
-    }))
-
-    const netIncome = computeNetIncome(normalizedIncomes)
-    const totalExpenses = computeTotalExpenses(normalizedExpenses)
+    const netIncome = useMemo(() => computeNetIncome(incomes), [incomes])
+    const totalExpenses = useMemo(() => computeTotalExpenses(expenses), [expenses])
 
     const balanceData = useMemo(() => {
         if (netIncome === 0 && totalExpenses === 0) {
@@ -66,7 +56,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
 
     const incomeByTagData = useMemo(() => {
         const groups = new Map<string, number>()
-        for (const income of normalizedIncomes) {
+        for (const income of incomes) {
             const tag = income.tag || 'Untagged'
             const net = income.value * (1 - (income.deductionRate) / 100)
             groups.set(tag, (groups.get(tag) || 0) + net)
@@ -82,11 +72,11 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
                 borderWidth: 2,
             }],
         }
-    }, [normalizedIncomes])
+    }, [incomes])
 
     const expenseByTagData = useMemo(() => {
         const groups = new Map<string, number>()
-        for (const expense of normalizedExpenses) {
+        for (const expense of expenses) {
             const tag = expense.tag || 'Untagged'
             groups.set(tag, (groups.get(tag) || 0) + expense.value)
         }
@@ -101,7 +91,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
                 borderWidth: 2,
             }],
         }
-    }, [normalizedExpenses])
+    }, [expenses])
 
     const formatAmount = (v: number) =>
         v.toLocaleString(undefined, v % 1 !== 0
@@ -122,7 +112,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
                 </div>
             </div>
 
-            {normalizedIncomes.length > 0 && (
+            {incomes.length > 0 && (
                 <div className="flex flex-col items-center gap-2">
                     <h3 className="text-sm font-medium text-softWhite/70">Income by Tag</h3>
                     <div className="fin-chart w-44 h-44">
@@ -142,7 +132,7 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
                 </div>
             )}
 
-            {normalizedExpenses.length > 0 && (
+            {expenses.length > 0 && (
                 <div className="flex flex-col items-center gap-2">
                     <h3 className="text-sm font-medium text-softWhite/70">Expenses by Tag</h3>
                     <div className="fin-chart w-44 h-44">

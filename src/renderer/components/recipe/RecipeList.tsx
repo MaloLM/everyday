@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus, Trash2, Copy, Search, Clock } from 'lucide-react'
 import { Recipe } from '../../utils/types'
 import { RecipeIndicators } from './RecipeIndicators'
+import { ConfirmModal } from '../ConfirmModal'
 
 interface RecipeListProps {
     recipes: Recipe[]
@@ -13,6 +14,8 @@ interface RecipeListProps {
 
 export const RecipeList = ({ recipes, onSelect, onNew, onDelete, onDuplicate }: RecipeListProps) => {
     const [search, setSearch] = useState('')
+    const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+    const pendingRecipe = pendingDeleteId ? recipes.find((r) => r.id === pendingDeleteId) : null
 
     const filtered = recipes
         .filter((r) => r.title.toLowerCase().includes(search.toLowerCase()))
@@ -20,6 +23,15 @@ export const RecipeList = ({ recipes, onSelect, onNew, onDelete, onDuplicate }: 
 
     return (
         <div className="flex flex-col gap-4">
+            <ConfirmModal
+                isOpen={pendingDeleteId !== null}
+                title="Delete Recipe"
+                message={pendingRecipe ? `Are you sure you want to delete "${pendingRecipe.title || 'Untitled'}"? This action cannot be undone.` : ''}
+                confirmLabel="Delete"
+                onConfirm={() => { if (pendingDeleteId) { onDelete(pendingDeleteId); setPendingDeleteId(null) } }}
+                onCancel={() => setPendingDeleteId(null)}
+                danger
+            />
             {/* Search + New */}
             <div className="flex items-center gap-3">
                 <div className="relative flex-1">
@@ -86,7 +98,7 @@ export const RecipeList = ({ recipes, onSelect, onNew, onDelete, onDuplicate }: 
                                 <Copy size={14} />
                             </button>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onDelete(recipe.id) }}
+                                onClick={(e) => { e.stopPropagation(); setPendingDeleteId(recipe.id) }}
                                 className="rounded p-1 text-softWhite/40 transition-colors hover:text-error"
                                 title="Delete"
                             >

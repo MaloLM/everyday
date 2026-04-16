@@ -4,6 +4,8 @@ import { SpProjectRow } from './SpProjectRow'
 import { SpMonthCells } from './SpMonthCells'
 import { CURRENCIES } from '../../../utils/constants'
 import { Plus, GripVertical } from 'lucide-react'
+import { useDragReorder } from '../../../hooks/useDragReorder'
+import { ConfirmModal } from '../../ConfirmModal'
 
 interface SpTableProps {
     projects: SavingsProject[]
@@ -24,36 +26,9 @@ function formatMonthHeader(month: string): string {
 
 export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder }: SpTableProps) => {
     const currencySymbol = CURRENCIES.get(currency) || currency
-    const [dragIndex, setDragIndex] = useState<number | null>(null)
-    const [overIndex, setOverIndex] = useState<number | null>(null)
-
-    const handleDragStart = (index: number) => (e: React.DragEvent) => {
-        setDragIndex(index)
-        e.dataTransfer.effectAllowed = 'move'
-    }
-
-    const handleDragOver = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        e.dataTransfer.dropEffect = 'move'
-        setOverIndex(index)
-    }
-
-    const handleDrop = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        if (dragIndex === null || dragIndex === index) {
-            setDragIndex(null)
-            setOverIndex(null)
-            return
-        }
-        onReorder(dragIndex, index)
-        setDragIndex(null)
-        setOverIndex(null)
-    }
-
-    const handleDragEnd = () => {
-        setDragIndex(null)
-        setOverIndex(null)
-    }
+    const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
+    const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
+    const pendingProject = pendingDeleteIndex !== null ? projects[pendingDeleteIndex] : null
 
     if (projects.length === 0) {
         return (
@@ -72,6 +47,15 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder
 
     return (
         <div className="flex flex-col gap-3">
+            <ConfirmModal
+                isOpen={pendingDeleteIndex !== null}
+                title="Delete Project"
+                message={pendingProject ? `Are you sure you want to delete "${pendingProject.title || 'Untitled project'}"? This action cannot be undone.` : ''}
+                confirmLabel="Delete"
+                onConfirm={() => { if (pendingDeleteIndex !== null) { onDelete(pendingDeleteIndex); setPendingDeleteIndex(null) } }}
+                onCancel={() => setPendingDeleteIndex(null)}
+                danger
+            />
             <div className="flex min-w-0">
                 {/* Fixed left columns */}
                 <div className="shrink-0 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.4)]">
@@ -90,11 +74,7 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder
                             {projects.map((project, index) => (
                                 <tr
                                     key={project.id}
-                                    draggable
-                                    onDragStart={handleDragStart(index)}
-                                    onDragOver={handleDragOver(index)}
-                                    onDrop={handleDrop(index)}
-                                    onDragEnd={handleDragEnd}
+                                    {...dragHandlers(index)}
                                     className={`h-20 border-t border-white/5 transition-opacity ${
                                         dragIndex === index ? 'opacity-30' : ''
                                     } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold bg-nobleGold/10' : ''}`}
@@ -108,7 +88,7 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder
                                         index={index}
                                         project={project}
                                         currency={currency}
-                                        onDelete={() => onDelete(index)}
+                                        onDelete={() => setPendingDeleteIndex(index)}
                                     />
                                 </tr>
                             ))}
@@ -132,11 +112,7 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder
                             {projects.map((project, index) => (
                                 <tr
                                     key={project.id}
-                                    draggable
-                                    onDragStart={handleDragStart(index)}
-                                    onDragOver={handleDragOver(index)}
-                                    onDrop={handleDrop(index)}
-                                    onDragEnd={handleDragEnd}
+                                    {...dragHandlers(index)}
                                     className={`h-20 border-t border-white/5 transition-opacity ${
                                         dragIndex === index ? 'opacity-30' : ''
                                     } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold bg-nobleGold/10' : ''}`}

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
 import { BudgetForm } from '../components/form/budget-form/BudgetForm'
 import { useAppContext } from '../context'
 
 export const Budgeting = () => {
     const { budgetData, refreshBudgetData } = useAppContext()
-    const { saveBudgetData } = useIpcRenderer()
+    const { saveBudgetData } = ipc
     const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {

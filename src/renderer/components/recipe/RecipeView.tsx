@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, Pencil, Copy, Trash2, ClipboardCopy, Check } from 'lucide-react'
 import { Recipe } from '../../utils/types'
 import { Card } from '../Card'
+import { ConfirmModal } from '../ConfirmModal'
 import { RecipeIndicators } from './RecipeIndicators'
 import { RecipeMarkdownRenderer } from './RecipeMarkdownRenderer'
 import { buildRecipeMarkdown } from './recipeMarkdown'
@@ -16,6 +17,7 @@ interface RecipeViewProps {
 
 export const RecipeView = ({ recipe, onEdit, onDuplicate, onDelete, onBack }: RecipeViewProps) => {
     const [copied, setCopied] = useState(false)
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
     const handleCopyMarkdown = async () => {
         try {
@@ -58,13 +60,23 @@ export const RecipeView = ({ recipe, onEdit, onDuplicate, onDelete, onBack }: Re
                         <Copy size={14} /> Duplicate
                     </button>
                     <button
-                        onClick={onDelete}
+                        onClick={() => setConfirmOpen(true)}
                         className="flex items-center gap-1 rounded-lg border border-softWhite/20 px-3 py-1.5 text-sm text-softWhite/70 transition-colors hover:border-error/50 hover:text-error"
                     >
                         <Trash2 size={14} /> Delete
                     </button>
                 </div>
             </div>
+
+            <ConfirmModal
+                isOpen={confirmOpen}
+                title="Delete Recipe"
+                message={`Are you sure you want to delete "${recipe.title || 'Untitled'}"? This action cannot be undone.`}
+                confirmLabel="Delete"
+                onConfirm={() => { setConfirmOpen(false); onDelete() }}
+                onCancel={() => setConfirmOpen(false)}
+                danger
+            />
 
             {/* Title */}
             <h2 className="font-serif text-3xl font-medium tracking-wider text-nobleGold">

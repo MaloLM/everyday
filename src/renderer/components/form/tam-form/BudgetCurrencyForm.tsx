@@ -1,4 +1,4 @@
-import { CURRENCIES, TamFormResponse } from '../../../utils'
+import { CURRENCY_OPTIONS, TamFormResponse } from '../../../utils'
 import { SelectorField } from '../SelectorField'
 import { NumberField } from '../NumberField'
 import { Button } from '../../Button'
@@ -19,7 +19,7 @@ export const BudgetCurrencyForm = ({ computeResult, handleUpdate }: BudgetCurren
                 tooltip="Enter budget"
                 displayError
             />
-            <SelectorField title="Currency" name="currency" options={Array.from(CURRENCIES.keys())} />
+            <SelectorField title="Currency" name="currency" options={CURRENCY_OPTIONS} />
 
             {computeResult.assets && (
                 <>

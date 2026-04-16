@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '../../Button'
+import { ConfirmModal } from '../../ConfirmModal'
 import { Plus } from 'lucide-react'
 import { AssetForm } from './AssetForm'
 import { Asset, CURRENCIES } from '../../../utils'
@@ -19,8 +20,26 @@ const MAX_ASSETS = 30
 
 export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => {
     const lastAssetRef = useRef<HTMLDivElement>(null)
+    const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
+    const pendingAsset = pendingDeleteIndex !== null ? values.assets[pendingDeleteIndex] : null
+
     return (
         <div className="flex w-full flex-col">
+            <ConfirmModal
+                isOpen={pendingDeleteIndex !== null}
+                title="Delete Asset"
+                message={pendingAsset ? `Are you sure you want to delete "${pendingAsset.assetName || 'Untitled asset'}"? This action cannot be undone.` : ''}
+                confirmLabel="Delete"
+                onConfirm={() => {
+                    if (pendingDeleteIndex !== null) {
+                        const newAssets = values.assets.filter((_, idx) => idx !== pendingDeleteIndex)
+                        setFieldValue('assets', newAssets)
+                        setPendingDeleteIndex(null)
+                    }
+                }}
+                onCancel={() => setPendingDeleteIndex(null)}
+                danger
+            />
             <div className="flex max-h-110 w-full flex-col gap-1  overflow-y-scroll py-1 pr-4 md:min-h-24">
                 {values.assets.map((asset, index) => (
                     <div ref={index === values.assets.length - 1 ? lastAssetRef : null} key={asset.id ?? index}>
@@ -31,10 +50,7 @@ export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => 
                                 (errors.assets && errors.assets[index]) !== undefined &&
                                 typeof (errors.assets && errors.assets[index]) !== 'string'
                             }
-                            onDelete={() => {
-                                const newAssets = values.assets.filter((_, idx) => idx !== index)
-                                setFieldValue('assets', newAssets)
-                            }}
+                            onDelete={() => setPendingDeleteIndex(index)}
                         />
                     </div>
                 ))}

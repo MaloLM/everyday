@@ -160,6 +160,7 @@ export const RpForm = ({ rpData, onSave }: RpFormProps) => {
                                 errors={errors}
                                 setFieldValue={setFieldValue}
                                 displayUnit={displayUnit}
+                                activeTag={activeTag}
                             />
                         </Card>
                     </Form>

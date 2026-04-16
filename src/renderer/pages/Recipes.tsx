@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Recipe } from '../utils/types'
 import { Loading } from '../components/utils/Loading'
 import { RecipeList } from '../components/recipe/RecipeList'
@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 
 export const Recipes = () => {
     const { recipesData, refreshRecipesData } = useAppContext()
-    const { saveRecipe, deleteRecipe } = useIpcRenderer()
+    const { saveRecipe, deleteRecipe } = ipc
     const [isLoading, setIsLoading] = useState(true)
     const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null)
     const [isEditing, setIsEditing] = useState(false)

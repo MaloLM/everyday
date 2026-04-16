@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BarChartBig, ChefHat, Download, FileSpreadsheet, Landmark, PiggyBank, ShoppingCart, Upload, Wallet } from 'lucide-react'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { useAppContext } from '../context'
 import toast from 'react-hot-toast'
 
@@ -52,7 +52,7 @@ const features = [
 
 export const Home = () => {
     const navigate = useNavigate()
-    const { exportAllData, importAllData, sendRequestData } = useIpcRenderer()
+    const { exportAllData, importAllData, requestData: sendRequestData } = ipc
     const { refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData } = useAppContext()
     const fileInputRef = useRef<HTMLInputElement>(null)
 

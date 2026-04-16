@@ -3,7 +3,7 @@ import { computeProjectTotal } from '../../../utils/parse'
 import { CURRENCIES } from '../../../utils/constants'
 import { TextField } from '../TextField'
 import { NumberField } from '../NumberField'
-import { X } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 
 interface SpProjectRowProps {
     index: number
@@ -18,7 +18,7 @@ export const SpProjectRow = ({ index, project, currency, onDelete }: SpProjectRo
     const objective = Number(project.objective) || 0
     const rawPercent = objective > 0 ? (total / objective) * 100 : 0
     const barWidth = Math.min(100, Math.max(0, rawPercent))
-    const exceeded = rawPercent > 100
+    const exceeded = rawPercent >= 100
 
     const fmt = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 0 })
 
@@ -31,7 +31,7 @@ export const SpProjectRow = ({ index, project, currency, onDelete }: SpProjectRo
                     title="Remove project"
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-softWhite/40 transition-colors hover:bg-error/20 hover:text-error"
                 >
-                    <X size={14} />
+                    <Trash2 size={14} />
                 </button>
             </td>
             <td className="px-1 py-1">

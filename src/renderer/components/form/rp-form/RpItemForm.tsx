@@ -1,5 +1,5 @@
 import { NumberField, TextField, SelectorField } from '..'
-import { X, ExternalLink } from 'lucide-react'
+import { Trash2, ExternalLink } from 'lucide-react'
 import { RECURRENCE_UNITS, CURRENCIES, computeAnnualCost, convertAnnualToUnit, DISPLAY_UNIT_LABELS, RecurringPurchaseItem } from '../../../utils'
 import type { DisplayUnit } from '../../../utils/constants'
 import { useFormikContext } from 'formik'
@@ -105,8 +105,8 @@ export const RpItemForm = (props: RpItemFormProps) => {
                     : { maximumFractionDigits: 0 }
                 )} {props.currency}{DISPLAY_UNIT_LABELS[props.displayUnit]}
             </div>
-            <button className="absolute right-0 top-0 m-1 border-0 p-0.5" type="button" onClick={props.onDelete}>
-                <X className="opacity-30 hover:text-error hover:opacity-100" size={'20'} />
+            <button className="absolute right-1 top-1/2 -translate-y-1/2 border-0 p-1" type="button" onClick={props.onDelete} title="Delete item">
+                <Trash2 className="opacity-30 hover:text-error hover:opacity-100" size={16} />
             </button>
         </div>
     )

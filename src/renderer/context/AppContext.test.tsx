@@ -3,12 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { AppProvider, useAppContext } from './index'
 
 vi.mock('../api/electron', () => ({
-  useIpcRenderer: () => ({
-    sendRequestData: vi.fn(),
+  ipc: {
+    requestData: vi.fn(),
     onResponseData: vi.fn().mockReturnValue(vi.fn()),
     loadNetWorthData: vi.fn().mockResolvedValue({ entries: [], currency: 'EUR' }),
-    sendWriteData: vi.fn(),
-    saveFormData: vi.fn(),
+    sendData: vi.fn(),
+    saveTAMForm: vi.fn(),
     saveNetWorthEntry: vi.fn(),
     deleteNetWorthEntry: vi.fn(),
     loadRpData: vi.fn().mockResolvedValue({ items: [], currency: 'EUR' }),
@@ -26,7 +26,7 @@ vi.mock('../api/electron', () => ({
     deleteEaImport: vi.fn(),
     exportAllData: vi.fn().mockResolvedValue({}),
     importAllData: vi.fn().mockResolvedValue(undefined),
-  }),
+  },
 }))
 
 function TestConsumer() {

@@ -3,7 +3,7 @@ import { Form, Formik } from 'formik'
 import {
     SavingsProjectsData,
     SavingsProjectsFormSchema,
-    CURRENCIES,
+    CURRENCIES, CURRENCY_OPTIONS,
     computeProjectTotal,
     getMonthColumns,
 } from '../../../utils'
@@ -73,7 +73,7 @@ export const SpForm = ({ spData, onSave }: SpFormProps) => {
                 const totalObjective = normalizedProjects.reduce((sum, p) => sum + p.objective, 0)
                 const globalProgress = totalObjective > 0 ? (totalSaved / totalObjective) * 100 : 0
                 const globalBarWidth = Math.min(100, globalProgress)
-                const globalExceeded = globalProgress > 100
+                const globalExceeded = globalProgress >= 100
                 const months = getMonthColumns(normalizedProjects)
 
                 const handleAdd = () => {
@@ -139,7 +139,7 @@ export const SpForm = ({ spData, onSave }: SpFormProps) => {
                                 <SelectorField
                                     title="Currency"
                                     name="currency"
-                                    options={Array.from(CURRENCIES.keys())}
+                                    options={CURRENCY_OPTIONS}
                                     className="text-sm"
                                 />
                             }

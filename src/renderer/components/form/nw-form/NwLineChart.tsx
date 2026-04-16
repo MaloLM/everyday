@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
 import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
 import 'chartjs-adapter-date-fns'
@@ -31,39 +31,107 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
     const chartRef = useRef<any>(null)
     const currencySymbol = CURRENCIES.get(currency) || currency
 
-    const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
+    const chartData = useMemo(() => {
+        const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
 
-    // Collect unique item names in order of first appearance
-    const itemNames: string[] = []
-    for (const entry of sorted) {
-        for (const item of entry.items) {
-            if (!itemNames.includes(item.name)) {
-                itemNames.push(item.name)
+        // Collect unique item names in order of first appearance (Set for O(1) lookup)
+        const seen = new Set<string>()
+        const itemNames: string[] = []
+        for (const entry of sorted) {
+            for (const item of entry.items) {
+                if (!seen.has(item.name)) {
+                    seen.add(item.name)
+                    itemNames.push(item.name)
+                }
             }
         }
-    }
 
-    const datasets = itemNames.map((name, i) => {
-        const color = AREA_PALETTE[i % AREA_PALETTE.length]
-        return {
-            label: name,
-            data: sorted.map((entry) => {
-                const item = entry.items.find((it) => it.name === name)
-                return { x: entry.date, y: item ? item.estimatedValue : null }
-            }),
-            spanGaps: false,
-            borderColor: color,
-            backgroundColor: color + '80',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 3,
-            pointHoverRadius: 5,
-            pointBackgroundColor: color,
-            pointBorderColor: color,
-        }
-    })
+        const datasets = itemNames.map((name, i) => {
+            const color = AREA_PALETTE[i % AREA_PALETTE.length]
+            return {
+                label: name,
+                data: sorted.map((entry) => {
+                    const item = entry.items.find((it) => it.name === name)
+                    return { x: entry.date, y: item ? item.estimatedValue : null }
+                }),
+                spanGaps: false,
+                borderColor: color,
+                backgroundColor: color + '80',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                pointBackgroundColor: color,
+                pointBorderColor: color,
+            }
+        })
 
-    const chartData = { datasets }
+        return { datasets }
+    }, [entries])
+
+    const chartOptions = useMemo(() => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: 'index' as const,
+            intersect: false,
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        const val = (context.raw as { y: number }).y
+                        return `  ${context.dataset.label}: ${val.toLocaleString()} ${currencySymbol}`
+                    },
+                    footer: (tooltipItems) => {
+                        const total = tooltipItems.reduce(
+                            (sum, item) => sum + ((item.raw as { y: number }).y || 0),
+                            0,
+                        )
+                        return `Net Worth: ${total.toLocaleString()} ${currencySymbol}`
+                    },
+                },
+            },
+            legend: {
+                labels: {
+                    color: COLORS.softWhite,
+                },
+            },
+        },
+        scales: {
+            x: {
+                type: 'time' as const,
+                stacked: true,
+                time: {
+                    tooltipFormat: 'dd MMM yyyy',
+                    displayFormats: {
+                        day: 'dd MMM',
+                        week: 'dd MMM',
+                        month: 'MMM yyyy',
+                        quarter: 'MMM yyyy',
+                        year: 'yyyy',
+                    },
+                },
+                ticks: {
+                    color: COLORS.softWhite,
+                    autoSkip: true,
+                    maxRotation: 45,
+                },
+                grid: {
+                    color: COLORS.lightGray,
+                },
+            },
+            y: {
+                stacked: true,
+                grid: {
+                    color: COLORS.lightGray,
+                },
+                ticks: {
+                    color: COLORS.softWhite,
+                },
+            },
+        },
+    }), [currencySymbol])
 
     const exportChart = () => {
         if (!chartRef.current) return
@@ -99,69 +167,7 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
                 <Line
                     ref={chartRef}
                     data={chartData}
-                    options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: (context) => {
-                                        const val = (context.raw as { y: number }).y
-                                        return `  ${context.dataset.label}: ${val.toLocaleString()} ${currencySymbol}`
-                                    },
-                                    footer: (tooltipItems) => {
-                                        const total = tooltipItems.reduce(
-                                            (sum, item) => sum + ((item.raw as { y: number }).y || 0),
-                                            0,
-                                        )
-                                        return `Net Worth: ${total.toLocaleString()} ${currencySymbol}`
-                                    },
-                                },
-                            },
-                            legend: {
-                                labels: {
-                                    color: COLORS.softWhite,
-                                },
-                            },
-                        },
-                        scales: {
-                            x: {
-                                type: 'time',
-                                stacked: true,
-                                time: {
-                                    tooltipFormat: 'dd MMM yyyy',
-                                    displayFormats: {
-                                        day: 'dd MMM',
-                                        week: 'dd MMM',
-                                        month: 'MMM yyyy',
-                                        quarter: 'MMM yyyy',
-                                        year: 'yyyy',
-                                    },
-                                },
-                                ticks: {
-                                    color: COLORS.softWhite,
-                                    autoSkip: true,
-                                    maxRotation: 45,
-                                },
-                                grid: {
-                                    color: COLORS.lightGray,
-                                },
-                            },
-                            y: {
-                                stacked: true,
-                                grid: {
-                                    color: COLORS.lightGray,
-                                },
-                                ticks: {
-                                    color: COLORS.softWhite,
-                                },
-                            },
-                        },
-                    }}
+                    options={chartOptions}
                 />
             </div>
         </div>

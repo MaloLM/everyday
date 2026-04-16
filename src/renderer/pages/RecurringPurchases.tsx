@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components/utils/Loading'
 import { RpForm } from '../components/form/rp-form/RpForm'
 import { useAppContext } from '../context'
 
 export const RecurringPurchases = () => {
     const { rpData, refreshRpData } = useAppContext()
-    const { saveRpItem, deleteRpItem } = useIpcRenderer()
+    const { saveRpItem, deleteRpItem } = ipc
     const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {

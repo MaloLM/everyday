@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, FileSpreadsheet, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
+import { useDragReorder } from '../hooks/useDragReorder'
 
 const navItems: { path: string; altPaths: string[]; label: string; icon: typeof Home }[] = [
     { path: '/', altPaths: [], label: 'Home', icon: Home },
@@ -19,8 +20,6 @@ const navItemsByPath = new Map(navItems.map((item) => [item.path, item]))
 export const Sidebar = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
     const [reordering, setReordering] = useState(false)
-    const [dragIndex, setDragIndex] = useState<number | null>(null)
-    const [overIndex, setOverIndex] = useState<number | null>(null)
     const { sidebarOrder, setSidebarOrder } = useAppContext()
     const navigate = useNavigate()
     const location = useLocation()
@@ -40,36 +39,14 @@ export const Sidebar = () => {
         location.pathname === item.path || item.altPaths.includes(location.pathname) ||
         (item.path !== '/' && location.pathname.startsWith(item.path + '/'))
 
-    const handleDragStart = (index: number) => (e: React.DragEvent) => {
-        setDragIndex(index)
-        e.dataTransfer.effectAllowed = 'move'
-    }
-
-    const handleDragOver = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        e.dataTransfer.dropEffect = 'move'
-        setOverIndex(index)
-    }
-
-    const handleDrop = (index: number) => (e: React.DragEvent) => {
-        e.preventDefault()
-        if (dragIndex === null || dragIndex === index) {
-            setDragIndex(null)
-            setOverIndex(null)
-            return
-        }
+    const onReorder = useCallback((from: number, to: number) => {
         const newItems = [...orderedItems]
-        const [moved] = newItems.splice(dragIndex, 1)
-        newItems.splice(index, 0, moved)
+        const [moved] = newItems.splice(from, 1)
+        newItems.splice(to, 0, moved)
         setSidebarOrder(newItems.map((item) => item.path))
-        setDragIndex(null)
-        setOverIndex(null)
-    }
+    }, [orderedItems, setSidebarOrder])
 
-    const handleDragEnd = () => {
-        setDragIndex(null)
-        setOverIndex(null)
-    }
+    const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
 
     return (
         <>
@@ -105,11 +82,7 @@ export const Sidebar = () => {
                             return (
                                 <li
                                     key={item.path}
-                                    draggable={reordering}
-                                    onDragStart={reordering ? handleDragStart(index) : undefined}
-                                    onDragOver={reordering ? handleDragOver(index) : undefined}
-                                    onDrop={reordering ? handleDrop(index) : undefined}
-                                    onDragEnd={reordering ? handleDragEnd : undefined}
+                                    {...(reordering ? dragHandlers(index) : {})}
                                     className={`transition-opacity ${dragIndex === index ? 'opacity-30' : ''} ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}
                                 >
                                     <a

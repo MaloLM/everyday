@@ -1,5 +1,5 @@
-import { createContext, useState, useContext, useEffect, useCallback } from 'react'
-import { useIpcRenderer } from '../api/electron'
+import { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react'
+import { ipc } from '../api/electron'
 import toast from 'react-hot-toast'
 import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, ExpenseAnalysisData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, parseEaData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA } from '../utils'
 
@@ -57,6 +57,22 @@ const AppContext = createContext<AppContextState>({
     setSidebarOrder: () => {},
 })
 
+function useRefresh<T>(
+    loader: () => Promise<any>,
+    parser: (d: any) => T,
+    setter: (d: T) => void,
+    label: string,
+) {
+    return useCallback(async () => {
+        try {
+            setter(parser(await loader()))
+        } catch (err) {
+            console.error(`Failed to load ${label}:`, err)
+            toast.error(`Failed to load ${label}`)
+        }
+    }, [])
+}
+
 export const AppProvider = ({ children }) => {
     const [tamData, setTamData] = useState<TamFormData>({} as TamFormData)
     const [nwData, setNwData] = useState<NetWorthData>(INIT_NW_DATA)
@@ -81,7 +97,6 @@ export const AppProvider = ({ children }) => {
         }
         return defaultOrder
     })
-    const { sendRequestData, onResponseData, loadNetWorthData, loadRpData, loadRecipesData, loadBudgetData, loadSavingsProjectsData, loadEaData } = useIpcRenderer()
 
     const setSidebarOrder = useCallback((order: string[]) => {
         setSidebarOrderState(order)
@@ -96,65 +111,12 @@ export const AppProvider = ({ children }) => {
         })
     }, [])
 
-    const refreshNwData = useCallback(async () => {
-        try {
-            const data = await loadNetWorthData()
-            setNwData(parseNetWorthData(data))
-        } catch (err) {
-            console.error('Failed to load net worth data:', err)
-            toast.error('Failed to load net worth data')
-        }
-    }, [])
-
-    const refreshRpData = useCallback(async () => {
-        try {
-            const data = await loadRpData()
-            setRpData(parseRpData(data))
-        } catch (err) {
-            console.error('Failed to load recurring purchases data:', err)
-            toast.error('Failed to load recurring purchases data')
-        }
-    }, [])
-
-    const refreshRecipesData = useCallback(async () => {
-        try {
-            const data = await loadRecipesData()
-            setRecipesData(parseRecipesData(data))
-        } catch (err) {
-            console.error('Failed to load recipes data:', err)
-            toast.error('Failed to load recipes data')
-        }
-    }, [])
-
-    const refreshBudgetData = useCallback(async () => {
-        try {
-            const data = await loadBudgetData()
-            setBudgetData(parseBudgetData(data))
-        } catch (err) {
-            console.error('Failed to load budget data:', err)
-            toast.error('Failed to load budget data')
-        }
-    }, [])
-
-    const refreshSpData = useCallback(async () => {
-        try {
-            const data = await loadSavingsProjectsData()
-            setSpData(parseSavingsProjectsData(data))
-        } catch (err) {
-            console.error('Failed to load savings projects data:', err)
-            toast.error('Failed to load savings projects data')
-        }
-    }, [])
-
-    const refreshEaData = useCallback(async () => {
-        try {
-            const data = await loadEaData()
-            setEaData(parseEaData(data))
-        } catch (err) {
-            console.error('Failed to load expense analysis data:', err)
-            toast.error('Failed to load expense analysis data')
-        }
-    }, [])
+    const refreshNwData = useRefresh(ipc.loadNetWorthData, parseNetWorthData, setNwData, 'net worth data')
+    const refreshRpData = useRefresh(ipc.loadRpData, parseRpData, setRpData, 'recurring purchases data')
+    const refreshRecipesData = useRefresh(ipc.loadRecipesData, parseRecipesData, setRecipesData, 'recipes data')
+    const refreshBudgetData = useRefresh(ipc.loadBudgetData, parseBudgetData, setBudgetData, 'budget data')
+    const refreshSpData = useRefresh(ipc.loadSavingsProjectsData, parseSavingsProjectsData, setSpData, 'savings projects data')
+    const refreshEaData = useRefresh(ipc.loadEaData, parseEaData, setEaData, 'expense analysis data')
 
     useEffect(() => {
         const handleResponse = (event, responseData) => {
@@ -166,8 +128,8 @@ export const AppProvider = ({ children }) => {
             }
         }
 
-        const cleanup = onResponseData(handleResponse)
-        sendRequestData()
+        const cleanup = ipc.onResponseData(handleResponse)
+        ipc.requestData()
         refreshNwData()
         refreshRpData()
         refreshRecipesData()
@@ -177,32 +139,22 @@ export const AppProvider = ({ children }) => {
         return cleanup
     }, [])
 
-    const contextValue = {
-        tamData,
-        setTamData,
-        nwData,
-        setNwData,
-        refreshNwData,
-        rpData,
-        setRpData,
-        refreshRpData,
-        recipesData,
-        setRecipesData,
-        refreshRecipesData,
-        budgetData,
-        setBudgetData,
-        refreshBudgetData,
-        spData,
-        setSpData,
-        refreshSpData,
-        eaData,
-        setEaData,
-        refreshEaData,
-        blurFinances,
-        toggleBlurFinances,
-        sidebarOrder,
-        setSidebarOrder,
-    }
+    const contextValue = useMemo(() => ({
+        tamData, setTamData,
+        nwData, setNwData, refreshNwData,
+        rpData, setRpData, refreshRpData,
+        recipesData, setRecipesData, refreshRecipesData,
+        budgetData, setBudgetData, refreshBudgetData,
+        spData, setSpData, refreshSpData,
+        eaData, setEaData, refreshEaData,
+        blurFinances, toggleBlurFinances,
+        sidebarOrder, setSidebarOrder,
+    }), [
+        tamData, nwData, rpData, recipesData, budgetData, spData, eaData,
+        blurFinances, sidebarOrder,
+        refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData,
+        toggleBlurFinances, setSidebarOrder,
+    ])
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
 }

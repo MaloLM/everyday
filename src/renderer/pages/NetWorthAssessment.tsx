@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useIpcRenderer } from '../api/electron'
+import { ipc } from '../api/electron'
 import { Loading } from '../components'
 import { NwForm } from '../components/form/nw-form/NwForm'
 import { useAppContext } from '../context'
@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 
 export const NetWorthAssessment = () => {
     const { nwData, refreshNwData } = useAppContext()
-    const { saveNetWorthEntry, deleteNetWorthEntry } = useIpcRenderer()
+    const { saveNetWorthEntry, deleteNetWorthEntry } = ipc
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
