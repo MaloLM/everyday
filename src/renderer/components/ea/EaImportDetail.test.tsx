@@ -80,6 +80,11 @@ describe('EaImportDetail', () => {
         expect(screen.getByText(/Are you sure you want to delete/)).toBeInTheDocument()
     })
 
+    it('renders export button', () => {
+        renderDetail()
+        expect(screen.getByTitle('Export import')).toBeInTheDocument()
+    })
+
     it('renders flagged row styling', () => {
         renderDetail()
         const rentRow = screen.getByDisplayValue('Rent').closest('tr')

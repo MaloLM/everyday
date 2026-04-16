@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Eye, EyeOff, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, Download, Eye, EyeOff, Save, Trash2 } from 'lucide-react'
 import { EaImport, EaTransaction } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
 import { Card, Button, ConfirmModal } from '..'
@@ -64,6 +64,20 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
         }
     }
 
+    const handleExport = () => {
+        const data = { ...importData, title, transactions }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        a.download = `ea-${slug}-${importData.date.slice(0, 10)}.json`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+    }
+
     const handleDelete = async () => {
         try {
             await onDelete(importData.id)
@@ -96,6 +110,14 @@ export const EaImportDetail = ({ importData, allKnownTags, onSave, onDelete }: E
                     <Save size={16} />
                     Save
                 </Button>
+                <button
+                    type="button"
+                    onClick={handleExport}
+                    title="Export import"
+                    className="rounded-lg border border-softWhite/20 p-2 text-softWhite/50 transition-colors hover:border-nobleGold/30 hover:text-nobleGold"
+                >
+                    <Download size={18} />
+                </button>
                 <button
                     type="button"
                     onClick={toggleBlurFinances}

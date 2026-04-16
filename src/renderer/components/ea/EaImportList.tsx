@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, X } from 'lucide-react'
+import { Download, Plus, Upload, X } from 'lucide-react'
 import { EaImport } from '../../utils/types'
 import { CURRENCIES } from '../../utils/constants'
 import { Button, Card } from '..'
 import { EaCsvImportWizard } from './EaCsvImportWizard'
 import { EaExpenseChart } from './EaExpenseChart'
+import toast from 'react-hot-toast'
 
 interface EaImportListProps {
     imports: EaImport[]
@@ -19,6 +20,44 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
     const navigate = useNavigate()
     const [isImporting, setIsImporting] = useState(false)
     const [newTag, setNewTag] = useState('')
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        try {
+            const text = await file.text()
+            const data = JSON.parse(text)
+            if (!data.title || !Array.isArray(data.transactions)) {
+                toast.error('Invalid import file format')
+                return
+            }
+            const imported: EaImport = {
+                ...data,
+                id: crypto.randomUUID(),
+            }
+            await onSaveImport(imported)
+            await onRefresh()
+            toast.success('Import loaded successfully')
+        } catch {
+            toast.error('Failed to load import file')
+        }
+        if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+
+    const handleExport = (imp: EaImport, e: React.MouseEvent) => {
+        e.stopPropagation()
+        const blob = new Blob([JSON.stringify(imp, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        const slug = imp.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        a.download = `ea-${slug}-${imp.date.slice(0, 10)}.json`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+    }
 
     const sortedImports = [...imports].sort((a, b) => b.date.localeCompare(a.date))
 
@@ -46,6 +85,22 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
                     <Plus size={16} />
                     New Import
                 </Button>
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Import from file"
+                    className="rounded-lg border border-nobleGold/40 p-2 text-nobleGold transition-colors hover:border-nobleGold hover:bg-nobleGold/10"
+                >
+                    <Upload size={18} />
+                </button>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json"
+                    className="hidden"
+                    onChange={handleFileImport}
+                    data-testid="import-file-input"
+                />
             </div>
 
             {isImporting && (
@@ -122,8 +177,16 @@ export const EaImportList = ({ imports, allKnownTags, onSaveImport, onSaveTags, 
                                 <button
                                     key={imp.id}
                                     onClick={() => navigate(`/ea/${imp.id}`)}
-                                    className="group flex flex-col items-start rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left transition-all duration-300 hover:border-nobleGold/30 hover:bg-nobleGold/[0.06]"
+                                    className="group relative flex flex-col items-start rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left transition-all duration-300 hover:border-nobleGold/30 hover:bg-nobleGold/[0.06]"
                                 >
+                                    <div
+                                        className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100"
+                                        onClick={(e) => handleExport(imp, e)}
+                                        title="Export import"
+                                        role="button"
+                                    >
+                                        <Download size={16} className="text-softWhite/40 hover:text-nobleGold" />
+                                    </div>
                                     <h2 className="mb-1 text-lg font-medium text-softWhite">{imp.title}</h2>
                                     <p className="mb-2 text-xs text-softWhite/40">
                                         {new Date(imp.date).toLocaleDateString()} — {imp.bankSource}

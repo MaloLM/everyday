@@ -82,4 +82,11 @@ describe('ExpenseAnalysis', () => {
             expect(screen.getByText('New Import')).toBeInTheDocument()
         })
     })
+
+    it('shows Import from file button in list view', async () => {
+        renderPage('/ea')
+        await waitFor(() => {
+            expect(screen.getByTitle('Import from file')).toBeInTheDocument()
+        })
+    })
 })
