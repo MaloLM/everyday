@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, FileSpreadsheet, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
@@ -27,11 +28,12 @@ export const Sidebar = () => {
     const orderedItems = sidebarOrder.map((path) => navItemsByPath.get(path)).filter(Boolean)
 
     const toggleSidebar = () => {
+        if (isSidebarOpen) setReordering(false)
         setSidebarOpen(!isSidebarOpen)
     }
 
-    const navigateToPath = (path) => {
-        setSidebarOpen(false)
+    const navigateToPath = (path: string) => {
+        if (isSidebarOpen) setSidebarOpen(false)
         navigate(path)
     }
 
@@ -46,76 +48,94 @@ export const Sidebar = () => {
         setSidebarOrder(newItems.map((item) => item.path))
     }, [orderedItems, setSidebarOrder])
 
+    const [tooltip, setTooltip] = useState<{ label: string; top: number } | null>(null)
+
     const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
 
     return (
         <>
             {isSidebarOpen && (
-                <div className="fixed inset-0 z-30" onClick={() => setSidebarOpen(false)} />
+                <div className="fixed inset-0 z-30" onClick={() => { setReordering(false); setSidebarOpen(false) }} />
             )}
-            <button
-                onClick={toggleSidebar}
-                onMouseEnter={() => { if (!isSidebarOpen) setSidebarOpen(true) }}
-                aria-controls="default-sidebar"
-                type="button"
-                className={`fixed top-2 z-50 mt-2 inline-flex items-center border p-2
-                    text-sm text-softWhite transition-transform duration-500 focus:outline-none
-                    ${isSidebarOpen
-                        ? 'translate-x-64 rounded-l-none rounded-r-lg border-l-0 border-white/10 bg-white/5 backdrop-blur-xl xl:translate-x-72'
-                        : 'ms-3 rounded-lg border-lightNobleBlack bg-lightNobleBlack'
-                    }`}
-            >
-                <span className="sr-only">{isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}</span>
-                {isSidebarOpen ? <AlignJustify /> : <AlignLeft className={'text-nobleGold'} />}
-            </button>
             <aside
                 id="default-sidebar"
-                className={`fixed left-0 top-0 z-40 h-screen w-64 transition-transform duration-500 xl:w-72 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed left-0 top-0 z-40 h-screen transition-all duration-300 ${isSidebarOpen ? 'w-64 xl:w-72' : 'w-16'}`}
                 aria-label="Sidebar"
             >
-                <div className="sidebar-glass flex h-full flex-col overflow-y-auto border-r border-white/10 px-3 py-4">
-                    <div className="mb-4 px-2.5 font-serif text-xl font-medium tracking-widest text-nobleGold">Everyday</div>
-                    <ul className="space-y-1 font-medium">
+                <div className="sidebar-glass flex h-full flex-col overflow-hidden border-r border-white/10 px-3 py-4">
+                    <div className={`mb-4 flex items-center ${isSidebarOpen ? 'justify-between' : 'justify-center'}`}>
+                        {isSidebarOpen && (
+                            <div className="px-2.5 font-serif text-xl font-medium tracking-widest text-nobleGold">Everyday</div>
+                        )}
+                        <button
+                            onClick={toggleSidebar}
+                            type="button"
+                            className="inline-flex items-center rounded-lg p-2 text-sm text-softWhite/70 hover:text-softWhite focus:outline-none"
+                        >
+                            <span className="sr-only">{isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}</span>
+                            {isSidebarOpen ? <AlignJustify size={20} /> : <AlignLeft size={20} className="text-nobleGold" />}
+                        </button>
+                    </div>
+                    <ul className="space-y-1 overflow-y-auto font-medium">
                         {orderedItems.map((item, index) => {
                             const active = isActive(item)
                             const Icon = item.icon
                             return (
                                 <li
                                     key={item.path}
-                                    {...(reordering ? dragHandlers(index) : {})}
+                                    {...(reordering && isSidebarOpen ? dragHandlers(index) : {})}
                                     className={`transition-opacity ${dragIndex === index ? 'opacity-30' : ''} ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}
                                 >
                                     <a
                                         onClick={() => !reordering && navigateToPath(item.path)}
-                                        className={`flex cursor-pointer items-center rounded-lg p-2.5
+                                        onMouseEnter={(e) => {
+                                            if (!isSidebarOpen) {
+                                                const rect = e.currentTarget.getBoundingClientRect()
+                                                setTooltip({ label: item.label, top: rect.top + rect.height / 2 })
+                                            }
+                                        }}
+                                        onMouseLeave={() => setTooltip(null)}
+                                        className={`flex cursor-pointer items-center whitespace-nowrap rounded-lg p-2.5
+                                            ${!isSidebarOpen ? 'justify-center' : ''}
                                             ${active
                                                 ? 'bg-nobleGold/15 text-nobleGold'
                                                 : 'text-softWhite/70 hover:text-softWhite'
                                             }`}
                                     >
-                                        {reordering && (
+                                        {reordering && isSidebarOpen && (
                                             <div className="shrink-0 cursor-grab text-softWhite/30 hover:text-softWhite/60 active:cursor-grabbing">
                                                 <GripVertical size={16} />
                                             </div>
                                         )}
-                                        <Icon size={20} className={`${reordering ? 'ms-1' : ''} ${active ? 'text-nobleGold' : 'opacity-60'}`} />
-                                        <span className="ms-3">{item.label}</span>
+                                        <Icon size={20} className={`shrink-0 ${reordering && isSidebarOpen ? 'ms-1' : ''} ${active ? 'text-nobleGold' : 'opacity-60'}`} />
+                                        {isSidebarOpen && <span className="ms-3 truncate">{item.label}</span>}
                                     </a>
                                 </li>
                             )
                         })}
                     </ul>
-                    <div className="mt-auto border-t border-white/10 pt-3">
-                        <button
-                            onClick={() => setReordering((r) => !r)}
-                            className={`flex w-full cursor-pointer items-center rounded-lg p-2.5 ${reordering ? 'text-nobleGold' : 'text-softWhite/70 hover:text-softWhite'}`}
-                        >
-                            <ArrowDownUp size={20} className={reordering ? '' : 'opacity-60'} />
-                            <span className="ms-3">{reordering ? 'Done reordering' : 'Reorder menu'}</span>
-                        </button>
-                    </div>
+                    {isSidebarOpen && (
+                        <div className="mt-auto border-t border-white/10 pt-3">
+                            <button
+                                onClick={() => setReordering((r) => !r)}
+                                className={`flex w-full cursor-pointer items-center rounded-lg p-2.5 ${reordering ? 'text-nobleGold' : 'text-softWhite/70 hover:text-softWhite'}`}
+                            >
+                                <ArrowDownUp size={20} className={reordering ? '' : 'opacity-60'} />
+                                <span className="ms-3">{reordering ? 'Done reordering' : 'Reorder menu'}</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </aside>
+            {tooltip && createPortal(
+                <div
+                    className="pointer-events-none fixed z-50 rounded-md bg-lightNobleBlack px-2.5 py-1.5 text-sm text-softWhite shadow-lg"
+                    style={{ left: '4.5rem', top: tooltip.top, transform: 'translateY(-50%)' }}
+                >
+                    {tooltip.label}
+                </div>,
+                document.body,
+            )}
         </>
     )
 }
