@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
-import { DonutChart } from '../DonutChart'
+import { Doughnut } from 'react-chartjs-2'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { EaTransaction } from '../../utils/types'
 import { COLORS, TAG_COLORS } from '../../utils/constants'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
 
 interface EaExpenseChartProps {
     transactions: EaTransaction[]
@@ -9,7 +12,7 @@ interface EaExpenseChartProps {
 }
 
 export const EaExpenseChart = ({ transactions, currencySymbol }: EaExpenseChartProps) => {
-    const chartData = useMemo(() => {
+    const { chartData, rawAmounts } = useMemo(() => {
         const groups = new Map<string, number>()
         for (const t of transactions) {
             const tag = t.tag || 'Untagged'
@@ -17,25 +20,33 @@ export const EaExpenseChart = ({ transactions, currencySymbol }: EaExpenseChartP
         }
         if (groups.size === 0) {
             return {
-                labels: ['No data'],
-                datasets: [{
-                    data: [1],
-                    backgroundColor: [COLORS.lightNobleBlack],
-                    borderColor: COLORS.lightNobleBlack,
-                    borderWidth: 2,
-                }],
+                chartData: {
+                    labels: ['No data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: [COLORS.lightNobleBlack],
+                        borderColor: COLORS.lightNobleBlack,
+                        borderWidth: 2,
+                    }],
+                },
+                rawAmounts: [0],
             }
         }
         const labels = [...groups.keys()]
-        const data = [...groups.values()].map((v) => Math.round(v * 100) / 100)
+        const rawValues = [...groups.values()]
+        const total = rawValues.reduce((s, v) => s + v, 0)
+        const data = rawValues.map((v) => Math.round((v / total) * 1000) / 10)
         return {
-            labels,
-            datasets: [{
-                data,
-                backgroundColor: labels.map((_, i) => TAG_COLORS[i % TAG_COLORS.length]),
-                borderColor: COLORS.lightNobleBlack,
-                borderWidth: 2,
-            }],
+            chartData: {
+                labels,
+                datasets: [{
+                    data,
+                    backgroundColor: labels.map((_, i) => TAG_COLORS[i % TAG_COLORS.length]),
+                    borderColor: COLORS.lightNobleBlack,
+                    borderWidth: 2,
+                }],
+            },
+            rawAmounts: rawValues.map((v) => Math.round(v * 100) / 100),
         }
     }, [transactions])
 
@@ -44,24 +55,44 @@ export const EaExpenseChart = ({ transactions, currencySymbol }: EaExpenseChartP
     return (
         <div className="flex flex-col items-center gap-2">
             <h3 className="text-sm font-medium text-softWhite/70">Expenses by Tag</h3>
-            <div className="relative flex h-44 w-44 items-center justify-center">
-                <div className="fin-chart h-full w-full"><DonutChart data={chartData} /></div>
-                <span className="fin-value absolute text-sm font-bold text-nobleGold">
-                    {total.toLocaleString(undefined, total % 1 !== 0
-                        ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                        : { maximumFractionDigits: 0 })} {currencySymbol}
-                </span>
-            </div>
-            <div className="flex flex-wrap justify-center gap-2">
-                {chartData.labels.map((label, i) => (
-                    <div key={label} className="flex items-center gap-1 text-xs text-softWhite/60">
-                        <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: TAG_COLORS[i % TAG_COLORS.length] }}
+            <div className="flex items-center gap-6">
+                <div className="relative flex h-44 w-44 shrink-0 items-center justify-center">
+                    <div className="fin-chart h-full w-full">
+                        <Doughnut
+                            data={chartData}
+                            options={{
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: (context) => {
+                                                const amount = rawAmounts[context.dataIndex]
+                                                const formatted = amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                                return ` ${context.parsed}% — ${formatted} ${currencySymbol}`
+                                            },
+                                        },
+                                    },
+                                },
+                            }}
                         />
-                        {label}
                     </div>
-                ))}
+                    <span className="fin-value absolute text-sm font-bold text-nobleGold">
+                        {total.toLocaleString(undefined, total % 1 !== 0
+                            ? { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+                            : { maximumFractionDigits: 0 })} {currencySymbol}
+                    </span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                    {chartData.labels.map((label, i) => (
+                        <div key={label} className="flex items-center gap-2 text-xs text-softWhite/60">
+                            <span
+                                className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: TAG_COLORS[i % TAG_COLORS.length] }}
+                            />
+                            {label}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

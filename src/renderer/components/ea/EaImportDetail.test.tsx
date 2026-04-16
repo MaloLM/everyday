@@ -4,8 +4,15 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { EaImport } from '../../utils/types'
 
-vi.mock('../DonutChart', () => ({
-    DonutChart: () => <div data-testid="donut-chart" />,
+vi.mock('../../context', () => ({
+    useAppContext: vi.fn().mockReturnValue({
+        blurFinances: false,
+        toggleBlurFinances: vi.fn(),
+    }),
+}))
+
+vi.mock('react-chartjs-2', () => ({
+    Doughnut: () => <div data-testid="donut-chart" />,
 }))
 
 import { EaImportDetail } from './EaImportDetail'
@@ -56,8 +63,8 @@ describe('EaImportDetail', () => {
 
     it('renders transaction descriptions', () => {
         renderDetail()
-        expect(screen.getByText('Shop A')).toBeInTheDocument()
-        expect(screen.getByText('Rent')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Shop A')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Rent')).toBeInTheDocument()
     })
 
     it('renders the donut chart', () => {
@@ -74,7 +81,7 @@ describe('EaImportDetail', () => {
 
     it('renders flagged row styling', () => {
         renderDetail()
-        const rentRow = screen.getByText('Rent').closest('tr')
+        const rentRow = screen.getByDisplayValue('Rent').closest('tr')
         expect(rentRow).toHaveClass('bg-error/10')
     })
 })

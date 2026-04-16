@@ -17,7 +17,6 @@ export const EaTransactionTable = ({ transactions, onUpdateTransaction, onToggle
                         <th className="px-3 py-2 font-medium">Description</th>
                         <th className="px-3 py-2 font-medium">Type</th>
                         <th className="px-3 py-2 font-medium text-right">Amount</th>
-                        <th className="px-3 py-2 font-medium text-right">Fee</th>
                         <th className="px-3 py-2 font-medium">Currency</th>
                         <th className="px-3 py-2 font-medium">Tag</th>
                         <th className="px-3 py-2 font-medium w-10"></th>
@@ -29,15 +28,18 @@ export const EaTransactionTable = ({ transactions, onUpdateTransaction, onToggle
                             key={t.id}
                             className={`border-b border-white/5 transition-colors ${t.flagged ? 'bg-error/10' : 'hover:bg-white/[0.02]'}`}
                         >
-                            <td className="px-3 py-2 text-softWhite/80">{t.description}</td>
+                            <td className="px-3 py-2">
+                                <input
+                                    type="text"
+                                    value={t.description}
+                                    onChange={(e) => onUpdateTransaction(i, 'description', e.target.value)}
+                                    className="field w-full bg-transparent px-1 py-0.5 text-sm text-softWhite/80"
+                                    maxLength={200}
+                                />
+                            </td>
                             <td className="px-3 py-2 text-softWhite/60">{t.type}</td>
                             <td className="fin-value px-3 py-2 text-right text-softWhite/80">
                                 {t.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </td>
-                            <td className="fin-value px-3 py-2 text-right text-softWhite/60">
-                                {t.fee !== 0
-                                    ? t.fee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                    : '—'}
                             </td>
                             <td className="px-3 py-2 text-softWhite/60">{CURRENCIES.get(t.currency) || t.currency}</td>
                             <td className="px-3 py-2">

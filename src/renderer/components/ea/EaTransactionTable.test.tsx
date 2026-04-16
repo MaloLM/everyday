@@ -18,8 +18,8 @@ describe('EaTransactionTable', () => {
                 onToggleFlag={vi.fn()}
             />
         )
-        expect(screen.getByText('Supermarket')).toBeInTheDocument()
-        expect(screen.getByText('Rent Payment')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Supermarket')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Rent Payment')).toBeInTheDocument()
     })
 
     it('renders flagged row with error background', () => {
@@ -30,7 +30,7 @@ describe('EaTransactionTable', () => {
                 onToggleFlag={vi.fn()}
             />
         )
-        const flaggedRow = screen.getByText('Rent Payment').closest('tr')
+        const flaggedRow = screen.getByDisplayValue('Rent Payment').closest('tr')
         expect(flaggedRow).toHaveClass('bg-error/10')
     })
 
@@ -42,7 +42,7 @@ describe('EaTransactionTable', () => {
                 onToggleFlag={vi.fn()}
             />
         )
-        const unflaggedRow = screen.getByText('Supermarket').closest('tr')
+        const unflaggedRow = screen.getByDisplayValue('Supermarket').closest('tr')
         expect(unflaggedRow).not.toHaveClass('bg-error/10')
     })
 
@@ -96,7 +96,7 @@ describe('EaTransactionTable', () => {
         expect(screen.getByText('-42.50')).toBeInTheDocument()
     })
 
-    it('shows dash for zero fees', () => {
+    it('renders editable description fields', () => {
         render(
             <EaTransactionTable
                 transactions={transactions}
@@ -104,7 +104,21 @@ describe('EaTransactionTable', () => {
                 onToggleFlag={vi.fn()}
             />
         )
-        const dashes = screen.getAllByText('—')
-        expect(dashes.length).toBeGreaterThanOrEqual(1)
+        expect(screen.getByDisplayValue('Supermarket')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Rent Payment')).toBeInTheDocument()
+    })
+
+    it('calls onUpdateTransaction when description is changed', async () => {
+        const onUpdateTransaction = vi.fn()
+        render(
+            <EaTransactionTable
+                transactions={transactions}
+                onUpdateTransaction={onUpdateTransaction}
+                onToggleFlag={vi.fn()}
+            />
+        )
+        const descInput = screen.getByDisplayValue('Supermarket')
+        await userEvent.type(descInput, '!')
+        expect(onUpdateTransaction).toHaveBeenCalledWith(0, 'description', 'Supermarket!')
     })
 })
