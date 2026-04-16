@@ -42,15 +42,18 @@ export const TamDonutChart = ({ assets, className }: DonutChartProps) => {
     }, [assets])
 
     return (
-        <div className={'relative flex items-center justify-center ' + className}>
-            <DonutChart data={data} />
-            <span
-                className={`absolute text-4xl font-bold ${totalPurcentage > 100 ? 'text-error' : totalPurcentage === 100 ? 'text-nobleGold' : ''}`}
-            >
-                {totalPurcentage > 999 || totalPurcentage < 0.1 || isNaN(totalPurcentage)
-                    ? '???'
-                    : totalPurcentage + '%'}
-            </span>
+        <div className={'flex flex-col items-center gap-2 ' + className}>
+            <div className="relative flex items-center justify-center">
+                <DonutChart data={data} />
+                <span
+                    className={`absolute text-4xl font-bold ${totalPurcentage > 100 ? 'text-error' : totalPurcentage === 100 ? 'text-nobleGold' : ''}`}
+                >
+                    {totalPurcentage > 999 || totalPurcentage < 0.1 || isNaN(totalPurcentage)
+                        ? '???'
+                        : totalPurcentage + '%'}
+                </span>
+            </div>
+            <h3 className="text-sm font-medium text-softWhite/70">Target Allocation</h3>
         </div>
     )
 }

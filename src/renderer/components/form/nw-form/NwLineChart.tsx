@@ -31,8 +31,10 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
     const chartRef = useRef<any>(null)
     const currencySymbol = CURRENCIES.get(currency) || currency
 
+    const sortedEntries = useMemo(() => [...entries].sort((a, b) => a.date.localeCompare(b.date)), [entries])
+
     const chartData = useMemo(() => {
-        const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
+        const sorted = sortedEntries
 
         // Collect unique item names in order of first appearance (Set for O(1) lookup)
         const seen = new Set<string>()
@@ -67,7 +69,7 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
         })
 
         return { datasets }
-    }, [entries])
+    }, [sortedEntries])
 
     const chartOptions = useMemo(() => ({
         responsive: true,
@@ -104,18 +106,20 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
                 stacked: true,
                 time: {
                     tooltipFormat: 'dd MMM yyyy',
-                    displayFormats: {
-                        day: 'dd MMM',
-                        week: 'dd MMM',
-                        month: 'MMM yyyy',
-                        quarter: 'MMM yyyy',
-                        year: 'yyyy',
-                    },
                 },
                 ticks: {
                     color: COLORS.softWhite,
-                    autoSkip: true,
+                    autoSkip: false,
                     maxRotation: 45,
+                    source: 'data' as const,
+                    callback: function (_value, index) {
+                        if (index >= sortedEntries.length) return ''
+                        const d = new Date(sortedEntries[index].date)
+                        const day = String(d.getDate()).padStart(2, '0')
+                        const month = String(d.getMonth() + 1).padStart(2, '0')
+                        const year = String(d.getFullYear()).slice(-2)
+                        return `${day}/${month}/'${year}`
+                    },
                 },
                 grid: {
                     color: COLORS.lightGray,
@@ -131,7 +135,7 @@ export const NwLineChart = ({ entries, currency }: NwLineChartProps) => {
                 },
             },
         },
-    }), [currencySymbol])
+    }), [currencySymbol, sortedEntries])
 
     const exportChart = () => {
         if (!chartRef.current) return
