@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { SavingsProject } from '../../../utils/types'
 import { SpProjectRow } from './SpProjectRow'
 import { SpMonthCells } from './SpMonthCells'
 import { CURRENCIES } from '../../../utils/constants'
-import { Plus } from 'lucide-react'
+import { Plus, GripVertical } from 'lucide-react'
 
 interface SpTableProps {
     projects: SavingsProject[]
@@ -10,6 +11,7 @@ interface SpTableProps {
     currency: string
     onAdd: () => void
     onDelete: (index: number) => void
+    onReorder: (fromIndex: number, toIndex: number) => void
 }
 
 const MAX_PROJECTS = 50
@@ -20,8 +22,38 @@ function formatMonthHeader(month: string): string {
     return date.toLocaleDateString('en', { month: 'short', year: '2-digit' })
 }
 
-export const SpTable = ({ projects, months, currency, onAdd, onDelete }: SpTableProps) => {
+export const SpTable = ({ projects, months, currency, onAdd, onDelete, onReorder }: SpTableProps) => {
     const currencySymbol = CURRENCIES.get(currency) || currency
+    const [dragIndex, setDragIndex] = useState<number | null>(null)
+    const [overIndex, setOverIndex] = useState<number | null>(null)
+
+    const handleDragStart = (index: number) => (e: React.DragEvent) => {
+        setDragIndex(index)
+        e.dataTransfer.effectAllowed = 'move'
+    }
+
+    const handleDragOver = (index: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+        setOverIndex(index)
+    }
+
+    const handleDrop = (index: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        if (dragIndex === null || dragIndex === index) {
+            setDragIndex(null)
+            setOverIndex(null)
+            return
+        }
+        onReorder(dragIndex, index)
+        setDragIndex(null)
+        setOverIndex(null)
+    }
+
+    const handleDragEnd = () => {
+        setDragIndex(null)
+        setOverIndex(null)
+    }
 
     if (projects.length === 0) {
         return (
@@ -46,6 +78,7 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete }: SpTable
                     <table className="border-collapse">
                         <thead>
                             <tr className="h-10 text-xs uppercase tracking-wide text-softWhite/50">
+                                <th className="w-6 px-0 py-2" />
                                 <th className="px-1 py-2 text-left" />
                                 <th className="px-1 py-2 text-left">Project</th>
                                 <th className="px-1 py-2 text-center">Objective</th>
@@ -55,7 +88,22 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete }: SpTable
                         </thead>
                         <tbody>
                             {projects.map((project, index) => (
-                                <tr key={project.id} className="h-20 border-t border-white/5">
+                                <tr
+                                    key={project.id}
+                                    draggable
+                                    onDragStart={handleDragStart(index)}
+                                    onDragOver={handleDragOver(index)}
+                                    onDrop={handleDrop(index)}
+                                    onDragEnd={handleDragEnd}
+                                    className={`h-20 border-t border-white/5 transition-opacity ${
+                                        dragIndex === index ? 'opacity-30' : ''
+                                    } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold bg-nobleGold/10' : ''}`}
+                                >
+                                    <td className="w-6 px-0 py-1">
+                                        <div className="cursor-grab active:cursor-grabbing shrink-0 text-softWhite/30 hover:text-softWhite/60">
+                                            <GripVertical size={16} />
+                                        </div>
+                                    </td>
                                     <SpProjectRow
                                         index={index}
                                         project={project}
@@ -82,7 +130,17 @@ export const SpTable = ({ projects, months, currency, onAdd, onDelete }: SpTable
                         </thead>
                         <tbody>
                             {projects.map((project, index) => (
-                                <tr key={project.id} className="h-20 border-t border-white/5">
+                                <tr
+                                    key={project.id}
+                                    draggable
+                                    onDragStart={handleDragStart(index)}
+                                    onDragOver={handleDragOver(index)}
+                                    onDrop={handleDrop(index)}
+                                    onDragEnd={handleDragEnd}
+                                    className={`h-20 border-t border-white/5 transition-opacity ${
+                                        dragIndex === index ? 'opacity-30' : ''
+                                    } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold bg-nobleGold/10' : ''}`}
+                                >
                                     <SpMonthCells
                                         index={index}
                                         months={months}

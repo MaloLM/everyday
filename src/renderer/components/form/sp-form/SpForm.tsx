@@ -92,6 +92,13 @@ export const SpForm = ({ spData, onSave }: SpFormProps) => {
                     setFieldValue('projects', updated)
                 }
 
+                const handleReorder = (fromIndex: number, toIndex: number) => {
+                    const newProjects = [...values.projects]
+                    const [moved] = newProjects.splice(fromIndex, 1)
+                    newProjects.splice(toIndex, 0, moved)
+                    setFieldValue('projects', newProjects)
+                }
+
                 return (
                     <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
@@ -176,6 +183,7 @@ export const SpForm = ({ spData, onSave }: SpFormProps) => {
                                 currency={values.currency}
                                 onAdd={handleAdd}
                                 onDelete={handleDelete}
+                                onReorder={handleReorder}
                             />
                         </Card>
                     </Form>
