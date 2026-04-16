@@ -61,8 +61,9 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             const net = income.value * (1 - (income.deductionRate) / 100)
             groups.set(tag, (groups.get(tag) || 0) + net)
         }
-        const labels = [...groups.keys()]
-        const data = [...groups.values()].map((v) => Math.round(v * 100) / 100)
+        const entries = [...groups.entries()].sort((a, b) => b[1] - a[1])
+        const labels = entries.map(([k]) => k)
+        const data = entries.map(([, v]) => Math.round(v * 100) / 100)
         return {
             labels,
             datasets: [{
@@ -80,8 +81,9 @@ export const BudgetCharts = ({ incomes, expenses, currencySymbol }: BudgetCharts
             const tag = expense.tag || 'Untagged'
             groups.set(tag, (groups.get(tag) || 0) + expense.value)
         }
-        const labels = [...groups.keys()]
-        const data = [...groups.values()].map((v) => Math.round(v * 100) / 100)
+        const entries = [...groups.entries()].sort((a, b) => b[1] - a[1])
+        const labels = entries.map(([k]) => k)
+        const data = entries.map(([, v]) => Math.round(v * 100) / 100)
         return {
             labels,
             datasets: [{

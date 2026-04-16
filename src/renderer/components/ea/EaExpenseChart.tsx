@@ -32,8 +32,10 @@ export const EaExpenseChart = ({ transactions, currencySymbol }: EaExpenseChartP
                 rawAmounts: [0],
             }
         }
-        const labels = [...groups.keys()]
-        const rawValues = [...groups.values()]
+        const entries = [...groups.entries()]
+            .sort((a, b) => b[1] - a[1])
+        const labels = entries.map(([k]) => k)
+        const rawValues = entries.map(([, v]) => v)
         const total = rawValues.reduce((s, v) => s + v, 0)
         const data = rawValues.map((v) => Math.round((v / total) * 1000) / 10)
         return {

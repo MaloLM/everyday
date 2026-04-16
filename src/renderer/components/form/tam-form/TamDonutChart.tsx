@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Asset } from '../../../utils/types'
 import { DonutChart } from '../../DonutChart'
-import { COLORS } from '../../../utils/constants'
+import { COLORS, TAG_COLORS } from '../../../utils/constants'
 
 interface DonutChartProps {
     className?: string
@@ -9,39 +9,37 @@ interface DonutChartProps {
 }
 
 export const TamDonutChart = ({ assets, className }: DonutChartProps) => {
-    const { totalPurcentage, borderColor } = useMemo(() => {
-        const total = assets.reduce(
+    const totalPurcentage = useMemo(() => {
+        return assets.reduce(
             (acc: number, asset) =>
                 acc + (typeof asset.targetPercent === 'string' ? parseInt(asset.targetPercent) : asset.targetPercent),
             0,
         )
-        const color = total > 100 ? COLORS.error : total === 100 ? COLORS.nobleGold : COLORS.lightNobleBlack
-        return { totalPurcentage: total, borderColor: color }
     }, [assets])
 
-    const data = useMemo(() => ({
-        labels: assets.map((asset) => asset.assetName),
-        datasets: [
-            {
-                label: 'Asset Allocation',
-                data: assets.map((asset) => asset.targetPercent),
-                backgroundColor: [
-                    '#eccba0',
-                    '#a69151',
-                    '#ad8851',
-                    '#241935',
-                    '#8c9364',
-                    '#cfc1b2',
-                    '#947c5c',
-                    '#4c3c24',
-                    '#d4c9b3',
-                ],
-                hoverOffset: 4,
-                borderColor: borderColor,
-                borderWidth: 2,
-            },
-        ],
-    }), [assets, borderColor])
+    const data = useMemo(() => {
+        // Build indexed entries then sort by value descending for the chart
+        const indexed = assets.map((asset, i) => ({
+            label: asset.assetName,
+            value: asset.targetPercent,
+            color: TAG_COLORS[i % TAG_COLORS.length],
+        }))
+        const sorted = [...indexed].sort((a, b) => Number(b.value) - Number(a.value))
+
+        return {
+            labels: sorted.map((e) => e.label),
+            datasets: [
+                {
+                    label: 'Asset Allocation',
+                    data: sorted.map((e) => e.value),
+                    backgroundColor: sorted.map((e) => e.color),
+                    hoverOffset: 4,
+                    borderColor: COLORS.lightNobleBlack,
+                    borderWidth: 2,
+                },
+            ],
+        }
+    }, [assets])
 
     return (
         <div className={'relative flex items-center justify-center ' + className}>

@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import { Button } from '../../Button'
 import { ConfirmModal } from '../../ConfirmModal'
-import { Plus } from 'lucide-react'
+import { Plus, GripVertical } from 'lucide-react'
 import { AssetForm } from './AssetForm'
 import { Asset, CURRENCIES } from '../../../utils'
+import { useDragReorder } from '../../../hooks/useDragReorder'
 import toast from 'react-hot-toast'
 
 interface AssetListProps {
@@ -23,6 +24,15 @@ export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => 
     const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
     const pendingAsset = pendingDeleteIndex !== null ? values.assets[pendingDeleteIndex] : null
 
+    const onReorder = useCallback((from: number, to: number) => {
+        const newItems = [...values.assets]
+        const [moved] = newItems.splice(from, 1)
+        newItems.splice(to, 0, moved)
+        setFieldValue('assets', newItems)
+    }, [values.assets, setFieldValue])
+
+    const { dragIndex, overIndex, dragHandlers } = useDragReorder(onReorder)
+
     return (
         <div className="flex w-full flex-col">
             <ConfirmModal
@@ -40,18 +50,30 @@ export const AssetList = ({ values, errors, setFieldValue }: AssetListProps) => 
                 onCancel={() => setPendingDeleteIndex(null)}
                 danger
             />
-            <div className="flex max-h-110 w-full flex-col gap-1  overflow-y-scroll py-1 pr-4 md:min-h-24">
+            <div className="flex max-h-110 w-full flex-col gap-1 overflow-y-scroll py-1 pr-4 md:min-h-24">
                 {values.assets.map((asset, index) => (
-                    <div ref={index === values.assets.length - 1 ? lastAssetRef : null} key={asset.id ?? index}>
-                        <AssetForm
-                            currency={CURRENCIES.get(values.currency)}
-                            assetIndex={index}
-                            error={
-                                (errors.assets && errors.assets[index]) !== undefined &&
-                                typeof (errors.assets && errors.assets[index]) !== 'string'
-                            }
-                            onDelete={() => setPendingDeleteIndex(index)}
-                        />
+                    <div
+                        ref={index === values.assets.length - 1 ? lastAssetRef : null}
+                        key={asset.id ?? index}
+                        {...dragHandlers(index)}
+                        className={`flex items-center gap-1 transition-opacity ${
+                            dragIndex === index ? 'opacity-30' : ''
+                        } ${overIndex === index && dragIndex !== index ? 'border-t-2 border-nobleGold' : ''}`}
+                    >
+                        <div className="cursor-grab active:cursor-grabbing shrink-0 text-softWhite/30 hover:text-softWhite/60">
+                            <GripVertical size={16} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <AssetForm
+                                currency={CURRENCIES.get(values.currency)}
+                                assetIndex={index}
+                                error={
+                                    (errors.assets && errors.assets[index]) !== undefined &&
+                                    typeof (errors.assets && errors.assets[index]) !== 'string'
+                                }
+                                onDelete={() => setPendingDeleteIndex(index)}
+                            />
+                        </div>
                     </div>
                 ))}
                 {values.assets.length === 0 && (

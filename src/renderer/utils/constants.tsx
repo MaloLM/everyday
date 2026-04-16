@@ -98,15 +98,26 @@ export const INIT_EA_DATA: ExpenseAnalysisData = {
 }
 
 export const TAG_COLORS = [
-    '#eccba0',
-    '#a69151',
-    '#ad8851',
-    '#241935',
-    '#8c9364',
-    '#cfc1b2',
-    '#947c5c',
-    '#4c3c24',
-    '#d4c9b3',
+    '#d4b85b', // noble gold
+    '#6bc5e8', // sky blue
+    '#e8845f', // warm coral
+    '#8dd889', // soft green
+    '#c97dd6', // lavender
+    '#f0c24a', // bright amber
+    '#5ba8d4', // steel blue
+    '#e66b8f', // rose
+    '#a4d65e', // lime
+    '#d4a05b', // caramel
+    '#69d1c5', // teal
+    '#e89b4a', // tangerine
+    '#9b8de6', // periwinkle
+    '#d6cb5e', // chartreuse
+    '#e87070', // soft red
+    '#5ec4a0', // mint
+    '#d98abf', // pink
+    '#8eb8e8', // powder blue
+    '#c5a65e', // old gold
+    '#7dd6a8', // seafoam
 ]
 
 export const INIT_TAM_DATA: TamFormData = {
