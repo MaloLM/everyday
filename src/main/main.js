@@ -130,6 +130,9 @@ registerCrudHandlers({ prefix: "rp", filename: RP_FILE, collectionKey: "items", 
 registerCrudHandlers({ prefix: "recipes", filename: RECIPES_FILE, collectionKey: "recipes", saveChannel: "save", deleteChannel: "delete" });
 registerCrudHandlers({ prefix: "ea", filename: EA_FILE, collectionKey: "imports", saveChannel: "save-import", deleteChannel: "delete-import" });
 
+const GI_FILE = "gift_ideas_data.json";
+registerCrudHandlers({ prefix: "gi", filename: GI_FILE, collectionKey: "ideas", saveChannel: "save", deleteChannel: "delete" });
+
 // Budget (simple save, no upsert/delete)
 const BUDGET_FILE = "budget_data.json";
 
@@ -162,7 +165,7 @@ ipcMain.handle("ea:save", async (event, data) => {
 
 // Export all data
 ipcMain.handle("app:export-all", async () => {
-  const [tam, netWorth, recurringPurchases, recipes, budget, savingsProjects, expenseAnalysis] = await Promise.all([
+  const [tam, netWorth, recurringPurchases, recipes, budget, savingsProjects, expenseAnalysis, giftIdeas] = await Promise.all([
     readJsonFile("tam_form_data.json"),
     readJsonFile(NW_FILE),
     readJsonFile(RP_FILE),
@@ -170,6 +173,7 @@ ipcMain.handle("app:export-all", async () => {
     readJsonFile(BUDGET_FILE),
     readJsonFile(SP_FILE),
     readJsonFile(EA_FILE),
+    readJsonFile(GI_FILE),
   ]);
   return {
     exportedAt: new Date().toISOString(),
@@ -180,6 +184,7 @@ ipcMain.handle("app:export-all", async () => {
     budget,
     savingsProjects,
     expenseAnalysis,
+    giftIdeas,
   };
 });
 
@@ -192,5 +197,6 @@ ipcMain.handle("app:import-all", async (event, data) => {
     writeJsonFile(BUDGET_FILE, data.budget ?? {}),
     writeJsonFile(SP_FILE, data.savingsProjects ?? {}),
     writeJsonFile(EA_FILE, data.expenseAnalysis ?? {}),
+    writeJsonFile(GI_FILE, data.giftIdeas ?? {}),
   ]);
 });

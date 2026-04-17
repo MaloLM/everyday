@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, FileSpreadsheet, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
+import { AlignJustify, AlignLeft, ArrowDownUp, BarChartBig, ChefHat, FileSpreadsheet, Gift, GripVertical, Home, Landmark, PiggyBank, ShoppingCart, Wallet } from 'lucide-react'
 import { useAppContext } from '../context'
 import { useDragReorder } from '../hooks/useDragReorder'
 
@@ -14,6 +14,7 @@ const navItems: { path: string; altPaths: string[]; label: string; icon: typeof 
     { path: '/budget', altPaths: [], label: 'Budgeting', icon: PiggyBank },
     { path: '/sp', altPaths: [], label: 'Savings Projects', icon: Landmark },
     { path: '/ea', altPaths: [], label: 'Expense Analysis', icon: FileSpreadsheet },
+    { path: '/gift-ideas', altPaths: [], label: 'Gift Ideas', icon: Gift },
 ]
 
 const navItemsByPath = new Map(navItems.map((item) => [item.path, item]))

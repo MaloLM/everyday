@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BarChartBig, ChefHat, Download, FileSpreadsheet, Landmark, PiggyBank, ShoppingCart, Upload, Wallet } from 'lucide-react'
+import { BarChartBig, ChefHat, Download, FileSpreadsheet, Gift, Landmark, PiggyBank, ShoppingCart, Upload, Wallet } from 'lucide-react'
 import { ipc } from '../api/electron'
 import { useAppContext } from '../context'
 import toast from 'react-hot-toast'
@@ -48,12 +48,18 @@ const features = [
         title: 'Expense Analysis',
         description: 'Import bank CSV statements, tag and analyze transactions, visualize spending by category with charts.',
     },
+    {
+        path: '/gift-ideas',
+        icon: Gift,
+        title: 'Gift Ideas',
+        description: 'Keep track of gift ideas. Add details in markdown, mark gifts as offered, and search through your list.',
+    },
 ]
 
 export const Home = () => {
     const navigate = useNavigate()
     const { exportAllData, importAllData, requestData: sendRequestData } = ipc
-    const { refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData } = useAppContext()
+    const { refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData, refreshGiftIdeasData } = useAppContext()
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleExport = async () => {
@@ -77,7 +83,7 @@ export const Home = () => {
             const data = JSON.parse(text)
             await importAllData(data)
             sendRequestData()
-            await Promise.all([refreshNwData(), refreshRpData(), refreshRecipesData(), refreshBudgetData(), refreshSpData(), refreshEaData()])
+            await Promise.all([refreshNwData(), refreshRpData(), refreshRecipesData(), refreshBudgetData(), refreshSpData(), refreshEaData(), refreshGiftIdeasData()])
             toast.success('Data imported successfully')
         } catch {
             toast.error('Failed to import data')

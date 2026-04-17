@@ -29,6 +29,13 @@ const electronMock = {
   saveBudgetData: vi.fn().mockResolvedValue({ expenses: [], incomes: [], currency: 'EUR' }),
   loadSavingsProjectsData: vi.fn().mockResolvedValue({ projects: [], currency: 'EUR' }),
   saveSavingsProjectsData: vi.fn().mockResolvedValue({ projects: [], currency: 'EUR' }),
+  loadEaData: vi.fn().mockResolvedValue({ imports: [], tags: [] }),
+  saveEaData: vi.fn().mockResolvedValue({ imports: [], tags: [] }),
+  saveEaImport: vi.fn().mockResolvedValue({ imports: [], tags: [] }),
+  deleteEaImport: vi.fn().mockResolvedValue({ imports: [], tags: [] }),
+  loadGiftIdeasData: vi.fn().mockResolvedValue({ ideas: [] }),
+  saveGiftIdea: vi.fn().mockResolvedValue({ ideas: [] }),
+  deleteGiftIdea: vi.fn().mockResolvedValue({ ideas: [] }),
   exportAllData: vi.fn().mockResolvedValue({}),
   importAllData: vi.fn().mockResolvedValue(undefined),
 }

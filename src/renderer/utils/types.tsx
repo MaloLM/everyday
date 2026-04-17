@@ -164,3 +164,14 @@ export interface ExpenseAnalysisData {
     imports: EaImport[]
     tags: string[]
 }
+
+export interface GiftIdea {
+    id: string
+    title: string
+    details: string
+    offered: boolean
+}
+
+export interface GiftIdeasData {
+    ideas: GiftIdea[]
+}

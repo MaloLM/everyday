@@ -1,5 +1,5 @@
-import { BudgetData, BudgetExpense, BudgetIncome, ChartData, ExpenseAnalysisData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData, SavingsProject, SavingsProjectsData } from './types'
-import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA } from './constants'
+import { BudgetData, BudgetExpense, BudgetIncome, ChartData, ExpenseAnalysisData, GiftIdeasData, TamFormResponse, TamFormResponseAsset, TamFormData, NetWorthData, NetWorthEntry, RecurringPurchasesData, RecurringPurchaseItem, RecipesData, SavingsProject, SavingsProjectsData } from './types'
+import { COLORS, INIT_TAM_DATA, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA, INIT_GIFT_IDEAS_DATA } from './constants'
 
 // ---------------------------------------------------------------------------
 // Generic parser factory
@@ -137,6 +137,17 @@ export const parseEaData = createParser<ExpenseAnalysisData>({
         if (!Array.isArray(data.tags)) {
             data.tags = []
         }
+    },
+})
+
+export const parseGiftIdeasData = createParser<GiftIdeasData>({
+    rootKey: 'ideas',
+    initData: INIT_GIFT_IDEAS_DATA,
+    postProcess: (data) => {
+        data.ideas = data.ideas.map((idea: any) => ({
+            ...idea,
+            offered: idea.offered ?? false,
+        }))
     },
 })
 

@@ -15,6 +15,7 @@ const mockRefreshRecipesData = vi.fn()
 const mockRefreshBudgetData = vi.fn()
 const mockRefreshSpData = vi.fn()
 const mockRefreshEaData = vi.fn()
+const mockRefreshGiftIdeasData = vi.fn()
 
 vi.mock('../api/electron', () => ({
     ipc: {
@@ -32,6 +33,7 @@ vi.mock('../context', () => ({
         refreshBudgetData: mockRefreshBudgetData,
         refreshSpData: mockRefreshSpData,
         refreshEaData: mockRefreshEaData,
+        refreshGiftIdeasData: mockRefreshGiftIdeasData,
     }),
 }))
 
@@ -66,6 +68,7 @@ describe('Home', () => {
         mockRefreshBudgetData.mockResolvedValue(undefined)
         mockRefreshSpData.mockResolvedValue(undefined)
         mockRefreshEaData.mockResolvedValue(undefined)
+        mockRefreshGiftIdeasData.mockResolvedValue(undefined)
     })
 
     it('renders the page title', () => {

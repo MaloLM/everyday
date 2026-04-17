@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react'
 import { ipc } from '../api/electron'
 import toast from 'react-hot-toast'
-import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, ExpenseAnalysisData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, parseEaData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA } from '../utils'
+import { TamFormData, NetWorthData, RecurringPurchasesData, RecipesData, BudgetData, SavingsProjectsData, ExpenseAnalysisData, GiftIdeasData, parseTamFormData, parseNetWorthData, parseRpData, parseRecipesData, parseBudgetData, parseSavingsProjectsData, parseEaData, parseGiftIdeasData, INIT_NW_DATA, INIT_RP_DATA, INIT_RECIPES_DATA, INIT_BUDGET_DATA, INIT_SP_DATA, INIT_EA_DATA, INIT_GIFT_IDEAS_DATA } from '../utils'
 
 interface AppContextState {
     tamData: TamFormData
@@ -24,6 +24,9 @@ interface AppContextState {
     eaData: ExpenseAnalysisData
     setEaData: (data: ExpenseAnalysisData) => void
     refreshEaData: () => Promise<void>
+    giftIdeasData: GiftIdeasData
+    setGiftIdeasData: (data: GiftIdeasData) => void
+    refreshGiftIdeasData: () => Promise<void>
     blurFinances: boolean
     toggleBlurFinances: () => void
     sidebarOrder: string[]
@@ -51,9 +54,12 @@ const AppContext = createContext<AppContextState>({
     eaData: INIT_EA_DATA,
     setEaData: () => {},
     refreshEaData: async () => {},
+    giftIdeasData: INIT_GIFT_IDEAS_DATA,
+    setGiftIdeasData: () => {},
+    refreshGiftIdeasData: async () => {},
     blurFinances: false,
     toggleBlurFinances: () => {},
-    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea'],
+    sidebarOrder: ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea', '/gift-ideas'],
     setSidebarOrder: () => {},
 })
 
@@ -81,8 +87,9 @@ export const AppProvider = ({ children }) => {
     const [budgetData, setBudgetData] = useState<BudgetData>(INIT_BUDGET_DATA)
     const [spData, setSpData] = useState<SavingsProjectsData>(INIT_SP_DATA)
     const [eaData, setEaData] = useState<ExpenseAnalysisData>(INIT_EA_DATA)
+    const [giftIdeasData, setGiftIdeasData] = useState<GiftIdeasData>(INIT_GIFT_IDEAS_DATA)
     const [blurFinances, setBlurFinances] = useState<boolean>(() => localStorage.getItem('blurFinances') === 'true')
-    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea']
+    const defaultOrder = ['/', '/tam', '/nw', '/rp', '/recipes', '/budget', '/sp', '/ea', '/gift-ideas']
     const [sidebarOrder, setSidebarOrderState] = useState<string[]>(() => {
         const stored = localStorage.getItem('sidebarOrder')
         if (stored) {
@@ -117,6 +124,7 @@ export const AppProvider = ({ children }) => {
     const refreshBudgetData = useRefresh(ipc.loadBudgetData, parseBudgetData, setBudgetData, 'budget data')
     const refreshSpData = useRefresh(ipc.loadSavingsProjectsData, parseSavingsProjectsData, setSpData, 'savings projects data')
     const refreshEaData = useRefresh(ipc.loadEaData, parseEaData, setEaData, 'expense analysis data')
+    const refreshGiftIdeasData = useRefresh(ipc.loadGiftIdeasData, parseGiftIdeasData, setGiftIdeasData, 'gift ideas data')
 
     useEffect(() => {
         const handleResponse = (event, responseData) => {
@@ -136,6 +144,7 @@ export const AppProvider = ({ children }) => {
         refreshBudgetData()
         refreshSpData()
         refreshEaData()
+        refreshGiftIdeasData()
         return cleanup
     }, [])
 
@@ -147,12 +156,13 @@ export const AppProvider = ({ children }) => {
         budgetData, setBudgetData, refreshBudgetData,
         spData, setSpData, refreshSpData,
         eaData, setEaData, refreshEaData,
+        giftIdeasData, setGiftIdeasData, refreshGiftIdeasData,
         blurFinances, toggleBlurFinances,
         sidebarOrder, setSidebarOrder,
     }), [
-        tamData, nwData, rpData, recipesData, budgetData, spData, eaData,
+        tamData, nwData, rpData, recipesData, budgetData, spData, eaData, giftIdeasData,
         blurFinances, sidebarOrder,
-        refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData,
+        refreshNwData, refreshRpData, refreshRecipesData, refreshBudgetData, refreshSpData, refreshEaData, refreshGiftIdeasData,
         toggleBlurFinances, setSidebarOrder,
     ])
 

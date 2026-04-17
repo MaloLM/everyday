@@ -20,6 +20,9 @@ export const ipc = {
     loadRecipesData: (): Promise<any> => window.electron.loadRecipesData(),
     saveRecipe: (recipe: any): Promise<any> => window.electron.saveRecipe(recipe),
     deleteRecipe: (recipeId: string): Promise<any> => window.electron.deleteRecipe(recipeId),
+    loadGiftIdeasData: (): Promise<any> => window.electron.loadGiftIdeasData(),
+    saveGiftIdea: (idea: any): Promise<any> => window.electron.saveGiftIdea(idea),
+    deleteGiftIdea: (ideaId: string): Promise<any> => window.electron.deleteGiftIdea(ideaId),
     exportAllData: (): Promise<any> => window.electron.exportAllData(),
     importAllData: (data: any): Promise<void> => window.electron.importAllData(data),
 } as const
